@@ -167,6 +167,16 @@ cough)`) on cards sensed afterwards; it never silently replaces what the tagger 
 runner-up alias was tried first and reverted (it missed the cough and added noise to 12 lines);
 learning from fixes needs no threshold tuned on the bench. Runs: one local JSONL file, nothing else.
 
+# Speech on the box overlaps the local passes (2026-10-10)
+
+Passes run one after the other so the Mac never holds a decoder and a speech model at once. Speech
+on a GPU box (`--on` / `FRAMESIFT_ON`) is the exception: the Mac only waits on ssh, and that wait
+was 11.5 s of a 29 s card on the 2:44 Vietnamese reel. Now the audio is decoded and tagged first;
+if the tagger hears speech, the box gets it in a background thread while the picture pass and OCR
+run, and the speech lines are collected last. Same reel: 29 s -> 18-20 s, the 34 speech lines
+identical, the wait left at the end 0.5-1.6 s. Lag probe during the run: wakeup lateness p50
+1.26 ms, p99 1.7 ms, none over 16 ms (idle: 1.26 / 5.8 ms). Audio without speech is never sent.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read

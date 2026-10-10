@@ -143,12 +143,12 @@ def _visual(path: str, info: decode.MediaInfo) -> tuple[events.Grid, float]:
     return g, fps
 
 
-def _audio(path: str, info: decode.MediaInfo, subs: Path | None, asr_mode: str):
-    pcm = decode.audio_pcm(path, sound.SR)
+def _audio(path: str, info: decode.MediaInfo, subs: Path | None, asr_mode: str, early=None):
+    pcm = early[0] if early else decode.audio_pcm(path, sound.SR)
     if len(pcm) < sound.SR // 2:
         return None
     at = audio.build_track(pcm)
-    tags = sound.tag(pcm, hop=0.5 if info.duration <= 1800 else 1.0)
+    tags = early[1] if early else sound.tag(pcm, hop=0.5 if info.duration <= 1800 else 1.0)
     sp = sound.speech_spans(tags)
     hits = sound.hits(pcm, tags, sp)
     beds = sound.trim(sound.beds(tags, sp), at)
@@ -160,8 +160,14 @@ def _audio(path: str, info: decode.MediaInfo, subs: Path | None, asr_mode: str):
         if bd.label not in ("music", "singing"):
             bd.times = sound.bursts(at.rms_db, at.times, bd.start, bd.end)
     sil = sound.silences(at.rms_db, at.times, [t for h in hits for t in h.times])
-    cues, asr_info, pre_voices = [], None, None
     talk = sum(e - s for s, e in sp)
+    # Speech is collected last (`finish`), so a transcription running on a GPU box overlaps
+    # the picture and OCR passes instead of holding them up.
+    return beds + hits + sil, lambda: _speech(pcm, tags, talk, subs, asr_mode, early), talk, tags
+
+
+def _speech(pcm, tags, talk: float, subs: Path | None, asr_mode: str, early) -> tuple[list[dict], dict | None]:
+    cues, asr_info, pre_voices = [], None, None
     if subs is not None:
         from .transcript import load
         cues, asr_info = load(str(subs)), {"backend": "subtitles", "model": subs.name}
@@ -169,7 +175,7 @@ def _audio(path: str, info: decode.MediaInfo, subs: Path | None, asr_mode: str):
         import os
         from . import asr
         host = os.environ.get("FRAMESIFT_ON")
-        r = asr.remote(pcm, host) if host else None
+        r = early[2].result() if early and early[2] else asr.remote(pcm, host) if host else None
         try:
             if r is None:
                 r = asr.transcribe(pcm, "auto", None, None)
@@ -195,7 +201,7 @@ def _audio(path: str, info: decode.MediaInfo, subs: Path | None, asr_mode: str):
         g_ = per.get(v) if v else g_
         speech.append({"start": round(c.start, 2), "end": round(c.end, 2), "text": c.text,
                        "voice": f"{v}" + (f", {g_}" if g_ else "") if v else g_})
-    return beds + hits + sil, speech, asr_info, talk, tags
+    return speech, asr_info
 
 
 def _dedupe(cues: list[Cue], subtitles: bool) -> list[Cue]:
@@ -258,9 +264,28 @@ def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = Non
     class _Now:                      # run in place (no pool): a picture failure stops before speech runs
         def __init__(self, fn, *a): self.fn, self.a = fn, a
         def result(self): return self.fn(*self.a)
+    # Speech on a GPU box is the exception: the Mac only waits on ssh (11.5 s of a 29 s card on a
+    # real 2:44 reel), so that wait runs beside the local passes. No local CPU or memory is added.
+    early = None
+    import os
+    host = os.environ.get("FRAMESIFT_ON")
+    if host and info.has_audio and subs is None and asr_mode != "off":
+        from concurrent.futures import ThreadPoolExecutor
+        from . import asr
+        pcm = decode.audio_pcm(str(path), sound.SR)
+        if len(pcm) >= sound.SR // 2:
+            # Tag first: only audio with speech goes to the box (the same test `_audio` applies).
+            tags = sound.tag(pcm, hop=0.5 if info.duration <= 1800 else 1.0)
+            fut = None
+            if asr_mode == "on" or sum(e - s_ for s_, e in sound.speech_spans(tags)) >= 2.0:
+                pool = ThreadPoolExecutor(1)
+                fut = pool.submit(asr.remote, pcm, host)
+                pool.shutdown(wait=False)
+            early = (pcm, tags, fut)
+    finish = None
     if True:
         fv = _Now(_visual, str(path), info) if info.has_video else None
-        fa = _Now(_audio, str(path), info, subs, asr_mode) if info.has_audio else None
+        fa = _Now(_audio, str(path), info, subs, asr_mode, early) if info.has_audio else None
         if fv is not None:
             g, s.analysed_fps = fv.result()
             s.events = events.detect(g)
@@ -269,15 +294,11 @@ def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = Non
         if fa is not None:
             r = fa.result()
             if r is not None:
-                s.sounds, s.speech, s.asr, talk, tags = r
+                s.sounds, finish, talk, tags = r
                 s.sound_sensed = True
                 s.timings["audio"] = round(time.perf_counter() - t0, 1)
             else:
                 s.holes.append("audio track too short to tag")
-    if not info.has_audio:
-        s.holes.append("no audio track")
-    elif not s.speech and s.asr is None and any(x.label == "speech" for x in s.sounds):
-        s.holes.append("speech heard but not transcribed")
     if info.has_video:
         if s.analysed_fps < 10:
             s.holes.append(f"picture read at {s.analysed_fps:g} fps: changes shorter than {1 / s.analysed_fps:.1f} s can be missed")
@@ -297,6 +318,14 @@ def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = Non
             s.timings["ocr"] = round(time.perf_counter() - t1, 1)
         else:
             s.holes.append("on-screen text not read (OCR needs macOS Vision)")
+    if finish is not None:
+        t2 = time.perf_counter()
+        s.speech, s.asr = finish()
+        s.timings["speech_wait"] = round(time.perf_counter() - t2, 1)
+    if not info.has_audio:
+        s.holes.append("no audio track")
+    elif not s.speech and s.asr is None and any(x.label == "speech" for x in s.sounds):
+        s.holes.append("speech heard but not transcribed")
     if s.speech:
         _drop_captions(s)
     s.timings["total"] = round(time.perf_counter() - t0, 1)

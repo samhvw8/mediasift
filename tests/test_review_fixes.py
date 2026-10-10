@@ -128,3 +128,30 @@ def test_platform_watermark_is_named_once_not_per_jump(portrait):
     assert "TikTok" not in card.split("## Timeline")[1], "watermark repeated in the timeline"
     assert "Watermark" in card and "@tu.phu.ngo" in card.split("## Timeline")[0]
     assert "vá huhu cứu" in card, "real on-screen text must stay"
+
+
+def test_remote_asr_overlaps_the_picture_pass(tmp_path, monkeypatch):
+    """The box does the speech work; the Mac only waits on ssh, so that wait runs beside the
+    picture pass instead of after it (11.5 s of a 29 s card on a real 2:44 reel)."""
+    import time
+    from framesift import asr
+    ff("-f", "lavfi", "-i", "testsrc2=s=320x180:d=4:r=15", "-f", "lavfi", "-i", "sine=f=300:d=4",
+       "-shortest", "-pix_fmt", "yuv420p", str(tmp_path / "a.mp4"))
+    marks = {}
+
+    def fake_remote(pcm, host, language=None, connect_s=3):
+        marks["asr_start"] = time.perf_counter()
+        time.sleep(0.5)
+        return asr.AsrResult([Cue(0.5, 2.0, "hello")], "fake", "m", "en", 0.5)
+
+    real_visual = see._visual
+    def timed_visual(*a):
+        r = real_visual(*a)
+        marks["visual_end"] = time.perf_counter()
+        return r
+    monkeypatch.setattr(asr, "remote", fake_remote)
+    monkeypatch.setattr(see, "_visual", timed_visual)
+    monkeypatch.setenv("FRAMESIFT_ON", "fakehost")
+    s, _ = see.sense(tmp_path / "a.mp4", tmp_path, asr_mode="on")
+    assert [c["text"] for c in s.speech] == ["hello"]
+    assert marks["asr_start"] < marks["visual_end"], "speech waited for the picture pass"
