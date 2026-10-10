@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — real bench r10 with the final code: parity at 31/32, 51 vs 58 images.
 * **Updated**: [framesift see](decisions/see-sensor.md) — real bench r7 caught a regression (crop rule on screen recordings); the rule now applies to camera footage only, confirmed in r8/r9.
 * **Updated**: [framesift see](decisions/see-sensor.md) — first real-use run: portrait tiles, event crops and tile ids only for listed events, one voice said once; card version see-3.
 * **Updated**: [framesift see](decisions/see-sensor.md) — tagger check: Zipformer-small 35/40, CED + Zipformer average 34/40, CED-small alone 36/40 stays.

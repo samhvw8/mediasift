@@ -134,6 +134,8 @@ Real-footage bench r7 (all four videos, Sonnet answerers, blind graders): B 31/3
 python_100s (above), C missed Big Buck Bunny q02 (pan vs tilt, missed in r6 too) and q07 (cut-back
 count; the CUTS line and landscape sheets are unchanged, so noise). Lesson: a cleanup that removes
 images an agent can see is a behaviour change; measure it like one.
+After the fix, full round r10 in the daily setup (ASR on the box): B 31/32, C 31/32, C reading
+51 images vs 58; C's one miss is the python_100s emoji count.
 
 # Not measured or open
 
