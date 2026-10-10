@@ -1,0 +1,77 @@
+{
+ "video": "tears_of_steel",
+ "grades": {
+  "A": {
+   "q01": 1,
+   "q02": 0,
+   "q03": 0,
+   "q04": 0,
+   "q05": 0,
+   "q06": 0,
+   "q07": 1,
+   "q08": 1,
+   "q09": 1,
+   "q10": 1,
+   "q11": 1,
+   "q12": 1,
+   "q13": 1,
+   "q14": 0
+  },
+  "B": {
+   "q01": 1,
+   "q02": 1,
+   "q03": 0,
+   "q04": 1,
+   "q05": 1,
+   "q06": 1,
+   "q07": 1,
+   "q08": 1,
+   "q09": 1,
+   "q10": 1,
+   "q11": 1,
+   "q12": 1,
+   "q13": 1,
+   "q14": 1
+  },
+  "C": {
+   "q01": 1,
+   "q02": 1,
+   "q03": 1,
+   "q04": 0,
+   "q05": 1,
+   "q06": 1,
+   "q07": 1,
+   "q08": 1,
+   "q09": 1,
+   "q10": 1,
+   "q11": 1,
+   "q12": 1,
+   "q13": 1,
+   "q14": 1
+  },
+  "F": {
+   "q01": 1,
+   "q02": 1,
+   "q03": 0,
+   "q04": 1,
+   "q05": 1,
+   "q06": 1,
+   "q07": 1,
+   "q08": 1,
+   "q09": 1,
+   "q10": 1,
+   "q11": 1,
+   "q12": 1,
+   "q13": 1,
+   "q14": 1
+  }
+ },
+ "notes": {
+  "A/q01": "'Project Mango' contains accepted 'Mango'; accepted",
+  "C/q01": "same as A/q01",
+  "A/q14": "Unknown",
+  "B/q03": "'creates' vs 'gets': verb differs from headline; marked wrong",
+  "C/q03": "regraded after key correction (headline reads CREATES)",
+  "F/q03": "fragmentary, missing 'gets'; marked wrong"
+ }
+}

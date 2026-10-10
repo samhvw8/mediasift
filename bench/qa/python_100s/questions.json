@@ -1,0 +1,61 @@
+{
+ "video": "python_100s",
+ "questions": [
+  {
+   "id": "q01",
+   "question": "In the language ranking chart, what rating percentage does the top-ranked language have?"
+  },
+  {
+   "id": "q02",
+   "question": "In the first code example typed in the editor, what string value is assigned to the variable?"
+  },
+  {
+   "id": "q03",
+   "question": "In the code snippet that ends with a semicolon, what is the variable's name?"
+  },
+  {
+   "id": "q04",
+   "question": "In the final object-oriented code example, what is the name of the child class?"
+  },
+  {
+   "id": "q05",
+   "question": "What command is typed at the interactive prompt before the poem-like text appears?"
+  },
+  {
+   "id": "q06",
+   "question": "What text appears under the OpenCV logo?"
+  },
+  {
+   "id": "q07",
+   "question": "What is printed on the T-shirt of the bearded man shown with his name caption?"
+  },
+  {
+   "id": "q08",
+   "question": "What variable name appears in the closing code animation at the end?"
+  },
+  {
+   "id": "q09",
+   "question": "What does the narrator say Python uses instead of semicolons to determine the scope of a line of code?"
+  },
+  {
+   "id": "q10",
+   "question": "The narrator says Python is strongly typed, which means values will not do what?"
+  },
+  {
+   "id": "q11",
+   "question": "According to the narrator, what are you watching this YouTube video in right now?"
+  },
+  {
+   "id": "q12",
+   "question": "In the code sample shown when the narrator mentions the food words, what variable is set to 10 inside the function named after the first food word?"
+  },
+  {
+   "id": "q13",
+   "question": "Which library does the on-screen example install with the package manager the narrator names?"
+  },
+  {
+   "id": "q14",
+   "question": "When the narrator explains declaring multiple variables on one line, what second variable name is added next to the first?"
+  }
+ ]
+}

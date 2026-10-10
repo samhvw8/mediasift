@@ -1,0 +1,36 @@
+{
+  "scores": {
+    "C01": {"value": 7, "feasibility": 8, "running_cost": 8, "novelty": 7, "specificity": 8, "off_brief": false},
+    "C02": {"value": 6, "feasibility": 6, "running_cost": 9, "novelty": 5, "specificity": 7, "off_brief": false},
+    "C03": {"value": 6, "feasibility": 7, "running_cost": 6, "novelty": 6, "specificity": 7, "off_brief": false},
+    "C04": {"value": 5, "feasibility": 6, "running_cost": 7, "novelty": 5, "specificity": 7, "off_brief": false},
+    "C05": {"value": 7, "feasibility": 8, "running_cost": 7, "novelty": 4, "specificity": 7, "off_brief": false},
+    "C06": {"value": 6, "feasibility": 7, "running_cost": 8, "novelty": 5, "specificity": 5, "off_brief": false},
+    "C07": {"value": 6, "feasibility": 7, "running_cost": 7, "novelty": 7, "specificity": 7, "off_brief": false},
+    "C08": {"value": 4, "feasibility": 5, "running_cost": 5, "novelty": 5, "specificity": 5, "off_brief": false},
+    "C09": {"value": 6, "feasibility": 6, "running_cost": 8, "novelty": 6, "specificity": 7, "off_brief": false},
+    "C10": {"value": 4, "feasibility": 5, "running_cost": 6, "novelty": 5, "specificity": 8, "off_brief": false},
+    "C11": {"value": 8, "feasibility": 8, "running_cost": 7, "novelty": 4, "specificity": 8, "off_brief": false},
+    "C12": {"value": 5, "feasibility": 7, "running_cost": 7, "novelty": 5, "specificity": 6, "off_brief": false},
+    "C13": {"value": 3, "feasibility": 9, "running_cost": 7, "novelty": 4, "specificity": 6, "off_brief": false},
+    "C14": {"value": 5, "feasibility": 9, "running_cost": 9, "novelty": 3, "specificity": 8, "off_brief": false},
+    "C15": {"value": 2, "feasibility": 8, "running_cost": 6, "novelty": 3, "specificity": 5, "off_brief": false}
+  },
+  "notes": {
+    "C01": "One cheap signal drives demotion, caption skip and tags, cutting image tokens on speech-heavy video; risk is layout-blind embeddings.",
+    "C02": "Deletes the metered VLM with a fire-rate kill criterion, but depends on retrieval quality being good enough.",
+    "C03": "Cluster sheets with a return map reduce repeat tokens, but a layout switch adds a recurrence knob.",
+    "C04": "Removes heuristics, but uniform sampling raises embed cost and the codec signals are partly kept anyway; unproven.",
+    "C05": "Ask-conditioned sheets with a coverage floor are directly useful to the harness, though close to proposed find.",
+    "C06": "Text-only default is a bold token cut, but vague on how the redundant/adds tag is computed and it depends on C01.",
+    "C07": "Check loop on the agent's summary is a fresh way to close the analysis loop and gives a label-free score; claim-to-frame matching is noisy.",
+    "C08": "Three-tower agreement needs the audio tower always loaded and adds cost for marginal chapter gain.",
+    "C09": "Replaces hand-set knobs with per-video calibration; real maintenance win, but Otsu on few cuts is fragile.",
+    "C10": "Admission-gated audio tag is disciplined but the payoff is narrow (silent windows only).",
+    "C11": "Paired tokens-per-correct-answer ledger against a random arm is the proof mechanism every other idea needs; high leverage and cheap.",
+    "C12": "Audit sheet and gap trace add honesty to the output, cheap, but a modest effect on understanding.",
+    "C13": "Documentation of deletions is process, not an embedding use; low value.",
+    "C14": "Cheap recall sweep to pick MRL dims, with a clear first move, but small and expected.",
+    "C15": "Scope-checking meta idea adds no use of the model; low value."
+  }
+}

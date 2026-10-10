@@ -1,0 +1,824 @@
+{
+  "framesift": "0.1.0",
+  "source": "samples/python_100s.mp4",
+  "duration": 143.01,
+  "media": {
+    "width": 1280,
+    "height": 720,
+    "fps": 29.97,
+    "has_video": true,
+    "has_audio": true
+  },
+  "params": {
+    "fps": 5.0,
+    "fast": false,
+    "min_seg": 2.0,
+    "max_seg": 90.0,
+    "sensitivity": 4.0,
+    "cut_threshold": 0.12,
+    "drift": null,
+    "content": "auto",
+    "max_frames": 80,
+    "width": 768,
+    "sheets": true,
+    "asr": true,
+    "asr_model": "small",
+    "snap": 1.0
+  },
+  "content": {
+    "type": "screen",
+    "identical_frames": 0.448
+  },
+  "stats": {
+    "segments": 20,
+    "keyframe_images": 80,
+    "analysed_frames": 715,
+    "source_frames_approx": 4285,
+    "hard_cuts": 16,
+    "codec_scenecuts": 9,
+    "pauses": 2,
+    "transcript_cues": 40
+  },
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 3.2,
+      "start_ts": "00:00.0",
+      "end_ts": "00:03.2",
+      "reasons": [
+        "start"
+      ],
+      "visual_change": 1.49,
+      "audio_change": 0.63,
+      "speech_ratio": 0.88,
+      "activity": 23.9,
+      "keyframes": [
+        {
+          "t": 0.0,
+          "file": "frames/f001_00000.00s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 0.8,
+          "file": "frames/f002_00000.80s.jpg",
+          "why": "drift 0.11"
+        },
+        {
+          "t": 1.6,
+          "file": "frames/f003_00001.60s.jpg",
+          "why": "drift 0.19"
+        },
+        {
+          "t": 2.2,
+          "file": "frames/f004_00002.20s.jpg",
+          "why": "drift 0.21"
+        },
+        {
+          "t": 2.6,
+          "file": "frames/f005_00002.60s.jpg",
+          "why": "drift 0.14"
+        },
+        {
+          "t": 3.0,
+          "file": "frames/f006_00003.00s.jpg",
+          "why": "drift 0.42"
+        }
+      ],
+      "transcript": "Python, a high-level, interpreted programming language famous for its zen-like code."
+    },
+    {
+      "id": 2,
+      "start": 3.2,
+      "end": 5.6,
+      "start_ts": "00:03.2",
+      "end_ts": "00:05.6",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change"
+      ],
+      "visual_change": 2.53,
+      "audio_change": 0.0,
+      "speech_ratio": 0.92,
+      "activity": 32.17,
+      "keyframes": [
+        {
+          "t": 3.6,
+          "file": "frames/f007_00003.60s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 4.4,
+          "file": "frames/f008_00004.40s.jpg",
+          "why": "drift 0.09"
+        },
+        {
+          "t": 5.2,
+          "file": "frames/f009_00005.20s.jpg",
+          "why": "drift 0.14"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 3,
+      "start": 5.6,
+      "end": 11.8,
+      "start_ts": "00:05.6",
+      "end_ts": "00:11.8",
+      "reasons": [
+        "visual_change"
+      ],
+      "visual_change": 0.55,
+      "audio_change": 0.34,
+      "speech_ratio": 0.94,
+      "activity": 15.85,
+      "keyframes": [
+        {
+          "t": 6.6,
+          "file": "frames/f010_00006.60s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 8.2,
+          "file": "frames/f011_00008.20s.jpg",
+          "why": "drift 0.57"
+        },
+        {
+          "t": 8.8,
+          "file": "frames/f012_00008.80s.jpg",
+          "why": "drift 0.25"
+        },
+        {
+          "t": 11.2,
+          "file": "frames/f013_00011.20s.jpg",
+          "why": "drift 0.19"
+        },
+        {
+          "t": 11.6,
+          "file": "frames/f014_00011.60s.jpg",
+          "why": "drift 0.51"
+        }
+      ],
+      "transcript": "It's arguably the most popular language in the world because it's easy to learn, yet practical for serious projects."
+    },
+    {
+      "id": 4,
+      "start": 11.8,
+      "end": 15.8,
+      "start_ts": "00:11.8",
+      "end_ts": "00:15.8",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.54,
+      "speech_ratio": 1.0,
+      "activity": 39.03,
+      "keyframes": [
+        {
+          "t": 12.0,
+          "file": "frames/f015_00012.00s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 15.6,
+          "file": "frames/f016_00015.60s.jpg",
+          "why": "drift 0.43"
+        }
+      ],
+      "transcript": "In fact, you're watching this YouTube video in a Python web application right now."
+    },
+    {
+      "id": 5,
+      "start": 15.8,
+      "end": 20.0,
+      "start_ts": "00:15.8",
+      "end_ts": "00:20.0",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.08,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 25.12,
+      "keyframes": [
+        {
+          "t": 16.4,
+          "file": "frames/f017_00016.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 17.0,
+          "file": "frames/f018_00017.00s.jpg",
+          "why": "drift 0.21"
+        },
+        {
+          "t": 17.8,
+          "file": "frames/f019_00017.80s.jpg",
+          "why": "drift 0.10"
+        }
+      ],
+      "transcript": "It was created by Guido Van Rossum and released in 1991, who named it after Monty Python's"
+    },
+    {
+      "id": 6,
+      "start": 20.0,
+      "end": 22.4,
+      "start_ts": "00:20.0",
+      "end_ts": "00:22.4",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.24,
+      "audio_change": 1.06,
+      "speech_ratio": 1.0,
+      "activity": 10.69,
+      "keyframes": [
+        {
+          "t": 20.4,
+          "file": "frames/f020_00020.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 22.2,
+          "file": "frames/f021_00022.20s.jpg",
+          "why": "drift 0.23"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 7,
+      "start": 22.4,
+      "end": 27.4,
+      "start_ts": "00:22.4",
+      "end_ts": "00:27.4",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.19,
+      "speech_ratio": 0.96,
+      "activity": 3.33,
+      "keyframes": [
+        {
+          "t": 22.8,
+          "file": "frames/f022_00022.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 23.8,
+          "file": "frames/f023_00023.80s.jpg",
+          "why": "drift 0.07"
+        },
+        {
+          "t": 25.0,
+          "file": "frames/f024_00025.00s.jpg",
+          "why": "drift 0.12"
+        },
+        {
+          "t": 27.2,
+          "file": "frames/f025_00027.20s.jpg",
+          "why": "drift 0.18"
+        }
+      ],
+      "transcript": "flying circus, which is why you'll sometimes find spam and eggs instead of foo and bar in code samples."
+    },
+    {
+      "id": 8,
+      "start": 27.4,
+      "end": 37.2,
+      "start_ts": "00:27.4",
+      "end_ts": "00:37.2",
+      "reasons": [
+        "visual_cut"
+      ],
+      "visual_change": 0.38,
+      "audio_change": 0.02,
+      "speech_ratio": 0.96,
+      "activity": 14.66,
+      "keyframes": [
+        {
+          "t": 28.4,
+          "file": "frames/f026_00028.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 29.6,
+          "file": "frames/f027_00029.60s.jpg",
+          "why": "drift 0.36"
+        },
+        {
+          "t": 30.4,
+          "file": "frames/f028_00030.40s.jpg",
+          "why": "drift 0.12"
+        },
+        {
+          "t": 32.0,
+          "file": "frames/f029_00032.00s.jpg",
+          "why": "drift 0.08"
+        },
+        {
+          "t": 32.8,
+          "file": "frames/f030_00032.80s.jpg",
+          "why": "drift 0.18"
+        },
+        {
+          "t": 33.8,
+          "file": "frames/f031_00033.80s.jpg",
+          "why": "drift 0.14"
+        },
+        {
+          "t": 34.6,
+          "file": "frames/f032_00034.60s.jpg",
+          "why": "drift 0.06"
+        }
+      ],
+      "transcript": "Python is commonly used to build server-side applications, like web apps with the Django framework, and is the language of choice for big data analysis and machine learning. Many students choose Python to start learning to code because of its emphasis on readability"
+    },
+    {
+      "id": 9,
+      "start": 37.2,
+      "end": 40.04,
+      "start_ts": "00:37.2",
+      "end_ts": "00:40.0",
+      "reasons": [
+        "visual_cut"
+      ],
+      "visual_change": 0.4,
+      "audio_change": 0.18,
+      "speech_ratio": 1.0,
+      "activity": 1.32,
+      "keyframes": [
+        {
+          "t": 37.4,
+          "file": "frames/f033_00037.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 39.0,
+          "file": "frames/f034_00039.00s.jpg",
+          "why": "drift 0.17"
+        },
+        {
+          "t": 40.0,
+          "file": "frames/f035_00040.00s.jpg",
+          "why": "drift 0.38"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 10,
+      "start": 40.04,
+      "end": 45.4,
+      "start_ts": "00:40.0",
+      "end_ts": "00:45.4",
+      "reasons": [
+        "codec_scenecut"
+      ],
+      "visual_change": 0.07,
+      "audio_change": 0.06,
+      "speech_ratio": 1.0,
+      "activity": 4.03,
+      "keyframes": [
+        {
+          "t": 40.2,
+          "same_as": "frames/f035_00040.00s.jpg"
+        },
+        {
+          "t": 44.2,
+          "file": "frames/f036_00044.20s.jpg",
+          "why": "drift 0.09"
+        },
+        {
+          "t": 45.0,
+          "file": "frames/f037_00045.00s.jpg",
+          "why": "drift 0.42"
+        }
+      ],
+      "transcript": "as outlined by the zen of Python. Beautiful is better than ugly, while explicit is better than implicit."
+    },
+    {
+      "id": 11,
+      "start": 45.4,
+      "end": 49.92,
+      "start_ts": "00:45.4",
+      "end_ts": "00:49.9",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.22,
+      "audio_change": 0.41,
+      "speech_ratio": 0.96,
+      "activity": 3.61,
+      "keyframes": [
+        {
+          "t": 45.8,
+          "file": "frames/f038_00045.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 46.8,
+          "file": "frames/f039_00046.80s.jpg",
+          "why": "drift 0.13"
+        },
+        {
+          "t": 48.2,
+          "file": "frames/f040_00048.20s.jpg",
+          "why": "drift 0.13"
+        }
+      ],
+      "transcript": "Python is very simple, but avoids the temptation to sprinkle in magic that causes ambiguity."
+    },
+    {
+      "id": 12,
+      "start": 49.92,
+      "end": 55.4,
+      "start_ts": "00:49.9",
+      "end_ts": "00:55.4",
+      "reasons": [
+        "codec_scenecut"
+      ],
+      "visual_change": 0.98,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 6.55,
+      "keyframes": [
+        {
+          "t": 50.4,
+          "file": "frames/f041_00050.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 52.2,
+          "file": "frames/f042_00052.20s.jpg",
+          "why": "drift 0.36"
+        },
+        {
+          "t": 52.8,
+          "file": "frames/f043_00052.80s.jpg",
+          "why": "drift 0.10"
+        },
+        {
+          "t": 54.8,
+          "file": "frames/f044_00054.80s.jpg",
+          "why": "drift 0.12"
+        },
+        {
+          "t": 55.2,
+          "file": "frames/f045_00055.20s.jpg",
+          "why": "drift 0.11"
+        }
+      ],
+      "transcript": "Its code is often organized into notebooks where individual cells can be executed"
+    },
+    {
+      "id": 13,
+      "start": 55.4,
+      "end": 58.4,
+      "start_ts": "00:55.4",
+      "end_ts": "00:58.4",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 2.08,
+      "audio_change": 0.0,
+      "speech_ratio": 0.87,
+      "activity": 15.93,
+      "keyframes": [
+        {
+          "t": 55.8,
+          "file": "frames/f046_00055.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 56.4,
+          "file": "frames/f047_00056.40s.jpg",
+          "why": "drift 0.30"
+        }
+      ],
+      "transcript": "and documented in the same place. We're currently at version 3 of the language, and you can get started by creating a file"
+    },
+    {
+      "id": 14,
+      "start": 58.4,
+      "end": 89.4,
+      "start_ts": "00:58.4",
+      "end_ts": "01:29.4",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.02,
+      "audio_change": 0.58,
+      "speech_ratio": 0.96,
+      "activity": 1.2,
+      "keyframes": [
+        {
+          "t": 64.0,
+          "file": "frames/f048_00064.00s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 65.0,
+          "file": "frames/f049_00065.00s.jpg",
+          "why": "drift 0.09"
+        },
+        {
+          "t": 66.2,
+          "file": "frames/f050_00066.20s.jpg",
+          "why": "drift 0.06"
+        },
+        {
+          "t": 67.4,
+          "file": "frames/f051_00067.40s.jpg",
+          "why": "drift 0.08"
+        },
+        {
+          "t": 68.6,
+          "file": "frames/f052_00068.60s.jpg",
+          "why": "drift 0.10"
+        },
+        {
+          "t": 76.6,
+          "file": "frames/f053_00076.60s.jpg",
+          "why": "drift 0.07"
+        },
+        {
+          "t": 79.0,
+          "file": "frames/f054_00079.00s.jpg",
+          "why": "drift 0.09"
+        },
+        {
+          "t": 79.6,
+          "file": "frames/f055_00079.60s.jpg",
+          "why": "drift 0.10"
+        },
+        {
+          "t": 80.4,
+          "file": "frames/f056_00080.40s.jpg",
+          "why": "drift 0.11"
+        },
+        {
+          "t": 85.4,
+          "file": "frames/f057_00085.40s.jpg",
+          "why": "drift 0.22"
+        },
+        {
+          "t": 87.4,
+          "file": "frames/f058_00087.40s.jpg",
+          "why": "drift 0.12"
+        }
+      ],
+      "transcript": "that ends in .py, or .ipynb to create an interactive notebook. Create a variable by setting a name equal to a value. It's strongly typed, which means values won't change in unexpected ways, but dynamic, so type annotations are not required. The syntax is highly efficient, allowing you to declare multiple variables on a single line and define tuples, lists, and dictionaries with a literal syntax. Semi-colons are not required, and if you use them and experience Pythonista, we'll say that your code is not Pythonic."
+    },
+    {
+      "id": 15,
+      "start": 89.4,
+      "end": 121.6,
+      "start_ts": "01:29.4",
+      "end_ts": "02:01.6",
+      "reasons": [
+        "visual_cut"
+      ],
+      "visual_change": 0.07,
+      "audio_change": 0.43,
+      "speech_ratio": 0.99,
+      "activity": 1.25,
+      "keyframes": [
+        {
+          "t": 92.8,
+          "file": "frames/f059_00092.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 94.8,
+          "same_as": "frames/f049_00065.00s.jpg"
+        },
+        {
+          "t": 98.4,
+          "file": "frames/f060_00098.40s.jpg",
+          "why": "drift 0.17"
+        },
+        {
+          "t": 101.0,
+          "file": "frames/f061_00101.00s.jpg",
+          "why": "drift 0.07"
+        },
+        {
+          "t": 103.6,
+          "file": "frames/f062_00103.60s.jpg",
+          "why": "drift 0.13"
+        },
+        {
+          "t": 105.4,
+          "file": "frames/f063_00105.40s.jpg",
+          "why": "drift 0.08"
+        },
+        {
+          "t": 108.0,
+          "file": "frames/f064_00108.00s.jpg",
+          "why": "drift 0.07"
+        },
+        {
+          "t": 111.4,
+          "file": "frames/f065_00111.40s.jpg",
+          "why": "drift 0.20"
+        },
+        {
+          "t": 113.8,
+          "file": "frames/f066_00113.80s.jpg",
+          "why": "drift 0.07"
+        },
+        {
+          "t": 114.4,
+          "file": "frames/f067_00114.40s.jpg",
+          "why": "drift 0.07"
+        },
+        {
+          "t": 115.8,
+          "file": "frames/f068_00115.80s.jpg",
+          "why": "drift 0.08"
+        },
+        {
+          "t": 117.2,
+          "file": "frames/f069_00117.20s.jpg",
+          "why": "drift 0.13"
+        },
+        {
+          "t": 118.6,
+          "file": "frames/f070_00118.60s.jpg",
+          "why": "drift 0.11"
+        }
+      ],
+      "transcript": "Instead of semi-colons, Python uses indentation to terminate or determine the scope of a line of code. Define a function with the def keyword, then indent the next line, usually by four spaces, to define the function body. We might then add a for loop to it, and indent that by another four spaces. This eliminates the need for curly braces and semi-colons found in many other languages. Python is a multi-paradigm language. We can apply functional programming patterns with things like anonymous functions using Lambda. It also uses objects as an abstraction for data, allowing you to implement object-oriented patterns with things like classes and inheritance."
+    },
+    {
+      "id": 16,
+      "start": 121.6,
+      "end": 125.4,
+      "start_ts": "02:01.6",
+      "end_ts": "02:05.4",
+      "reasons": [
+        "visual_cut"
+      ],
+      "visual_change": 0.7,
+      "audio_change": 0.0,
+      "speech_ratio": 0.95,
+      "activity": 5.9,
+      "keyframes": [
+        {
+          "t": 122.2,
+          "file": "frames/f071_00122.20s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 123.4,
+          "file": "frames/f072_00123.40s.jpg",
+          "why": "drift 0.15"
+        },
+        {
+          "t": 124.2,
+          "file": "frames/f073_00124.20s.jpg",
+          "why": "drift 0.12"
+        }
+      ],
+      "transcript": "It also has a huge ecosystem of third-party libraries, such as deep learning frameworks"
+    },
+    {
+      "id": 17,
+      "start": 125.4,
+      "end": 128.0,
+      "start_ts": "02:05.4",
+      "end_ts": "02:08.0",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.72,
+      "audio_change": 0.49,
+      "speech_ratio": 1.0,
+      "activity": 6.67,
+      "keyframes": [
+        {
+          "t": 125.6,
+          "file": "frames/f074_00125.60s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 18,
+      "start": 128.0,
+      "end": 131.0,
+      "start_ts": "02:08.0",
+      "end_ts": "02:11.0",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.6,
+      "speech_ratio": 1.0,
+      "activity": 0.26,
+      "keyframes": [
+        {
+          "t": 128.4,
+          "file": "frames/f075_00128.40s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "like TensorFlow and wrappers for many high-performance low-level packages like Open"
+    },
+    {
+      "id": 19,
+      "start": 131.0,
+      "end": 135.6,
+      "start_ts": "02:11.0",
+      "end_ts": "02:15.6",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.05,
+      "speech_ratio": 1.0,
+      "activity": 9.39,
+      "keyframes": [
+        {
+          "t": 131.4,
+          "file": "frames/f076_00131.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 134.2,
+          "file": "frames/f077_00134.20s.jpg",
+          "why": "drift 0.10"
+        },
+        {
+          "t": 135.0,
+          "same_as": "frames/f002_00000.80s.jpg"
+        },
+        {
+          "t": 135.4,
+          "file": "frames/f078_00135.40s.jpg",
+          "why": "drift 0.18"
+        }
+      ],
+      "transcript": "Computer Vision, which are most often installed with the PIP package manager."
+    },
+    {
+      "id": 20,
+      "start": 135.6,
+      "end": 143.01,
+      "start_ts": "02:15.6",
+      "end_ts": "02:23.0",
+      "reasons": [
+        "codec_scenecut",
+        "visual_cut"
+      ],
+      "visual_change": 0.27,
+      "audio_change": 0.55,
+      "speech_ratio": 0.92,
+      "activity": 5.61,
+      "keyframes": [
+        {
+          "t": 136.4,
+          "same_as": "frames/f004_00002.20s.jpg"
+        },
+        {
+          "t": 137.0,
+          "file": "frames/f079_00137.00s.jpg",
+          "why": "drift 0.32"
+        },
+        {
+          "t": 137.8,
+          "file": "frames/f080_00137.80s.jpg",
+          "why": "drift 0.17"
+        }
+      ],
+      "transcript": "This has been the Python programming language in 100 seconds. Hit the like button if you want to see more short videos like this. Thanks for watching, and I will see you in the next one."
+    }
+  ],
+  "sheets": [
+    "sheet_01.jpg",
+    "sheet_02.jpg",
+    "sheet_03.jpg",
+    "sheet_04.jpg",
+    "sheet_05.jpg",
+    "sheet_06.jpg",
+    "sheet_07.jpg"
+  ]
+}

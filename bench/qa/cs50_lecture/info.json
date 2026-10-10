@@ -1,0 +1,7 @@
+{
+  "video": "cs50_lecture",
+  "duration": 360.0,
+  "oracle_seconds": 360.0,
+  "oracle_step": 2.0,
+  "images": 36
+}

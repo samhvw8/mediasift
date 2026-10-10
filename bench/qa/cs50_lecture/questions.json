@@ -1,0 +1,61 @@
+{
+ "video": "cs50_lecture",
+ "questions": [
+  {
+   "id": "q01",
+   "question": "What text is written on the small sign standing next to the giant yellow duck in the opening wide shot?"
+  },
+  {
+   "id": "q02",
+   "question": "In the photo of the crowded fair, what kind of balloons hang above the crowd?"
+  },
+  {
+   "id": "q03",
+   "question": "In the photo of two women chatting at the fair, what colour is the headscarf worn by the woman in the middle?"
+  },
+  {
+   "id": "q04",
+   "question": "What colour are the stacked, folded T-shirts shown in the close-up?"
+  },
+  {
+   "id": "q05",
+   "question": "In the diagram with the words input and output, what shape is drawn between the two labels?"
+  },
+  {
+   "id": "q06",
+   "question": "In the unusually dark, very wide shot of the whole hall, what colour is the square panel at the left of the stage?"
+  },
+  {
+   "id": "q07",
+   "question": "Between the slides reading base-2 and binary, a different one-word slide flashes by. What word is on it?"
+  },
+  {
+   "id": "q08",
+   "question": "What colour is the light bulb drawing on the slide when it is switched on?"
+  },
+  {
+   "id": "q09",
+   "question": "What is the highest number the speaker says he can count to on one hand using his clever finger scheme?"
+  },
+  {
+   "id": "q10",
+   "question": "What name does the speaker give to the tiny switches inside phones and computers that turn electricity on or off?"
+  },
+  {
+   "id": "q11",
+   "question": "How many possible up-and-down finger combinations does the speaker say five fingers give?"
+  },
+  {
+   "id": "q12",
+   "question": "After the input and output diagram, what single word does the next slide show as the speaker says we must agree on how to write inputs and outputs?"
+  },
+  {
+   "id": "q13",
+   "question": "What single word is on the slide while the speaker explains how to count up to thirty-one on one hand?"
+  },
+  {
+   "id": "q14",
+   "question": "At the moment the light bulb on the slide is lit up, what number does the speaker say that on state is called?"
+  }
+ ]
+}

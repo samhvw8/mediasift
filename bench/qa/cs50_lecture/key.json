@@ -1,0 +1,250 @@
+{
+ "video": "cs50_lecture",
+ "questions": [
+  {
+   "id": "q01",
+   "type": "image",
+   "question": "What text is written on the small sign standing next to the giant yellow duck in the opening wide shot?",
+   "answer": "CS50 Fair",
+   "accept": [
+    "CS50 Fair",
+    "the CS50 Fair"
+   ],
+   "evidence": [
+    [
+     0,
+     3
+    ]
+   ]
+  },
+  {
+   "id": "q02",
+   "type": "image",
+   "question": "In the photo of the crowded fair, what kind of balloons hang above the crowd?",
+   "answer": "yellow smiley (emoji) balloons",
+   "accept": [
+    "yellow balloons",
+    "smiley face balloons",
+    "emoji balloons",
+    "yellow smiley balloons"
+   ],
+   "evidence": [
+    [
+     2,
+     11
+    ]
+   ]
+  },
+  {
+   "id": "q03",
+   "type": "image",
+   "question": "In the photo of two women chatting at the fair, what colour is the headscarf worn by the woman in the middle?",
+   "answer": "pink",
+   "accept": [
+    "pink",
+    "magenta",
+    "light pink"
+   ],
+   "evidence": [
+    [
+     10,
+     13
+    ]
+   ]
+  },
+  {
+   "id": "q04",
+   "type": "image",
+   "question": "What colour are the stacked, folded T-shirts shown in the close-up?",
+   "answer": "gray",
+   "accept": [
+    "gray",
+    "grey",
+    "dark gray",
+    "dark grey",
+    "charcoal"
+   ],
+   "evidence": [
+    [
+     14,
+     25
+    ]
+   ]
+  },
+  {
+   "id": "q05",
+   "type": "image",
+   "question": "In the diagram with the words input and output, what shape is drawn between the two labels?",
+   "answer": "a square",
+   "accept": [
+    "square",
+    "box",
+    "a box",
+    "rectangle",
+    "a rectangle"
+   ],
+   "evidence": [
+    [
+     82,
+     104
+    ]
+   ]
+  },
+  {
+   "id": "q06",
+   "type": "image",
+   "question": "In the unusually dark, very wide shot of the whole hall, what colour is the square panel at the left of the stage?",
+   "answer": "green",
+   "accept": [
+    "green",
+    "light green",
+    "lime green"
+   ],
+   "evidence": [
+    [
+     148,
+     152
+    ]
+   ]
+  },
+  {
+   "id": "q07",
+   "type": "image",
+   "question": "Between the slides reading base-2 and binary, a different one-word slide flashes by. What word is on it?",
+   "answer": "ternary",
+   "accept": [
+    "ternary",
+    "base-3"
+   ],
+   "evidence": [
+    [
+     260,
+     264
+    ]
+   ],
+   "invalid": true,
+   "note": "invalid 2026-10-08: no third slide exists between 'base-2' and 'binary'. A 2 fps strip of 254-266 s and an answerer's 24 fps full-width scan of 251-268 s show base-2 -> binary (one dissolve frame); the transcript never says 'ternary'. The writer likely misread tiny slide text in a 480 px wide shot. Excluded from scoring."
+  },
+  {
+   "id": "q08",
+   "type": "image",
+   "question": "What colour is the light bulb drawing on the slide when it is switched on?",
+   "answer": "yellow",
+   "accept": [
+    "yellow",
+    "golden",
+    "gold",
+    "yellowish"
+   ],
+   "evidence": [
+    [
+     344,
+     347
+    ]
+   ]
+  },
+  {
+   "id": "q09",
+   "type": "speech",
+   "question": "What is the highest number the speaker says he can count to on one hand using his clever finger scheme?",
+   "answer": "31",
+   "accept": [
+    "31",
+    "thirty-one",
+    "thirty one"
+   ],
+   "evidence": [
+    [
+     151,
+     165
+    ],
+    [
+     212,
+     219
+    ]
+   ]
+  },
+  {
+   "id": "q10",
+   "type": "speech",
+   "question": "What name does the speaker give to the tiny switches inside phones and computers that turn electricity on or off?",
+   "answer": "transistors",
+   "accept": [
+    "transistors",
+    "transistor"
+   ],
+   "evidence": [
+    [
+     319,
+     330
+    ]
+   ]
+  },
+  {
+   "id": "q11",
+   "type": "speech",
+   "question": "How many possible up-and-down finger combinations does the speaker say five fingers give?",
+   "answer": "32",
+   "accept": [
+    "32",
+    "thirty-two",
+    "thirty two"
+   ],
+   "evidence": [
+    [
+     203,
+     214
+    ]
+   ]
+  },
+  {
+   "id": "q12",
+   "type": "both",
+   "question": "After the input and output diagram, what single word does the next slide show as the speaker says we must agree on how to write inputs and outputs?",
+   "answer": "representation",
+   "accept": [
+    "representation",
+    "representations"
+   ],
+   "evidence": [
+    [
+     101,
+     111
+    ]
+   ]
+  },
+  {
+   "id": "q13",
+   "type": "both",
+   "question": "What single word is on the slide while the speaker explains how to count up to thirty-one on one hand?",
+   "answer": "unary",
+   "accept": [
+    "unary",
+    "unary notation"
+   ],
+   "evidence": [
+    [
+     123,
+     226
+    ]
+   ]
+  },
+  {
+   "id": "q14",
+   "type": "both",
+   "question": "At the moment the light bulb on the slide is lit up, what number does the speaker say that on state is called?",
+   "answer": "one",
+   "accept": [
+    "one",
+    "1",
+    "a one"
+   ],
+   "evidence": [
+    [
+     339,
+     349
+    ]
+   ]
+  }
+ ]
+}

@@ -1,0 +1,238 @@
+{
+ "concepts": [
+  {
+   "id": "C01",
+   "title": "Narration redundancy score per keyframe",
+   "pitch": "Embed each transcript sentence and its nearest keyframe in the shared space. High agreement means the speech already says what the frame shows: the cell is demoted (kept in frames/, storyboard prints says: \"...\" (cos)) and the retrieved sentence is its caption; low agreement (diagram, silent action, 'as you can see') promotes the frame. One signal does three jobs (sheet demotion, caption skip, storyboard redundant/adds tag), runs only on speech-bearing segments, and is judged by whether it predicts the questions the agent answers with text only.",
+   "parents": [
+    "m01.4",
+    "m01.6",
+    "m02.2",
+    "m03.5",
+    "m01.r1.1",
+    "m03.r1.1",
+    "m01.r2.2"
+   ],
+   "members": [
+    "m01",
+    "m02",
+    "m03"
+   ]
+  },
+  {
+   "id": "C02",
+   "title": "Staged deletion of the meaning VLM, fire-rate as the criterion",
+   "pitch": "Remove the metered VLM captioner in stages: retrieved sentence replaces the caption, the harness names chapters from sheets, and the VLM sees only frames that fail both retrieval and a cosine(caption, frame) tripwire, answering a one-token yes/no on whether the sentence covers the frame. Fire-rate is a permanent bench column; when it is low on three of four videos the call path is removed, not switched off, and the VLM survives only as a bench-time referee.",
+   "parents": [
+    "m03.1",
+    "m02.1",
+    "m01.6",
+    "m02.r1.4",
+    "m03.r2.4",
+    "m02.r2.4"
+   ],
+   "members": [
+    "m01",
+    "m02",
+    "m03"
+   ]
+  },
+  {
+   "id": "C03",
+   "title": "Meaning-ordered cluster sheets and a return map",
+   "pitch": "Cluster stored vectors across the whole video and give each cluster its own sheet, one cell per distinct meaning with all its timestamps, cell count sized by within-cluster spread. The storyboard gets a ten-line return map (A at 0:10, B at 0:40, A at 1:05) so the harness sees what recurs and what is one-off (the novel material worth an image). Layout switches on only by a measured recurrence ratio; one-shot footage stays chronological; success is a lower repeat tax (QA items needing a second timestamp of the same cluster).",
+   "parents": [
+    "m03.3",
+    "m01.5",
+    "m01.r1.4",
+    "m02.r1.2",
+    "m03.r1.5",
+    "m01.r2.3"
+   ],
+   "members": [
+    "m01",
+    "m02",
+    "m03"
+   ]
+  },
+  {
+   "id": "C04",
+   "title": "Delete keyframe selection: uniform sampling plus medoid pick",
+   "pitch": "Remove the keyframe-picking heuristics: sample one frame every few seconds at fixed cost, embed all, and let the embedder only order, fold and size the sheets, with the codec I-frame and pixel-drift path kept only to set sampling density. Within a stable run the frame nearest the run mean replaces the 'sharpest in 0.6 s' pick, deleting that window; screen recordings keep the old pick. Kept only if tokens per correct answer does not rise.",
+   "parents": [
+    "m03.6",
+    "m02.r2.1"
+   ],
+   "members": [
+    "m02",
+    "m03"
+   ]
+  },
+  {
+   "id": "C05",
+   "title": "Ask-conditioned sheets with a coverage floor and ready-made queries",
+   "pitch": "An optional --ask embeds the question once (cheap low-dim vectors, so re-asks cost milliseconds from stored vectors) and reorders and budgets sheets around it, with a floor of one cell per segment so a wrong question never blinds the agent. Under each sheet print the nearest transcript phrases of each cluster centre as copyable queries, so the first pass needs no question and the second pass starts from a menu.",
+   "parents": [
+    "m03.2",
+    "m03.r1.4",
+    "m02.r2.3"
+   ],
+   "members": [
+    "m02",
+    "m03"
+   ]
+  },
+  {
+   "id": "C06",
+   "title": "Text-only default; images are a pull cost",
+   "pitch": "Delete 'images are sent by default'. The default output is the storyboard with each row carrying the redundant/adds tag and a retrieved speech sentence; an image leaves the machine only as a small sheet of coverage holes (check) or question matches (--ask). The bench meter is images requested per correct answer, with zero a possible value on the lecture.",
+   "parents": [
+    "m02.r2.2"
+   ],
+   "members": [
+    "m02"
+   ]
+  },
+  {
+   "id": "C07",
+   "title": "framesift check: close the loop on the agent's summary",
+   "pitch": "The harness passes its written summary back; framesift embeds each sentence and each segment, returns uncovered segments as a small sheet (holes) and flags sentences near no frame or speech (unsupported claims, the caption audit applied to the agent's own words). Sentences backed by two of frame/speech/audio are labelled grounded, one source is single-source. It doubles as a label-free analysis score for the bench on any new video.",
+   "parents": [
+    "m03.4",
+    "m03.r1.3",
+    "m02.r1.3",
+    "m02.1",
+    "m02.7"
+   ],
+   "members": [
+    "m02",
+    "m03"
+   ]
+  },
+  {
+   "id": "C08",
+   "title": "Cross-modal boundary agreement as chapter evidence",
+   "pitch": "Compute three change curves from the same model (visual tower, audio tower, transcript text tower) and call a chapter boundary strong only when at least two modalities peak within a few seconds. No learned or tuned weights; the storyboard prints which modalities agreed for each chapter.",
+   "parents": [
+    "m02.7"
+   ],
+   "members": [
+    "m02"
+   ]
+  },
+  {
+   "id": "C09",
+   "title": "Zero-knob calibration: content-type detector, codec-cut thresholds, out-of-distribution flag",
+   "pitch": "Replace hand-set knobs with per-video measurements. Embedding-distance over pixel-drift ratio (or zero-shot per-segment prompts) types screen vs camera and replaces the 25% identical-frames rule; codec I-frame cuts label embedding distances so the veto/merge/cluster threshold is set per video (Otsu-style) and graded on held-out cuts and instance pairs. One manifest record holds threshold, held-out recall, gap to pair-optimal and an out-of-distribution flag; too few cuts prints 'uncalibrated' and falls back to chronological.",
+   "parents": [
+    "m01.1",
+    "m02.3",
+    "m02.4",
+    "m01.r1.3",
+    "m02.r1.6",
+    "m03.r2.3",
+    "m01.2"
+   ],
+   "members": [
+    "m01",
+    "m02",
+    "m03"
+   ]
+  },
+  {
+   "id": "C10",
+   "title": "Audio tower admitted by one observed number, speech gaps only",
+   "pitch": "Load the 300M audio tower lazily, only on VAD non-speech windows where visual drift is above median, and output a single tag line (music, applause, typing, silence) from a zero-shot label list; no audio curve, no find --audio. Admission is decided before wiring: the count of QA items in silent windows the harness gets wrong with sheets alone, or the share of storyboard rows a tag would change on the silent film, with the kill threshold written down in advance and a rejection recorded with its number.",
+   "parents": [
+    "m01.3",
+    "m02.5",
+    "m03.7",
+    "m02.r1.5",
+    "m03.r1.6",
+    "m01.r1.6",
+    "m01.r2.5",
+    "m03.r2.5"
+   ],
+   "members": [
+    "m01",
+    "m02",
+    "m03"
+   ]
+  },
+  {
+   "id": "C11",
+   "title": "Bench ledger: tokens per correct answer against a random arm",
+   "pitch": "Every config (veto, k-center, demotion, clusters, medoid) runs as feature, current heuristic and uniform-random at equal count and tokens, paired per question with a sign test; the headline row is the agent answering from sheets plus storyboard, and proxies (cosine, drop rate) are only pre-tests whose false positives are recorded. Extras: a text-only arm gives the ceiling per video, ablation runs propose deletion diffs for features that tie, mean cosine and drop rate pin a baseline so drift fails the bench, and agent-answer logs become labels for thresholds. Cheapest-claim-first order starts with one embed-cache script over 1 fps frames of the 4 videos.",
+   "parents": [
+    "m02.6",
+    "m03.8",
+    "m01.8",
+    "m01.r1.2",
+    "m02.r1.1",
+    "m03.r1.2",
+    "m03.r2.1",
+    "m02.r2.5",
+    "m01.r1.6",
+    "m01.r2.1",
+    "m01.r2.4",
+    "m03.r2.6",
+    "m01.r2.6"
+   ],
+   "members": [
+    "m01",
+    "m02",
+    "m03"
+   ]
+  },
+  {
+   "id": "C12",
+   "title": "Self-reporting output: suspicious-decision audit sheet and gap trace",
+   "pitch": "An offline bench/audit scores every decision (each dropped or kept frame, caption, boundary, screen/camera call) with one embedding statistic and emits the 20 most suspicious per video as a contact sheet for a human. In the product, the storyboard header carries a five-line trace of what the agent was not shown: frames kept of total and why cells were demoted, tokens spent, segments with no cell, segments covered only by the floor cell.",
+   "parents": [
+    "m01.r1.5",
+    "m03.r2.2",
+    "m02.r1.3"
+   ],
+   "members": [
+    "m01",
+    "m02",
+    "m03"
+   ]
+  }
+ ],
+ "orphans": [
+  {
+   "id": "C13",
+   "title": "Fresh: the graveyard file, so a deleted feature leaves its epitaph",
+   "pitch": "Every deletion above is only safe if the reason survives it. Each time the ledger deletes a heuristic, the bench writes a dated entry (config, arm, tokens per correct answer, video, the model version) into `.okf/decisions/`, and a later model release re-runs just the deleted rows. The precedent is this repo's own keyframe-drift and cut-threshold history: constants were lost because their evidence was. Added: deletion becomes reversible by data, not by memory.",
+   "parents": [
+    "m02.r2.6"
+   ],
+   "members": [
+    "m02"
+   ]
+  },
+  {
+   "id": "C14",
+   "title": "Per-stage MRL dimension chosen by recall, not taste",
+   "pitch": "Use 128 dims for the veto and k-center (many comparisons, coarse meaning), 768 only for `find`. Do not argue it; run it: for the bench, compute recall@k of the top-10 frames per query at each of 128/256/512/768 and pick the smallest dimension within 1 point of full. Also shrinks signals.npz by 6x. Needs 20 queries written once, and the same sheet also validates proposal 3.",
+   "parents": [
+    "m01.7"
+   ],
+   "members": [
+    "m01"
+   ]
+  },
+  {
+   "id": "C15",
+   "title": "Fresh: the requirement trace as a bench file, so scope drift is caught by code",
+   "pitch": "Reading the others, every idea after this round will again drift toward \"better selection\". Keep the user's five-part goal (find, grid, send, analyse, extend) as a short checked list in the bench output, each line tied to one number from the ledger: best frames (recall vs random), grids (tokens per correct answer), harness (cells per sheet and total tokens), analysis (holes from `check`). A proposal that moves no line is flagged as outside the ask. Added: scope creep is detected by the bench rather than by memory.",
+   "parents": [
+    "m03.r1.7"
+   ],
+   "members": [
+    "m03"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,86 @@
+# Video-native models for framesift: keyframe vs clip (EN gather, 2026-10-01)
+
+Scope: video-native / clip-level models + frame-vs-clip tradeoff. Tags: GEM = decisive, MEH = useful/partial, NOISE = skip.
+
+## TL;DR
+1. GEM: the current describer is already video-native. Qwen3.5-4B takes `video_url` / `video` input (fps=2 default), same ViT/token math as Qwen3-VL. Switching to clips = change the input, not the model. [Qwen3.5-4B card](https://huggingface.co/Qwen/Qwen3.5-4B)
+2. GEM: Qwen3.5-4B self-reports Video-MME 76.9 w/o subs / 83.5 w/ subs, MLVU 82.8, LVBench 66.4, MVBench 71.2 (9B: 73.3 / 79.9 / 78.9 / 59.2 / 72.0). Beats every 4-8B video specialist found (best specialist VideoChat3-4B: Video-MME 70.1). Caveat: self-reported, long-video settings (card recommends raising video token budget to 224k). [card](https://huggingface.co/Qwen/Qwen3.5-4B)
+3. Clip cost is small for short segments: tokens/s = (W/32)(H/32) x fps/2. At 2 fps that is = (W/32)(H/32) per second, e.g. 640x360 = 225 tok/s, 448x252 ~ 110 tok/s. A 10 s clip @640x360 ~ 2.2k tokens = same as 10 keyframes. Derived from [video_preprocessor_config.json](https://huggingface.co/Qwen/Qwen3.5-4B/raw/main/video_preprocessor_config.json) (patch 16, merge 2, temporal_patch 2). Default total cap = 12,288 video tokens (longest_edge 25,165,824).
+4. Temporal grounding is the weak spot of general models; specialists add +9 to +13 mIoU. TimeLens2-4B (Qwen3-VL-4B finetune) Charades-TL mIoU 57.7 vs Qwen3-VL-4B 49.4, Qwen3.5-2B 46.0. [TimeLens2 paper](https://arxiv.org/html/2607.17423)
+5. Runtime on Sam's targets is the real risk, not model quality: llama.cpp video path is new and buggy; mlx-vlm video has live bugs. vLLM is the solid path (CUDA).
+6. Recommendation: HYBRID. See end.
+
+## Why single keyframes miss motion (evidence)
+- GEM: TOMATO shows many existing video benchmarks are solvable with a single / few / out-of-order frames, so benchmark scores overstate temporal ability; real temporal-reasoning gap is large. [arXiv 2410.23266](https://arxiv.org/abs/2410.23266), [repo](https://github.com/yale-nlp/TOMATO)
+- MEH: TemporalBench, TimeBlind make same "single-frame bias" point. [TemporalBench](https://arxiv.org/html/2410.10818v2), [TimeBlind](https://arxiv.org/html/2602.00288v4)
+- Corollary: Video-MME/MLVU scores overstate the clip advantage; for "person picks up the envelope" use motion benchmarks (TOMATO, MotionBench, TempCompass, TVBench). VideoChat3 table (same eval): TOMATO Qwen3-VL-4B 31.8, Molmo2-4B 39.8, VideoChat3-4B 37.9; MotionBench 58.6 / 61.6 / 61.7. [VideoChat3 paper](https://arxiv.org/html/2607.14935) No Qwen3.5-4B motion numbers found.
+- MEH: Reddit practitioner (r/LocalLLaMA): "native" video models still tokenize frames internally, you pay context either way; scene-change + dedup keep-gate then timestamped transcript + frames only where picture changed held up in practice. That is framesift's design. Also warns global frame-diff gates go blind on small subjects (<1% of frame). [thread](https://www.reddit.com/r/LocalLLaMA/comments/1vkiyuo/native_long_video_understanding_models_locally/)
+- MEH: same thread, dash_bro: vLLM "just splits the video into adaptive frames" - confirms clip input = frame sequence w/ timestamps, not a different mechanism.
+
+## Candidate table
+Benchmarks column: V-MME = Video-MME w/o subs. TL = TimeLens-Bench Charades mIoU (Charades-STA re-annotated; legacy Charades-STA numbers inflated/unreliable per TimeLens). Eval settings differ across sources, compare within a source only.
+
+| Model (repo id) | Params / VRAM | Video tokens | Benchmarks | Runtime | License | Date | Tag |
+|---|---|---|---|---|---|---|---|
+| Qwen/Qwen3.5-4B (current) | 4B; Q4_K_M GGUF 2.74 GB + mmproj 0.67 GB ([unsloth](https://huggingface.co/unsloth/Qwen3.5-4B-GGUF)); fits 12 GB at Q8/AWQ | 1 tok/32x32px per 2 frames; fps 2 default; cap 12k default | V-MME 76.9 (83.5 sub), MLVU 82.8, LVBench 66.4, MVBench 71.2, VideoMMMU 74.1 (self-reported) | vLLM `video_url`, SGLang, llama.cpp mtmd, MLX (lmstudio 4bit exists for 9B) | Apache-2.0 | 2026-02-27 | GEM |
+| Qwen/Qwen3.5-9B | 9B; fits 12 GB at ~Q4 (unverified VRAM w/ video) | same | V-MME 73.3 (79.9 sub), MLVU 78.9, LVBench 59.2 | same | Apache-2.0 | 2026-02-27 | MEH (4B scores higher on video per card, odd; 9B only for text quality) |
+| Qwen/Qwen3-VL-4B-Instruct | 4B | same math | V-MME 69.3, Charades-TL 46.4 (VideoChat3 eval) / 49.4 (TL2 eval) | all; mature | Apache-2.0 | 2025-10-11 | MEH (superseded by 3.5) |
+| Qwen/Qwen3.8-27B | 27B, ~17 GB VRAM ([r/LocalLLaMA](https://www.reddit.com/r/LocalLLaMA/comments/1ve4uoe/daniel_han_of_unsloth_validates_qwen3827b_will/)) | same | not extracted | vLLM / MLX | see card | 2026-08-05 | MEH: too big for 3060 12GB; only Apple 32GB+. Only 27B + Flash-Next sizes exist, no small |
+| NemoStation/Marlin-2B | 2B (Qwen3.5-2B finetune); user runs 4-bit on 3060 mobile ([reddit](https://www.reddit.com/r/LocalLLaMA/comments/1thi2l7/marlin2b_a_tiny_vlm_to_extract_structured/)) | 2 fps, <=240 frames (~2 min), 448x448 max/frame ([ModelScope](https://www.modelscope.cn/models/NemoStation/Marlin-2B)) | Dense caption (Scene + timestamped Events) + `find()` grounding; claims top 2B on DREAM-1K, CaReBench; TL Charades 46.5 / ActivityNet 37.9 / QVH 46.8 ([TL2 table](https://arxiv.org/html/2607.17423)) | vLLM; GGUF (`jadeonrails/marlin-2b-gguf`, 343k dl), `NemoStation/Marlin-2B-MLX-8bit`, GPTQ-4bit | Apache-2.0, HF gated (auto) | 2026-05-13 | GEM for dense-caption-with-timestamps; weaker grounding than TimeLens2 |
+| MCG-NJU/TimeLens2-4B (also -2B, -8B) | 4B (Qwen3-VL-4B base); GGUF by mradermacher | 2 fps, <=480x480, total 128000x32x32 px | Grounding avg 47.7 mIoU / 7 benchmarks; Charades-TL 57.7, ActivityNet-TL 59.0, QVH-TL 69.3, Ego4D-NLQ 18.6 ([TL2](https://arxiv.org/html/2607.17423)) | transformers; Qwen3-VL arch so vLLM/mlx-vlm should load (unverified) | Apache-2.0 | 2026-07-12 | GEM for "find when X happens" |
+| TencentARC/TimeLens-8B (-7B) | 8B (Qwen3-VL-8B) | same | Charades-TL mIoU 55.2, ActivityNet 53.2, QVH 65.5 ([repo](https://github.com/TencentARC/TimeLens)) | GGUF exist | see card | 2025-12-16 | MEH (TimeLens2 supersedes) |
+| MCG-NJU/VideoChat3-4B | 4B | I3D-ViT 16x spatiotemporal compression; half the visual tokens of Qwen3-VL at same patches; H200 2048 frames 100k tok vs 200k ([paper](https://arxiv.org/html/2607.14935)) | V-MME 70.1, LVBench 56.7, MotionBench 61.7, TempCompass 75.6, Charades-TL 56.1, ActivityNet-TL 54.6; proactive streaming mode | transformers `trust_remote_code`; no vLLM/GGUF/MLX found | Apache-2.0 | 2026-07-05 | MEH: good efficiency story but Qwen3.5-4B has higher V-MME and richer ecosystem |
+| allenai/Molmo2-4B / 8B | 4B / 8B | n/a | V-MME 69.6, TOMATO 39.8 (best in set), Charades-TL 33.3; strong video pointing/tracking, captioning ([card](https://huggingface.co/allenai/Molmo2-4B)) | transformers; GGUF, MLX-4bit (8B) community | Apache-2.0 | 2025-12-14 | MEH: weak grounding, strong short-video captioning |
+| openbmb/MiniCPM-V-4.6 (+AWQ/GPTQ/BNB, gguf) | ~1.2B (SigLIP2-400M + Qwen3.5-0.8B); phone-class | 1 fps default, <=128 frames; 16x or 4x token compression; `stack_frames` packs sub-frames into a grid per second | video numbers only in images, not extracted | vLLM, SGLang, llama.cpp, Ollama | Apache-2.0 | 2026-04-13 | MEH: cheapest clip option, quality unverified |
+| openbmb/MiniCPM-V-4_5 | 8B | 3D-resampler | V-MME 67.9, LVBench 50.4, Charades-TL 31.9 ([VideoChat3 table](https://arxiv.org/html/2607.14935)) | gguf | Apache-2.0 | 2025-08-24 | MEH |
+| yanziang/InternVideo3-8B-Instruct (OpenGVLab) | 8B, 256k ctx, M2LA latent attn | 4 fps/2048 frames trained | Charades-TL 53.2, ActivityNet-TL 46.3 | transformers `trust_remote_code`; no quant found | Apache-2.0 | 2026-05-26 | MEH: long-video/agentic; too heavy |
+| OpenMOSS-Team/MOSS-VL-Instruct-0708 (+FP8, Realtime) | cross-attn arch | abs timestamps injected | not extracted | own stack | Apache-2.0 | 2026-07-13 | NOISE for this use (unverified numbers) |
+| Kwai-Keye/Keye-VL-1_5-8B | 8B, SlowFast encoding | - | card claims SOTA among comparable on V-MME/LongVideoBench; no numbers extracted | transformers | Apache-2.0 | 2025-08-26 | MEH, stale; Keye-VL-2.0-30B-A3B (2026-05) too big |
+| lmms-lab-encoder/LLaVA-OneVision-2-8B-Instruct | 8B | - | Charades-TL 52.6 | - | - | 2026-05-11 | MEH |
+| DAMO-NLP-SG/VideoLLaMA3-7B / 2B | 7B/2B | - | V-MME 66.2, Charades-TL 39.8 | transformers | Apache-2.0 | 2025-01-21 | NOISE (superseded) |
+| OpenGVLab/InternVideo2_5_Chat_8B | 8B | - | V-MME 65.1, LongVideoBench 60.6, MVBench 75.7 | - | Apache-2.0 | 2025-01-22 | NOISE |
+| lmms-lab/LLaVA-Video-7B-Qwen2 | 7B | - | V-MME 63.3, Charades-TL 15.2 | - | - | 2024-09-02 | NOISE |
+| HuggingFaceTB/SmolVLM2-2.2B/500M/256M | 2.2B/0.5B/0.26B; MLX variants exist | - | 2.2B: V-MME 52.1, MLVU 55.2, MVBench 46.3; 500M: 42.2 / 47.3 / 39.7 ([card](https://huggingface.co/HuggingFaceTB/SmolVLM2-2.2B-Instruct)) | transformers, MLX, GGUF | Apache-2.0 | 2025-02 | NOISE (far below Qwen3.5-2B-class) |
+| google/gemma-4-E4B-it / 12B-it | 4B/12B | frames; max ~60 s video | no video benchmarks on card; Reddit user says too small for video ([thread](https://www.reddit.com/r/LocalLLaMA/comments/1vkiyuo/native_long_video_understanding_models_locally/)) | llama.cpp, MLX | Apache-2.0 | 2026-03 | NOISE |
+| Meta Apollo (7B) | 7B | - | Dec 2024, "1 h video" | - | - | 2024-12 | NOISE (stale) [reddit](https://www.reddit.com/r/LocalLLaMA/comments/1hffh35/meta_releases_the_apollo_family_of_large/) |
+| Moondream | - | no video input found | - | - | - | - | NOISE |
+| Video-XL2-8B | 8B | long-video | V-MME 66.6, Charades-TL 38.9 | - | - | 2025 | NOISE |
+
+Grounding detail (TL2 table, mIoU on Charades-TL / ActivityNet-TL / QVHighlights-TL): Qwen3-VL-4B 49.4/50.7/62.3; Qwen3.5-2B 46.0/48.9/60.6; Qwen3.5-35B-A3B 48.2/52.6/66.0; VideoChat3-4B 56.1/54.6/67.0; TimeLens2-4B 57.7/59.0/69.3; Gemini 2.5 Pro 52.8/58.1/70.4; GPT-5 40.5/42.9/56.8. A 4B specialist beats Gemini 2.5 Pro on Charades-TL and GPT-5 everywhere. [source](https://arxiv.org/html/2607.17423) No Qwen3.5-4B/9B grounding row exists in any source found (gap).
+Hard-moment retrieval (MomentSeeker, Ego4D-NLQ) is still poor everywhere: TimeLens2-4B MomentSeeker 27.9, Ego4D-NLQ 18.6 mIoU.
+
+## Runtime support (Sam's hardware)
+- vLLM (CUDA, 3060 12GB): Qwen3.5 video via `--media-io-kwargs '{"video":{"num_frames":-1}}'` + `mm_processor_kwargs {"fps":2,"do_sample_frames":true}`. GEM [card](https://huggingface.co/Qwen/Qwen3.5-4B). Use AWQ/FP8 to fit 12 GB (e.g. `cyankiwi/Qwen3.5-4B-AWQ-4bit`, `QuantTrio/Qwen3.5-4B-AWQ`). Video+KV VRAM at 12 GB untested by me.
+- llama.cpp: video input plan closed 2026-06-08 ([#18389](https://github.com/ggml-org/llama.cpp/issues/18389)), but: input_video >~10 s hangs server forever, deadlock in mmproj probe ([#27587](https://github.com/ggml-org/llama.cpp/issues/27587), open 2026-09-23); Windows hang on faststart MP4 ([#24429](https://github.com/ggml-org/llama.cpp/issues/24429)); data URLs rejected ([#27724](https://github.com/ggml-org/llama.cpp/issues/27724)); no audio+video ([#29129](https://github.com/ggml-org/llama.cpp/issues/29129)). Active development (video-ID PR merged 2026-09-09). Verdict: pre-extract frames and send as multi-image instead of `input_video`. GEM for risk.
+- mlx-vlm (Apple Silicon): Qwen3-VL dense video works; `qwen3_vl_moe` video broken (empty / degenerate output) even after fix ([#2297](https://github.com/Blaizzy/mlx-vlm/issues/2297)); fps/max_frames overrides were ignored, hardcoded fps=2,max_frames=768 ([#2050](https://github.com/Blaizzy/mlx-vlm/issues/2050), closed); `apply_chat_template(video=)` undocumented ([#2302](https://github.com/Blaizzy/mlx-vlm/issues/2302)). No Qwen3.5-specific video issue found, neither confirming nor denying support. Marlin has an official MLX-8bit.
+- Qwen3-VL-embedding does native video->vector (not in scope, noted): [Show HN sentrysearch](https://news.ycombinator.com/item?id=47575196).
+- Timestamp quirk: Qwen2.5-VL `tokens_per_second=2` made frames >5 fps share time index; Qwen3 family switched to text timestamps, issue is old/not confirmed for Qwen3.5. [#1031](https://github.com/QwenLM/Qwen3-VL/issues/1031) MEH. Keep fps <=2.
+- Thinking mode: Qwen3.5 thinks by default; disable for captioning or output tokens dominate cost (card; implied cost).
+
+## Practitioner signals
+- HN: [Qwen3-VL scans two-hour videos](https://news.ycombinator.com/item?id=46094606): vlm.run commenter says Qwen3-VL "outperformed Gemini" on video detail extraction; others note CLIP gives search but "lacks temporal understanding so you have to do the scene analysis yourself". MEH (anecdote, vendor).
+- HN: [Claude-real-video](https://news.ycombinator.com/item?id=48766005): "use Gemini or some local VLM... Claude will just burn tokens". NOISE.
+- Reddit r/LocalLLaMA Marlin-2B launch: built because Gemini-2.5-Flash cost at ~1000 clips/day + content-policy blocks; public caption corpora have only one-line captions, rough timestamps. Commenter ran 4-bit on a 3060 mobile. MEH. [thread](https://www.reddit.com/r/LocalLLaMA/comments/1thi2l7/marlin2b_a_tiny_vlm_to_extract_structured/)
+- Not found: any head-to-head of keyframe captions vs clip captions for retrieval quality. Dense-captioning surveys only confirm single-sentence/keyframe captions cover a fraction of a video: [ACM CSUR](https://dl.acm.org/doi/10.1145/3712059).
+
+## Recommendation: HYBRID, same model
+1. Keep `Qwen/Qwen3.5-4B` as the describer. Add a clip path: for segments where the codec/motion signal is high (or keyframe caption gate says "action likely"), cut the segment (<=10-15 s; split longer) and send as video at fps=2, <=448-480 px long side, thinking off. ~1-2.5k tokens per 10 s. Static/talking-head segments keep the 1-keyframe caption (cheapest; single frame loses nothing there).
+2. Output asks for timestamped event list (relative seconds) so each segment yields 1-N event rows rather than one blurb; store with segment offsets. Marlin-style `Scene + Events <t0-t1>` format is the template.
+3. Query time "find when X happens": do FTS/embedding over segment captions + transcript first, then, only on top-k segments, run `MCG-NJU/TimeLens2-4B` (+ GGUF `mradermacher/TimeLens2-4B-GGUF`) to refine (start,end). Do not run it on whole videos (MomentSeeker/Ego4D-style hard retrieval is still ~20-28 mIoU).
+4. Optional single-model alternative if you want to drop Qwen3.5-4B for clips: `NemoStation/Marlin-2B` (dense caption + find in 2B, fastest, gated HF, MLX-8bit exists). Quality vs Qwen3.5-4B unmeasured by me; test on 30 of your own clips first.
+5. Do not adopt VideoChat3 / InternVideo3 / MOSS-VL / Keye: no vLLM/GGUF path, lower Video-MME than the model you already run, extra maintenance surface.
+6. Runtime: CUDA box -> vLLM `video_url`. Apple Silicon -> extract frames yourself (ffmpeg at 2 fps, with timestamps in prompt) and pass as multi-image until Qwen3.5 video in mlx-vlm is verified; avoid llama.cpp `input_video` for now.
+Cost framing: no new model, no new service; marginal cost = extra prefill tokens on only motion segments + one optional grounding model loaded on demand.
+
+## Unresolved questions
+- Does mlx-vlm run Qwen3.5-4B video input correctly (only Qwen3-VL / Omni evidence found)? Needs a 6 s synthetic test like #2297.
+- Qwen3.5-4B real VRAM + prefill speed on 3060 with a 2k-token video prompt (not measured; AWQ vs GGUF).
+- Qwen3.5-4B / 9B temporal grounding (Charades-TL etc.) and motion benchmarks (TOMATO/MotionBench) - no published rows.
+- Qwen3.5-4B Video-MME 76.9 vs 9B 73.3 inversion: likely eval-setting artefact; unconfirmed.
+- Marlin-2B vs Qwen3.5-4B on dense caption quality (DREAM-1K numbers not extracted from gated card).
+- MiniCPM-V 4.6 video benchmark values (images only) and exact tokens/frame.
+- Does TimeLens2 load in vLLM/mlx-vlm unchanged (Qwen3-VL arch, so likely)?
+- Keyframe vs clip retrieval-quality A/B: no public data; must be measured on framesift's own corpus.
+
+## Sources
+HF API (videos pipeline listings, 2026-10-01); [Qwen3.5-4B](https://huggingface.co/Qwen/Qwen3.5-4B); [preproc cfg](https://huggingface.co/Qwen/Qwen3.5-4B/raw/main/video_preprocessor_config.json); [Qwen3.8-27B](https://huggingface.co/Qwen/Qwen3.8-27B); [TimeLens2-4B](https://huggingface.co/MCG-NJU/TimeLens2-4B); [TimeLens2 paper](https://arxiv.org/html/2607.17423); [TimeLens repo](https://github.com/TencentARC/TimeLens); [VideoChat3-4B](https://huggingface.co/MCG-NJU/VideoChat3-4B); [VideoChat3 paper](https://arxiv.org/html/2607.14935); [VideoChat3 page](https://mcg-nju.github.io/VideoChat3/); [Molmo2-4B](https://huggingface.co/allenai/Molmo2-4B); [MiniCPM-V-4.6](https://huggingface.co/openbmb/MiniCPM-V-4.6); [InternVideo3](https://huggingface.co/yanziang/InternVideo3-8B-Instruct); [MOSS-VL](https://huggingface.co/OpenMOSS-Team/MOSS-VL-Instruct-0708); [Keye-VL-1.5](https://huggingface.co/Kwai-Keye/Keye-VL-1_5-8B); [SmolVLM2](https://huggingface.co/HuggingFaceTB/SmolVLM2-2.2B-Instruct); [Gemma 4 E4B](https://huggingface.co/google/gemma-4-E4B-it); [Marlin-2B](https://huggingface.co/NemoStation/Marlin-2B); [ModelScope Marlin](https://www.modelscope.cn/models/NemoStation/Marlin-2B); Reddit/HN/GitHub links inline above; [Qwen3-VL #925](https://github.com/QwenLM/Qwen3-VL/issues/925).

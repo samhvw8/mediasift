@@ -1,0 +1,36 @@
+{
+  "scores": {
+    "C01": {"value": 7, "feasibility": 7, "running_cost": 8, "novelty": 7, "specificity": 8, "off_brief": false},
+    "C02": {"value": 7, "feasibility": 5, "running_cost": 9, "novelty": 7, "specificity": 7, "off_brief": false},
+    "C03": {"value": 6, "feasibility": 6, "running_cost": 6, "novelty": 6, "specificity": 7, "off_brief": false},
+    "C04": {"value": 5, "feasibility": 6, "running_cost": 6, "novelty": 5, "specificity": 7, "off_brief": false},
+    "C05": {"value": 7, "feasibility": 7, "running_cost": 7, "novelty": 5, "specificity": 7, "off_brief": false},
+    "C06": {"value": 6, "feasibility": 8, "running_cost": 9, "novelty": 5, "specificity": 5, "off_brief": false},
+    "C07": {"value": 7, "feasibility": 6, "running_cost": 7, "novelty": 8, "specificity": 7, "off_brief": false},
+    "C08": {"value": 5, "feasibility": 6, "running_cost": 7, "novelty": 5, "specificity": 5, "off_brief": false},
+    "C09": {"value": 7, "feasibility": 5, "running_cost": 8, "novelty": 6, "specificity": 6, "off_brief": false},
+    "C10": {"value": 4, "feasibility": 6, "running_cost": 6, "novelty": 5, "specificity": 8, "off_brief": false},
+    "C11": {"value": 8, "feasibility": 9, "running_cost": 9, "novelty": 4, "specificity": 7, "off_brief": false},
+    "C12": {"value": 5, "feasibility": 6, "running_cost": 6, "novelty": 5, "specificity": 6, "off_brief": false},
+    "C13": {"value": 4, "feasibility": 9, "running_cost": 7, "novelty": 4, "specificity": 6, "off_brief": false},
+    "C14": {"value": 5, "feasibility": 9, "running_cost": 9, "novelty": 4, "specificity": 8, "off_brief": false},
+    "C15": {"value": 2, "feasibility": 8, "running_cost": 6, "novelty": 3, "specificity": 5, "off_brief": false}
+  },
+  "notes": {
+    "C01": "One signal drives demotion, caption skip and redundancy tag; cheap and testable against text-only QA.",
+    "C02": "Deletes the metered VLM, the biggest running cost, but staged and depends on retrieval quality.",
+    "C03": "Return map is useful for recurring footage, but layout switching adds a measured-ratio knob.",
+    "C04": "Medoid pick risks losing instance detail the embedder collapses; gated by tokens per correct answer.",
+    "C05": "Ask-conditioning with coverage floor is sound but overlaps proposal 3 find.",
+    "C06": "Cuts per-turn image tokens, the user's top cost, but is a policy flip more than a concept.",
+    "C07": "Closing the loop on the agent summary is a fresh, useful analysis step and doubles as a label-free bench score.",
+    "C08": "Three-modality agreement is tidy but speculative and needs the audio tower for modest gain.",
+    "C09": "Replaces hand knobs with per-video calibration, but calibration itself needs held-out cuts and can fail on short videos.",
+    "C10": "Narrow audio use with a pre-registered kill threshold; small value, loads a 300M tower.",
+    "C11": "Measurement ledger that makes every other idea provable cheaply; not novel but highest leverage.",
+    "C12": "Audit sheet and gap trace add honesty to output, but extra surface for a modest gain.",
+    "C13": "Sensible hygiene for deletions, mostly a documentation habit, little direct value.",
+    "C14": "Cheap, concrete MRL dimension sweep that shrinks storage; narrow value.",
+    "C15": "Meta scope-tracking rather than a use of the model; adds bench surface with no video understanding gain."
+  }
+}

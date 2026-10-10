@@ -1,0 +1,16 @@
+{"arm": "C", "images_read": 7, "answers": [
+{"id": "q01", "answer": "CS50 Fair", "sure": true},
+{"id": "q02", "answer": "Emoji (smiley face) balloons", "sure": false},
+{"id": "q03", "answer": "Pink", "sure": true},
+{"id": "q04", "answer": "Dark grey (charcoal)", "sure": true},
+{"id": "q05", "answer": "Square", "sure": true},
+{"id": "q06", "answer": "Green", "sure": true},
+{"id": "q07", "answer": "bit", "sure": false},
+{"id": "q08", "answer": "Yellow", "sure": false},
+{"id": "q09", "answer": "31", "sure": true},
+{"id": "q10", "answer": "Transistors", "sure": true},
+{"id": "q11", "answer": "32", "sure": true},
+{"id": "q12", "answer": "representation", "sure": true},
+{"id": "q13", "answer": "unary", "sure": true},
+{"id": "q14", "answer": "One", "sure": true}
+]}

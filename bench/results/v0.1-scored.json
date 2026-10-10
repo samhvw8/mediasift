@@ -1,0 +1,64 @@
+{
+  "rows": [
+    {
+      "video": "big_buck_bunny",
+      "framesift": "0.1.0",
+      "segments": 30,
+      "hard_cuts": 33,
+      "keyframes": 56,
+      "keyframe_refs": 1,
+      "segments_with_image": 30,
+      "segments_with_text": 0,
+      "coverage": 0.989,
+      "coverage_uniform_same_n": 0.956
+    },
+    {
+      "video": "tears_of_steel",
+      "framesift": "0.1.0",
+      "segments": 43,
+      "hard_cuts": 43,
+      "keyframes": 80,
+      "keyframe_refs": 2,
+      "segments_with_image": 43,
+      "segments_with_text": 16,
+      "coverage": 0.917,
+      "coverage_uniform_same_n": 0.854
+    },
+    {
+      "video": "cs50_lecture",
+      "framesift": "0.1.0",
+      "segments": 40,
+      "hard_cuts": 21,
+      "keyframes": 66,
+      "keyframe_refs": 5,
+      "segments_with_image": 40,
+      "segments_with_text": 39,
+      "coverage": 1.0,
+      "coverage_uniform_same_n": 0.989
+    },
+    {
+      "video": "python_100s",
+      "framesift": "0.1.0",
+      "segments": 20,
+      "hard_cuts": 16,
+      "keyframes": 80,
+      "keyframe_refs": 4,
+      "segments_with_image": 20,
+      "segments_with_text": 16,
+      "coverage": 0.916,
+      "coverage_uniform_same_n": 0.902
+    },
+    {
+      "video": "cancer",
+      "framesift": "0.1.0",
+      "segments": 791,
+      "hard_cuts": 568,
+      "keyframes": 80,
+      "keyframe_refs": 43,
+      "segments_with_image": 120,
+      "segments_with_text": 685,
+      "coverage": 0.908,
+      "coverage_uniform_same_n": 0.912
+    }
+  ]
+}

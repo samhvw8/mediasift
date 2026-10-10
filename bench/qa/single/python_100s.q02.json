@@ -1,0 +1,9 @@
+{
+ "video": "python_100s",
+ "questions": [
+  {
+   "id": "q02",
+   "question": "In the first code example typed in the editor, what string value is assigned to the variable?"
+  }
+ ]
+}

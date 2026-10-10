@@ -1,0 +1,613 @@
+{
+  "version": 2,
+  "created": "2026-10-10 07:41:12",
+  "seed": 702108,
+  "dir": ".council/20261010-074112",
+  "members_n": 5,
+  "cross": 2,
+  "judges": 3,
+  "shortlist_n": 4,
+  "pool_max": 12,
+  "parallel": 6,
+  "preset": null,
+  "rubric": "decision",
+  "weights": [
+    [
+      "value",
+      35
+    ],
+    [
+      "feasibility",
+      25
+    ],
+    [
+      "running_cost",
+      20
+    ],
+    [
+      "novelty",
+      10
+    ],
+    [
+      "specificity",
+      10
+    ]
+  ],
+  "members": {
+    "m01": {
+      "card": {
+        "lens": {
+          "id": "contrarian",
+          "family": "challenger",
+          "name": "Contrarian",
+          "asks": "What if the obvious answer is wrong, and where is everyone not looking?",
+          "sees": "Crowded consensus, underserved angles, the bet nobody is making.",
+          "misses": "That the obvious answer is often obvious because it works.",
+          "clashes": [
+            "user-advocate",
+            "pragmatist"
+          ],
+          "delivers": "The obvious answer, and the strongest case that it is wrong."
+        },
+        "technique": {
+          "id": "none",
+          "name": "None",
+          "how": "No set technique: generate however your lens works best."
+        },
+        "provocation": {
+          "id": "score-to-ten",
+          "text": "Score the leading idea 1 to 10. What exactly would make it a 10?",
+          "source": "r/ClaudeAI practitioner consensus"
+        }
+      }
+    },
+    "m02": {
+      "card": {
+        "lens": {
+          "id": "custom-daily-operator",
+          "family": "custom",
+          "name": "Daily operator",
+          "asks": "What would make this run every single day with zero thought \u2014 no flags, no output folders, no waiting, nothing to babysit?",
+          "sees": "What only someone asking that question would notice.",
+          "misses": "Everything outside that question; the other members cover it.",
+          "delivers": "A direct answer to that question, with the evidence for it.",
+          "clashes": []
+        },
+        "technique": {
+          "id": "none",
+          "name": "None",
+          "how": "No set technique: generate however your lens works best."
+        },
+        "provocation": {
+          "id": "boring",
+          "text": "Which idea is boring but would quietly work? Make it exciting without losing what works."
+        }
+      }
+    },
+    "m03": {
+      "card": {
+        "lens": {
+          "id": "first-principles",
+          "family": "challenger",
+          "name": "First Principles",
+          "asks": "What is actually true here, and what is only inherited habit?",
+          "sees": "Requirements that were never requirements; conventions that can be dropped.",
+          "misses": "Why the convention existed in the first place.",
+          "clashes": [
+            "historian",
+            "incumbent"
+          ],
+          "delivers": "The two or three facts nobody can argue with, and the answer rebuilt from them alone."
+        },
+        "technique": {
+          "id": "none",
+          "name": "None",
+          "how": "No set technique: generate however your lens works best."
+        },
+        "provocation": {
+          "id": "for-what-purpose",
+          "text": "For what purpose? Ask it three times, going up a level each time.",
+          "source": "Practitioner alternative to Five Whys (HN 19625754)"
+        }
+      }
+    },
+    "m04": {
+      "card": {
+        "lens": {
+          "id": "custom-agent-harness",
+          "family": "custom",
+          "name": "Agent harness",
+          "asks": "If I am the model in the harness, a text-first mind with a token budget and no ears, what packet of evidence would let me actually perceive what happened over time and what was heard?",
+          "sees": "What only someone asking that question would notice.",
+          "misses": "Everything outside that question; the other members cover it.",
+          "delivers": "A direct answer to that question, with the evidence for it.",
+          "clashes": []
+        },
+        "technique": {
+          "id": "none",
+          "name": "None",
+          "how": "No set technique: generate however your lens works best."
+        },
+        "provocation": {
+          "id": "last-mistakes",
+          "text": "What mistakes did you make last time?",
+          "source": "Eno and Schmidt, Oblique Strategies (1975)"
+        }
+      }
+    },
+    "m05": {
+      "card": {
+        "lens": {
+          "id": "custom-film-and-perception-scientist",
+          "family": "custom",
+          "name": "Film and perception scientist",
+          "asks": "How do humans perceive motion, continuity and sound in film, and what exactly does a pile of still frames destroy that we could restore?",
+          "sees": "What only someone asking that question would notice.",
+          "misses": "Everything outside that question; the other members cover it.",
+          "delivers": "A direct answer to that question, with the evidence for it.",
+          "clashes": []
+        },
+        "technique": {
+          "id": "none",
+          "name": "None",
+          "how": "No set technique: generate however your lens works best."
+        },
+        "provocation": {
+          "id": "least-welcome",
+          "text": "What is the counterview we would least want to accept? Not the easiest one to digest.",
+          "source": "\u7d93\u7406\u4eba (Manager Today) anti-sycophancy prompt"
+        }
+      }
+    }
+  },
+  "pool": [
+    {
+      "id": "C01",
+      "title": "Sense the recording, not the pixels: record-time event sidecar",
+      "pitch": "For the user's own screen repros, a recorder wrapper (or the agent's own Playwright, bsk and cua-driver tools) writes a timeline of clicks, keys, window titles, DOM, console and network events while recording. The video becomes a thumbnail and the agent reads an exact, greppable cause-then-effect log, looking at a frame only at an event timestamp. Pixel inference is kept only for third-party footage, and every row carries a source column ('exact' vs 'inferred') so the card format stays stable as sensing improves.",
+      "parents": [
+        "m01.1",
+        "m03.1",
+        "m05.1",
+        "m01.r1.4",
+        "m02.r1.3",
+        "m04.r2.4"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m03",
+        "m04",
+        "m05"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C02",
+      "title": "Screen recording as a numbered action script with measured lag",
+      "pitch": "From pixels (cursor template, click ripple, scroll, big post-pause change, OCR on the changed region only) emit a numbered script: click, page change, typed text, banner appears. Each step gets a latency column, with click time anchored on the audio click when system audio exists, and a tag (reacted, late, unrelated) from the roughly 150 ms causation window. The steps double as markers on a strip and compile to a Playwright or bsk test skeleton whose failure reproduces the video's failure, so the perception is proven by running it.",
+      "parents": [
+        "m04.6",
+        "m05.r1.5",
+        "m03.r1.3",
+        "m03.r2.2",
+        "m05.r2.1"
+      ],
+      "members": [
+        "m03",
+        "m04",
+        "m05"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C03",
+      "title": "Motion encoded inside one picture: chronophoto, slit-scan, motion still",
+      "pitch": "Instead of adding frames, add a dimension to one image: a motion-history frame with ghosted earlier positions, flow arrows and a time ruler, and an x-t slit-scan strip where scrolling is a diagonal, repetitions are stripes and cuts are vertical edges. Each costs about one image (1-1.5k tokens) and carries direction, speed, order and counts that a tile grid only hints at, using signals framesift already decodes. Whether vision models read them is unproven, so it is a cheap falsifiable bet.",
+      "parents": [
+        "m01.2",
+        "m03.2",
+        "m03.3",
+        "m05.3",
+        "m04.7",
+        "m04.r1.1"
+      ],
+      "members": [
+        "m01",
+        "m03",
+        "m04",
+        "m05"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C04",
+      "title": "Make sound legible: spectrogram strip, sound score and SDH captions",
+      "pitch": "Because the agent has no ears, every non-speech sound becomes text or a picture: a labeled spectrogram/pitch/loudness strip on the same time axis as the frames, plus a text sound score (speech turns, silences over 3 s, music and laughter tags, pace and loudness shifts, one line per minute with a sparkline). The format borrows subtitles-for-the-deaf bracket style and the audio-description rule (spend images only where sound does not carry the scene), so a 1-2 hour podcast gets a navigable map in under a minute and stretches are described with Chion-style causal and reduced listening, not just words.",
+      "parents": [
+        "m01.3",
+        "m03.6",
+        "m04.5",
+        "m05.2",
+        "m02.r1.5",
+        "m05.r1.2",
+        "m05.r1.3"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m03",
+        "m04",
+        "m05"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C05",
+      "title": "Audio-visual coincidence (synchresis) as the cause-and-effect anchor",
+      "pitch": "Find audio onsets that land within about 80 ms of a visual change; these are the clicks, impacts, notifications and beat-cuts, and audio is the finer clock for dating them. Spend full-resolution frames and the audio tagger only around these moments, and draw them as vertical sync lines across a chronophoto stacked on a spectrogram slice, so one image shows whether sound came first, together or after. The same detections feed text rows with lag, period and count.",
+      "parents": [
+        "m05.5",
+        "m01.r1.1",
+        "m05.r1.1",
+        "m04.r1.2"
+      ],
+      "members": [
+        "m01",
+        "m04",
+        "m05"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C06",
+      "title": "Event-boundary pairs and the foveated look",
+      "pitch": "The unit is not the frame but the before|after pair at an event boundary, with a changed-region crop or outline and the words spoken in that window; cause and effect is two adjacent pairs, and the agent sees 5-15 pairs instead of 80 keyframes. A narrow 'look --at T --span S' call is the fovea over a wide text timeline, always returning a pair plus a measured 'still changing at the after frame' flag, and only then escalating to a burst or chronophoto. Burst size follows audio redundancy: 2 frames under speech, 6-8 with a difference mask in silence.",
+      "parents": [
+        "m03.7",
+        "m04.4",
+        "m05.4",
+        "m01.r1.3",
+        "m04.r1.3",
+        "m04.r2.3",
+        "m05.r1.2"
+      ],
+      "members": [
+        "m01",
+        "m03",
+        "m04",
+        "m05"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C07",
+      "title": "Ask first, sense second: stateless, question-driven sensing with a lazy ledger",
+      "pitch": "Drop the up-front analysis. A stateless command takes the video, a span or a question and a token budget; a cheap hash-keyed coarse pass (change curve plus ASR only if the question is about speech) finds candidates and spends the budget there. Every answer is appended to the sidecar as a layer and a per-video question log, so the cache holds only what was ever asked, a second visit is free and smarter, and a router table (speech, look, motion, sound) is learned from the log. The agent binary-searches the video like a person scrubbing.",
+      "parents": [
+        "m01.4",
+        "m03.4",
+        "m01.r1.2",
+        "m03.r1.6",
+        "m03.r2.3",
+        "m04.r1.6",
+        "m02.r2.5",
+        "m01.r2.4",
+        "m04.r2.2"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m03",
+        "m04"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C08",
+      "title": "Zero invocation: hook-made tiered sidecar with a fixed-size trailer and receipt",
+      "pitch": "A short-lived UserPromptSubmit hook (or folder watch) spots a video path or YouTube URL and writes a content-hashed sidecar next to the file: tier T0 in seconds (ffprobe, I-frame map, constant-size trailer of tiny tiles, pacing curve and sound bar), then richer rungs (sparse keyframes, ASR, index) filled lazily, with the first line a receipt of tier reached, tokens and holes. Content type picks the profile with no flags, YouTube uses platform captions first, the home GPU box can fill heavy layers by rsyncing a hash-named folder, and layers carry tool and model versions so stale evidence is relabelled. No daemon; the hook is the only trigger.",
+      "parents": [
+        "m01.5",
+        "m02.1",
+        "m02.2",
+        "m02.3",
+        "m02.5",
+        "m02.6",
+        "m03.5",
+        "m05.6",
+        "m05.r1.7",
+        "m02.r1.1",
+        "m02.r1.2",
+        "m02.r1.6",
+        "m02.r2.1",
+        "m02.r2.2",
+        "m02.r2.6",
+        "m03.r2.1",
+        "m04.r2.6",
+        "m01.r1.2",
+        "m03.r1.5"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m03",
+        "m04",
+        "m05"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C09",
+      "title": "Synthetic ground-truth bench with arrow-of-time controls, doubling as install self-test",
+      "pitch": "A small generator renders scripted clips (ball bounces 7 times, UI goes A to B to C, beep at 3.2 s, clap at 7.3 s, 5 s silence) whose truth is the script, then also renders them reversed, shuffled and muted, plus 'nothing happened' and loud-decoy clips, and scores each packet format on correct answers per 1,000 tokens, 'carries time', 'carries sound' and false-claim rate. The same clips become 'framesift doctor' (tests perception, not just that ffmpeg exists), run weekly from a stats log, and the generator writes expected sidecars so regression is a free card-versus-script diff with no agent. A reversed-clip check on real files can print 'order: not carried' in the card header.",
+      "parents": [
+        "m01.8",
+        "m03.8",
+        "m04.8",
+        "m05.7",
+        "m01.r1.5",
+        "m05.r1.4",
+        "m04.r1.5",
+        "m03.r1.4",
+        "m03.r2.5",
+        "m01.r2.3",
+        "m04.r2.5",
+        "m01.r2.5",
+        "m02.4",
+        "m02.8",
+        "m02.r1.4",
+        "m02.r2.3",
+        "m05.r2.6"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m03",
+        "m04",
+        "m05"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C10",
+      "title": "The honest card: testimony with handles, declared blind spots, one budget",
+      "pitch": "Every packet line is either a measured fact with a backing frame handle (count, period, duration, order, lag, with perception done in code, not by the model) or a labelled gap with a time range and a ready 'look A-B' command; the word 'saw' never appears. The card has four zones under one token budget with a drop order, a first-line perceived-fraction number, a 'what I could not tell' footer, per-detector track records printed as verified error, a kill rule that deletes any fact type that fails the bench, and a 'watch: 14:02-14:12 <clip>' handoff when the tool cannot settle it. Completeness is stated, not implied.",
+      "parents": [
+        "m04.1",
+        "m04.3",
+        "m02.7",
+        "m03.r1.1",
+        "m03.r1.2",
+        "m04.r2.1",
+        "m01.r2.1",
+        "m01.r2.2",
+        "m05.r2.1",
+        "m03.r2.6"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m03",
+        "m04",
+        "m05"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C11",
+      "title": "Rent the ears: native-video API as an opt-in, cost-metered valve",
+      "pitch": "Local models will not hear music, laughter or tone, so make a native video+audio model (Gemini-class) the sensor for the narrow spans where the local spectrogram and tags failed. The card footer carries a ready 'ear:' line with the printed cost, eligibility is read off the SDH ledger, a monthly doubt budget in cents sits in the sidecar header, and egress is opt-in per file. Running cost scales with real doubt rather than video count, against zero ops for the audio half. Per-hour pricing was flagged as unverified.",
+      "parents": [
+        "m01.6",
+        "m01.r1.6",
+        "m03.r2.4"
+      ],
+      "members": [
+        "m01",
+        "m03"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C12",
+      "title": "Delegated viewers: retina subagent, change-log and shot-list, blind re-watch",
+      "pitch": "Images never enter the main context: a hook injects only a constant text trailer and any image work goes by name to a throwaway viewing subagent returning about 300 tokens. The viewer writes delta lines per boundary pair in a continuity-editing shot-list grammar (entered, left, moved, sound under it), a greppable change log like git log for a video, optionally prefilled by the GPU box when awake. A second viewer without the card re-reads the same span, agreement marks a line firm and disagreement marks it contested. Delegation turns on only past a measured crossover (about 40 images, or repeated looks at one file).",
+      "parents": [
+        "m04.2",
+        "m01.7",
+        "m04.r1.4",
+        "m05.r1.6",
+        "m04.r2.2",
+        "m02.r2.4",
+        "m05.r2.5"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m04",
+        "m05"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C13",
+      "title": "Priming guard: the hook injects the digest, so the digest must be split into the part that cannot bias and the part that can",
+      "pitch": "Perception research shows that what a viewer is told before watching changes what they report seeing, and a hook that injects an interpreted summary before the agent starts will do the same to the agent. Split the injection into two blocks: a plain-fact block (duration, language, sound events, ledger counts, no adjectives, no cause words) that is always injected, and an interpretive block (the shot list, \"reacted\", chapter titles) that is available as a file and never pushed. m03.r1.5's token meter then logs which block the agent used before answering. This adds a defence against the agent echoing the digest's story, and the log gives a number for how often it did.",
+      "parents": [
+        "m05.r2.4"
+      ],
+      "members": [
+        "m05"
+      ],
+      "orphan": true
+    },
+    {
+      "id": "C14",
+      "title": "Change-blindness audit: the sensor reports what its own difference threshold cannot see",
+      "pitch": "Humans miss large changes that happen during a blink, a cut or a pan (change blindness), and a pixel-difference detector has the mirror flaw: it misses slow drifts (a progress bar creeping, a colour fade, a cursor that is a few pixels) and fires on camera shake. For each event pair, the tool also computes the slowest change over the whole span, the one that never crossed the event threshold, and prints it as a \"slow channel\" line beneath the pair. This adds a second detector with the opposite blindness to m03.3's motion still and m03.7's pairs, and the card header says which detector produced each line, so \"nothing happened\" is only written when both were quiet. Test it on synthetic clips with a 20-second fade and a 2-pixel-per-second slide.",
+      "parents": [
+        "m05.r2.2"
+      ],
+      "members": [
+        "m05"
+      ],
+      "orphan": true
+    },
+    {
+      "id": "C15",
+      "title": "Pre-attentive pop-out as the pointer: the card tells the agent where a viewer's eye would have been dragged",
+      "pitch": "A human viewer does not read a film evenly; sudden onsets, loud transients, a face turning, and a cut grab attention first, and everything else is context. Rank each second by a cheap saliency sum (visual onset, audio onset, speech-rate jump, silence break) and let that, not a fixed cap alone, set which seconds get a line, a frame, or nothing in m02.7's budgeted card. Chapters for the podcast case (m02.r1.5) fall out as the saliency peaks. The addition is that the budget follows what attracts a person rather than what is evenly spaced, and the footer names the quietest minutes so the agent knows they were skipped on purpose.",
+      "parents": [
+        "m05.r2.3"
+      ],
+      "members": [
+        "m05"
+      ],
+      "orphan": true
+    }
+  ],
+  "scores": {
+    "C01": {
+      "mean": 66.17,
+      "max": 66.5,
+      "spread": 1.0,
+      "judges": 3,
+      "novelty": 7.0,
+      "off_brief": false
+    },
+    "C02": {
+      "mean": 52.67,
+      "max": 55.0,
+      "spread": 4.5,
+      "judges": 3,
+      "novelty": 6.0,
+      "off_brief": false
+    },
+    "C03": {
+      "mean": 68.83,
+      "max": 69.5,
+      "spread": 1.0,
+      "judges": 3,
+      "novelty": 6.0,
+      "off_brief": false
+    },
+    "C04": {
+      "mean": 75.83,
+      "max": 77.0,
+      "spread": 2.5,
+      "judges": 3,
+      "novelty": 8.0,
+      "off_brief": false
+    },
+    "C05": {
+      "mean": 62.17,
+      "max": 63.0,
+      "spread": 2.5,
+      "judges": 3,
+      "novelty": 6.0,
+      "off_brief": false
+    },
+    "C06": {
+      "mean": 72.33,
+      "max": 73.5,
+      "spread": 2.5,
+      "judges": 3,
+      "novelty": 7.67,
+      "off_brief": false
+    },
+    "C07": {
+      "mean": 63.5,
+      "max": 63.5,
+      "spread": 0.0,
+      "judges": 3,
+      "novelty": 7.0,
+      "off_brief": false
+    },
+    "C08": {
+      "mean": 68.67,
+      "max": 70.5,
+      "spread": 3.0,
+      "judges": 3,
+      "novelty": 8.0,
+      "off_brief": false,
+      "dissent": true
+    },
+    "C09": {
+      "mean": 74.17,
+      "max": 74.5,
+      "spread": 1.0,
+      "judges": 3,
+      "novelty": 7.0,
+      "off_brief": false
+    },
+    "C10": {
+      "mean": 66.83,
+      "max": 69.0,
+      "spread": 5.5,
+      "judges": 3,
+      "novelty": 6.67,
+      "off_brief": false
+    },
+    "C11": {
+      "mean": 52.5,
+      "max": 57.5,
+      "spread": 8.0,
+      "judges": 3,
+      "novelty": 5.33,
+      "off_brief": false
+    },
+    "C12": {
+      "mean": 53.83,
+      "max": 54.5,
+      "spread": 2.0,
+      "judges": 3,
+      "novelty": 5.0,
+      "off_brief": false
+    },
+    "C13": {
+      "mean": 48.67,
+      "max": 52.0,
+      "spread": 5.0,
+      "judges": 3,
+      "novelty": 2.33,
+      "off_brief": false
+    },
+    "C14": {
+      "mean": 54.67,
+      "max": 57.5,
+      "spread": 6.0,
+      "judges": 3,
+      "novelty": 3.67,
+      "off_brief": false
+    },
+    "C15": {
+      "mean": 53.83,
+      "max": 55.5,
+      "spread": 2.5,
+      "judges": 3,
+      "novelty": 4.0,
+      "off_brief": false
+    }
+  },
+  "shortlist": [
+    "C04",
+    "C09",
+    "C06",
+    "C08"
+  ],
+  "ring": [
+    "m03",
+    "m02",
+    "m01",
+    "m05",
+    "m04"
+  ],
+  "relevance": {
+    "method": "clef",
+    "model": "@cf/cloudflare/clef",
+    "minimum": 0.5,
+    "fallback": null,
+    "notes": []
+  }
+}

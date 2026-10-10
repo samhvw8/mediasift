@@ -1,0 +1,16 @@
+{"arm": "C", "images_read": 7, "answers": [
+{"id":"q01","answer":"blue","sure":true},
+{"id":"q02","answer":"yellow-orange","sure":true},
+{"id":"q03","answer":"a leaf","sure":false},
+{"id":"q04","answer":"pink","sure":true},
+{"id":"q05","answer":"a pine (fir) tree","sure":true},
+{"id":"q06","answer":"a large rock beside his burrow","sure":false},
+{"id":"q07","answer":"yellow","sure":true},
+{"id":"q08","answer":"pink/purple","sure":true},
+{"id":"q09","answer":"apple","sure":true},
+{"id":"q10","answer":"a chestnut (dark brown nut)","sure":true},
+{"id":"q11","answer":"blue","sure":true},
+{"id":"q12","answer":"a nut (chestnut/acorn)","sure":false},
+{"id":"q13","answer":"the big rabbit (Big Buck Bunny)","sure":true},
+{"id":"q14","answer":"purple (grey-purple)","sure":true}
+]}

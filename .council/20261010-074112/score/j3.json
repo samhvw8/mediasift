@@ -1,0 +1,36 @@
+{
+  "scores": {
+    "C01": {"value": 7, "feasibility": 6, "running_cost": 6, "novelty": 8, "specificity": 7, "off_brief": false},
+    "C02": {"value": 6, "feasibility": 3, "running_cost": 5, "novelty": 7, "specificity": 7, "off_brief": false},
+    "C03": {"value": 6, "feasibility": 7, "running_cost": 8, "novelty": 7, "specificity": 7, "off_brief": false},
+    "C04": {"value": 8, "feasibility": 8, "running_cost": 8, "novelty": 5, "specificity": 8, "off_brief": false},
+    "C05": {"value": 6, "feasibility": 5, "running_cost": 7, "novelty": 7, "specificity": 6, "off_brief": false},
+    "C06": {"value": 8, "feasibility": 7, "running_cost": 7, "novelty": 6, "specificity": 8, "off_brief": false},
+    "C07": {"value": 7, "feasibility": 6, "running_cost": 6, "novelty": 6, "specificity": 6, "off_brief": false},
+    "C08": {"value": 8, "feasibility": 7, "running_cost": 6, "novelty": 5, "specificity": 8, "off_brief": false},
+    "C09": {"value": 7, "feasibility": 8, "running_cost": 8, "novelty": 5, "specificity": 8, "off_brief": false},
+    "C10": {"value": 7, "feasibility": 7, "running_cost": 7, "novelty": 6, "specificity": 6, "off_brief": false},
+    "C11": {"value": 5, "feasibility": 6, "running_cost": 4, "novelty": 4, "specificity": 5, "off_brief": false},
+    "C12": {"value": 5, "feasibility": 6, "running_cost": 5, "novelty": 6, "specificity": 6, "off_brief": false},
+    "C13": {"value": 2, "feasibility": 6, "running_cost": 7, "novelty": 6, "specificity": 5, "off_brief": false},
+    "C14": {"value": 4, "feasibility": 6, "running_cost": 7, "novelty": 6, "specificity": 6, "off_brief": false},
+    "C15": {"value": 4, "feasibility": 6, "running_cost": 7, "novelty": 5, "specificity": 5, "off_brief": false}
+  },
+  "notes": {
+    "C01": "Exact event logs beat pixel inference for own screen repros, but needs recorder/tool integration and covers only that slice",
+    "C02": "Pixel-inferred action scripts plus test compilation is a heavy, brittle detector stack; high build risk",
+    "C03": "Cheap one-image motion encoding from existing signals, but unproven whether VLMs read it",
+    "C04": "Directly closes the named audio gap with local, cheap text and strip output; strongest audio answer",
+    "C05": "Elegant A/V sync anchor for cause-effect, narrow applicability and needs audio tagging",
+    "C06": "Before/after pairs plus narrow look call cut images and address temporal questions concretely",
+    "C07": "Lazy question-driven sensing cuts upfront cost, but adds cache/router learning surface",
+    "C08": "Hook-triggered tiered sidecar delivers the zero-invocation daily-use goal; the main fix for the run-daily pain",
+    "C09": "Synthetic ground-truth bench is the cheap proof the brief asks for and doubles as self-test",
+    "C10": "Honest card with declared gaps and kill rule is sound discipline, mostly a format over other concepts",
+    "C11": "Paid API valve is opt-in and metered but adds egress and per-hour cost; weakest on running cost",
+    "C12": "Subagent viewers save main context but add token cost and double-watch overhead",
+    "C13": "Priming-bias guard is speculative, low value for daily use",
+    "C14": "Slow-change channel is a real detector gap, but a niche addition",
+    "C15": "Saliency budgeting is a plausible allocator but unproven and a thin add-on"
+  }
+}

@@ -1,0 +1,16 @@
+{"video": "python_100s", "questions": [
+{"id":"q01","type":"image","question":"In the language ranking chart, what rating percentage does the top-ranked language have?","answer":"11.27%","accept":["11.27","11.27 percent"],"evidence":[[6,9]]},
+{"id":"q02","type":"image","question":"In the first code example typed in the editor, what string value is assigned to the variable?","answer":"'hi mom'","accept":["hi mom","hello = 'hi mom'"],"evidence":[[68,77]]},
+{"id":"q03","type":"image","question":"In the code snippet that ends with a semicolon, what is the variable's name?","answer":"curlyBracesSuck","accept":["curly braces suck","curlyBracesSuck = True"],"evidence":[[82,90]]},
+{"id":"q04","type":"image","question":"In the final object-oriented code example, what is the name of the child class?","answer":"Snake","accept":["Snake(Reptile)","class Snake"],"evidence":[[116,125]]},
+{"id":"q05","type":"image","question":"What command is typed at the interactive prompt before the poem-like text appears?","answer":"import this","accept":[">>> import this"],"evidence":[[38,46]]},
+{"id":"q06","type":"image","question":"What text appears under the OpenCV logo?","answer":"written in C++","accept":["written in c++","C++"],"evidence":[[128,134]]},
+{"id":"q07","type":"image","question":"What is printed on the T-shirt of the bearded man shown with his name caption?","answer":"I love pyladies","accept":["I heart pyladies","I ♥ pyladies","pyladies"],"evidence":[[16,24]]},
+{"id":"q08","type":"image","question":"What variable name appears in the closing code animation at the end?","answer":"like_and_subscribe","accept":["like_and_subscribe = True","like and subscribe"],"evidence":[[138,143]]},
+{"id":"q09","type":"speech","question":"What does the narrator say Python uses instead of semicolons to determine the scope of a line of code?","answer":"indentation","accept":["indenting","indent"],"evidence":[[87,93]]},
+{"id":"q10","type":"speech","question":"The narrator says Python is strongly typed, which means values will not do what?","answer":"change in unexpected ways","accept":["change unexpectedly","change in unexpected way"],"evidence":[[67,73]]},
+{"id":"q11","type":"speech","question":"According to the narrator, what are you watching this YouTube video in right now?","answer":"a Python web application","accept":["Python web app","a web application written in Python"],"evidence":[[11,15]]},
+{"id":"q12","type":"both","question":"In the code sample shown when the narrator mentions the food words, what variable is set to 10 inside the function named after the first food word?","answer":"eggs","accept":["eggs = 10"],"evidence":[[15,29]]},
+{"id":"q13","type":"both","question":"Which library does the on-screen example install with the package manager the narrator names?","answer":"numpy","accept":["NumPy","pip install numpy"],"evidence":[[121,139]]},
+{"id":"q14","type":"both","question":"When the narrator explains declaring multiple variables on one line, what second variable name is added next to the first?","answer":"hola","accept":["hello, hola","hola = 'hola mamá'"],"evidence":[[73,82]]}
+]}

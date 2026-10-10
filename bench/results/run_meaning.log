@@ -1,0 +1,66 @@
+== big_buck_bunny 22:40:47
+framesift: detected language: en
+framesift: ASR faster-whisper (large-v3-turbo): 60.2x realtime
+framesift: 28 segments, 52 keyframes in 16.1s (visual 6.3s, audio 1.1s)
+analyze 17.59 s, max RSS 1890200 KB
+framesift: vision self-test passed
+framesift: described 52 keyframes in 23.4s
+framesift: 1 chapters; describe 23s, chapters 2s, summarize 9s
+bench/results/runs_m/big_buck_bunny/meaning.md
+meaning 37.84 s
+== tears_of_steel 22:41:43
+framesift: budget: kept 80 of 91 candidate keyframes (raise --max-frames for more)
+framesift: detected language: en
+framesift: ASR faster-whisper (large-v3-turbo): 57.9x realtime
+framesift: 42 segments, 80 keyframes in 15.4s (visual 4.1s, audio 1.2s)
+analyze 16.18 s, max RSS 2101968 KB
+framesift: vision self-test passed
+framesift: described 80 keyframes in 34.1s
+framesift: 2 chapters; describe 34s, chapters 2s, summarize 11s
+bench/results/runs_m/tears_of_steel/meaning.md
+meaning 50.06 s
+== cs50_lecture 22:42:49
+framesift: detected language: en
+  File "src/framesift/cli.py", line 18, in _analyze
+    r = analyze(a.video, out, p)
+  File "src/framesift/pipeline.py", line 181, in analyze
+RuntimeError: CUDA failed with error out of memory
+analyze 19.12 s, max RSS 2038744 KB
+Traceback (most recent call last):
+  File "src/framesift/cli.py", line 59, in _meaning
+  File "src/framesift/meaning.py", line 237, in build
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+    return io.open(self, mode, buffering, encoding, errors, newline)
+FileNotFoundError: [Errno 2] No such file or directory: 'bench/results/runs_m/cs50_lecture/manifest.json'
+meaning 0.42 s
+== python_100s 22:43:09
+framesift: budget: kept 80 of 83 candidate keyframes (raise --max-frames for more)
+framesift: detected language: en
+  File "src/framesift/cli.py", line 18, in _analyze
+    r = analyze(a.video, out, p)
+  File "src/framesift/pipeline.py", line 181, in analyze
+RuntimeError: CUDA failed with error out of memory
+analyze 15.64 s, max RSS 2019860 KB
+Traceback (most recent call last):
+  File "src/framesift/cli.py", line 59, in _meaning
+  File "src/framesift/meaning.py", line 237, in build
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+    return io.open(self, mode, buffering, encoding, errors, newline)
+FileNotFoundError: [Errno 2] No such file or directory: 'bench/results/runs_m/python_100s/manifest.json'
+meaning 0.46 s
+== cancer 22:43:25
+framesift: budget: kept 80 of 247 candidate keyframes (raise --max-frames for more)
+framesift: detected language: en
+  File "src/framesift/cli.py", line 18, in _analyze
+    r = analyze(a.video, out, p)
+  File "src/framesift/pipeline.py", line 181, in analyze
+RuntimeError: CUDA failed with error out of memory
+analyze 237.13 s, max RSS 3132488 KB
+Traceback (most recent call last):
+  File "src/framesift/cli.py", line 59, in _meaning
+  File "src/framesift/meaning.py", line 237, in build
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+    return io.open(self, mode, buffering, encoding, errors, newline)
+FileNotFoundError: [Errno 2] No such file or directory: 'bench/results/runs_m/cancer/manifest.json'
+meaning 0.40 s
+ALL DONE 22:47:22

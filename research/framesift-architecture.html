@@ -1,0 +1,467 @@
+<title>framesift Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Layout: a single engineering-drawing column (~68ch prose) with figures that run wider, two meaning hues: blue = lives with the agent (Mac), ochre = GPU batch work that runs, then exits. */
+:root {
+  --bg: #f3f5f4;
+  --panel: #ffffff;
+  --fg: #18201d;
+  --muted: #5a6762;
+  --rule: #cdd5d1;
+  --mac: #1d6a86;
+  --gpu: #9c5a07;
+  --ok: #2f7a4a;
+  --warn: #9c5a07;
+  --bad: #a3392f;
+  --chip: #e4e9e6;
+  --display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111514; --panel: #191f1d; --fg: #e3e8e5; --muted: #98a59f; --rule: #2e3835;
+    --mac: #6cb6d0; --gpu: #e2a24a; --ok: #6cc28a; --warn: #e2a24a; --bad: #e57f73; --chip: #232b28;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111514; --panel: #191f1d; --fg: #e3e8e5; --muted: #98a59f; --rule: #2e3835;
+  --mac: #6cb6d0; --gpu: #e2a24a; --ok: #6cc28a; --warn: #e2a24a; --bad: #e57f73; --chip: #232b28;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--body); margin: 0; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 72px; display: flex; flex-direction: column; gap: 56px; }
+header, section { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.6rem; font-weight: 600; }
+h3 { font-size: 1.15rem; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.lede { font-size: 1.15rem; color: var(--fg); max-width: 62ch; }
+.eyebrow { font: 500 0.75rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 20px; font: 0.85rem/1.4 var(--mono); color: var(--muted); }
+code, .mono { font-family: var(--mono); font-size: 0.88em; }
+code { background: var(--chip); padding: 1px 5px; border-radius: 3px; }
+a { color: var(--mac); }
+figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+figcaption { font-size: 0.92rem; color: var(--muted); max-width: 72ch; }
+.diagram { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; overflow-x: auto; }
+.diagram svg { display: block; width: 100%; height: auto; min-width: 760px; color: var(--fg); font-family: var(--body); }
+.diagram.narrow svg { min-width: 560px; }
+svg text { fill: currentColor; font-size: 13px; }
+svg .t-sm { font-size: 11.5px; fill: var(--muted); }
+svg .t-b { font-weight: 600; }
+svg .t-mono { font-family: var(--mono); font-size: 11.5px; }
+svg .box { fill: var(--panel); stroke: currentColor; stroke-width: 1.2; }
+svg .box.mac { stroke: var(--mac); stroke-width: 1.6; }
+svg .box.gpu { stroke: var(--gpu); stroke-width: 1.6; }
+svg .box.dash { stroke-dasharray: 5 4; }
+svg .zone { fill: none; stroke: var(--rule); stroke-width: 1.2; }
+svg .zone-label { font: 600 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; fill: var(--muted); }
+svg .ln { fill: none; stroke: currentColor; stroke-width: 1.3; }
+svg .ln.gpu { stroke: var(--gpu); stroke-width: 1.8; }
+svg .ln.mac { stroke: var(--mac); }
+svg .ln.dash { stroke-dasharray: 5 4; }
+svg .ln.dim { stroke: var(--rule); }
+svg .fill-gpu { fill: var(--gpu); }
+svg .fill-mac { fill: var(--mac); }
+svg .fill-fg { fill: currentColor; }
+svg .fill-dim { fill: var(--rule); }
+svg .lbl-gpu { fill: var(--gpu); }
+svg .lbl-mac { fill: var(--mac); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 22px; height: 0; border-top: 2px solid; display: inline-block; }
+.sw.mac { border-color: var(--mac); } .sw.gpu { border-color: var(--gpu); } .sw.dash { border-top-style: dashed; border-color: var(--muted); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.card h3 { font-size: 1.05rem; }
+.card p, .card li { font-size: 0.95rem; }
+ul, ol { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; max-width: 72ch; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 0.92rem; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--rule); }
+th { font: 600 0.75rem/1.2 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; }
+.chip { display: inline-block; font: 600 0.72rem/1 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; padding: 5px 7px; border-radius: 3px; border: 1px solid currentColor; white-space: nowrap; }
+.chip.keep { color: var(--ok); } .chip.change { color: var(--warn); } .chip.new { color: var(--mac); }
+.chip.test { color: var(--warn); } .chip.lazy { color: var(--muted); } .chip.remove { color: var(--bad); }
+.timeline { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0; max-width: none; }
+.timeline li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 16px; padding: 12px 0; border-top: 1px solid var(--rule); }
+.timeline li:first-child { border-top: 0; }
+.timeline .when { font: 500 0.82rem/1.5 var(--mono); color: var(--muted); }
+.timeline b { font-weight: 600; }
+.note { font-size: 0.88rem; color: var(--muted); }
+@media (max-width: 560px) {
+  .timeline li { grid-template-columns: 1fr; gap: 2px; }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">framesift · architecture proposal · 3 Oct 2026</span>
+  <h1>framesift Architecture</h1>
+  <p class="lede">framesift becomes a time-indexed video library. GPU work runs as batch jobs when a video is ingested. The agent queries a small index on the Mac and looks at pixels only when a question needs them.</p>
+  <div class="meta">
+    <span>status: proposed, not built</span>
+    <span>built and measured: v0.2</span>
+    <span>hardware: Mac M1 Pro 16 GB · Ubuntu box with RTX 3060 12 GB</span>
+  </div>
+</header>
+
+<section id="change">
+  <span class="eyebrow">What changes</span>
+  <h2>From documents to an index</h2>
+  <p>Today framesift writes documents the agent reads from top to bottom. For the 1 h 45 min podcast, <code>storyboard.md</code> is 188 KB. Two thirds of it is transcript, and 25% is segment headers and detector numbers the agent cannot use. A vision server also has to stay running for the meaning step. The proposal moves the GPU off the read path and gives the agent four small commands instead of a file.</p>
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 960 400" role="img" aria-label="Before and after. Today the agent reads a whole storyboard file produced with an always-on VLM server, about 60 thousand tokens. In the proposal, ingest writes layers, a GPU job runs then exits, and the agent queries an index for about 2 to 3 thousand tokens.">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-fg"/></marker>
+          <marker id="a1g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-gpu"/></marker>
+          <marker id="a1m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-mac"/></marker>
+        </defs>
+        <text x="20" y="26" class="zone-label">v0.2 today</text>
+        <rect x="20" y="44" width="150" height="56" rx="4" class="box"/>
+        <text x="95" y="70" text-anchor="middle" class="t-b">video file</text>
+        <text x="95" y="88" text-anchor="middle" class="t-sm">mp4 / mkv</text>
+        <rect x="210" y="44" width="150" height="56" rx="4" class="box"/>
+        <text x="285" y="70" text-anchor="middle" class="t-b">analyze + ASR</text>
+        <text x="285" y="88" text-anchor="middle" class="t-sm">one process</text>
+        <rect x="400" y="44" width="150" height="56" rx="4" class="box gpu"/>
+        <text x="475" y="70" text-anchor="middle" class="t-b">VLM server</text>
+        <text x="475" y="88" text-anchor="middle" class="t-sm lbl-gpu">always on · 3–5 min start</text>
+        <rect x="590" y="44" width="150" height="56" rx="4" class="box"/>
+        <text x="665" y="70" text-anchor="middle" class="t-b t-mono">storyboard.md</text>
+        <text x="665" y="88" text-anchor="middle" class="t-sm t-mono">meaning.md</text>
+        <rect x="780" y="44" width="160" height="56" rx="4" class="box"/>
+        <text x="860" y="70" text-anchor="middle" class="t-b">agent reads all</text>
+        <text x="860" y="88" text-anchor="middle" class="t-sm">≈ 60k tokens (podcast)</text>
+        <line x1="170" y1="72" x2="208" y2="72" class="ln" marker-end="url(#a1)"/>
+        <line x1="360" y1="72" x2="398" y2="72" class="ln" marker-end="url(#a1)"/>
+        <line x1="550" y1="72" x2="588" y2="72" class="ln" marker-end="url(#a1)"/>
+        <line x1="740" y1="72" x2="778" y2="72" class="ln" marker-end="url(#a1)"/>
+        <text x="379" y="64" text-anchor="middle" class="t-sm">frames</text>
+        <text x="569" y="64" text-anchor="middle" class="t-sm">writes</text>
+        <text x="759" y="64" text-anchor="middle" class="t-sm">reads</text>
+
+        <line x1="20" y1="138" x2="940" y2="138" class="ln dim"/>
+
+        <text x="20" y="172" class="zone-label">proposed</text>
+        <rect x="20" y="190" width="150" height="56" rx="4" class="box"/>
+        <text x="95" y="216" text-anchor="middle" class="t-b">video file</text>
+        <text x="95" y="234" text-anchor="middle" class="t-sm">dropped in inbox/</text>
+        <rect x="210" y="190" width="150" height="56" rx="4" class="box mac"/>
+        <text x="285" y="216" text-anchor="middle" class="t-b">ingest · CPU</text>
+        <text x="285" y="234" text-anchor="middle" class="t-sm">analyze, keep inputs</text>
+        <rect x="400" y="190" width="150" height="56" rx="4" class="box mac"/>
+        <text x="475" y="216" text-anchor="middle" class="t-b">layer store</text>
+        <text x="475" y="234" text-anchor="middle" class="t-sm t-mono">lib/&lt;audio-hash&gt;/</text>
+        <rect x="590" y="190" width="150" height="56" rx="4" class="box mac"/>
+        <text x="665" y="216" text-anchor="middle" class="t-b">library index</text>
+        <text x="665" y="234" text-anchor="middle" class="t-sm">one SQLite, rebuildable</text>
+        <rect x="780" y="190" width="160" height="56" rx="4" class="box mac"/>
+        <text x="860" y="216" text-anchor="middle" class="t-b">agent asks</text>
+        <text x="860" y="234" text-anchor="middle" class="t-sm">≈ 2–3k tokens (est.)</text>
+        <line x1="170" y1="218" x2="208" y2="218" class="ln" marker-end="url(#a1)"/>
+        <line x1="360" y1="218" x2="398" y2="218" class="ln mac" marker-end="url(#a1m)"/>
+        <line x1="550" y1="218" x2="588" y2="218" class="ln mac" marker-end="url(#a1m)"/>
+        <line x1="778" y1="218" x2="742" y2="218" class="ln mac" marker-end="url(#a1m)"/>
+        <text x="379" y="210" text-anchor="middle" class="t-sm">writes</text>
+        <text x="569" y="210" text-anchor="middle" class="t-sm">reindex</text>
+        <text x="760" y="210" text-anchor="middle" class="t-sm">query</text>
+
+        <rect x="330" y="310" width="290" height="62" rx="4" class="box gpu"/>
+        <text x="475" y="336" text-anchor="middle" class="t-b">GPU batch job</text>
+        <text x="475" y="355" text-anchor="middle" class="t-sm lbl-gpu">starts · ASR, then VLM on few frames · exits</text>
+        <path d="M455 246 L455 308" class="ln gpu" marker-end="url(#a1g)"/>
+        <path d="M495 308 L495 248" class="ln gpu" marker-end="url(#a1g)"/>
+        <text x="448" y="282" text-anchor="end" class="t-sm lbl-gpu">pending inputs</text>
+        <text x="502" y="282" class="t-sm lbl-gpu">finished layers</text>
+        <path d="M860 246 L860 290 L560 290 L540 248" class="ln dash" marker-end="url(#a1)"/>
+        <text x="710" y="284" text-anchor="middle" class="t-sm">look / read on demand</text>
+        <text x="640" y="392" class="t-sm">the GPU never sits between the agent and an answer</text>
+      </svg>
+    </div>
+    <figcaption>Two arrows disappear: the always-on VLM server, and the agent reading a whole file. Two appear: a GPU job that writes layers and exits, and an on-demand path where the agent pulls only the span or frame it needs. Proposed token figures are estimates from the agent-consumer analysis; the 60k figure is measured from the podcast storyboard size.</figcaption>
+  </figure>
+</section>
+
+<section id="system">
+  <span class="eyebrow">System</span>
+  <h2>What runs where</h2>
+  <p>The library lives on the Mac, next to the agent. The Ubuntu box holds no state. When it is on, a one-shot job copies pending inputs over, runs each GPU stage in its own process so VRAM is freed between stages, and returns finished layer folders. When it is off, queries still work, and the Mac can run speech recognition with MLX.</p>
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 980 560" role="img" aria-label="System architecture. The Mac holds inbox, ingest, the layer store, the library SQLite index, the framesift verbs and the agent. The Ubuntu box runs a one-shot drain that does ASR then a visual-delta VLM, each in its own process, and returns finished layers.">
+        <defs>
+          <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-fg"/></marker>
+          <marker id="a2g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-gpu"/></marker>
+          <marker id="a2m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-mac"/></marker>
+        </defs>
+        <rect x="20" y="40" width="300" height="500" rx="6" class="zone"/>
+        <text x="36" y="30" class="zone-label">Ubuntu box · RTX 3060 · optional</text>
+        <rect x="400" y="40" width="560" height="500" rx="6" class="zone"/>
+        <text x="416" y="30" class="zone-label">Mac M1 Pro · always with the agent</text>
+
+        <rect x="40" y="76" width="260" height="54" rx="4" class="box gpu"/>
+        <text x="170" y="100" text-anchor="middle" class="t-b">drain · one-shot</text>
+        <text x="170" y="118" text-anchor="middle" class="t-sm">systemd timer or path unit · GPU lock</text>
+        <rect x="40" y="176" width="260" height="62" rx="4" class="box gpu"/>
+        <text x="170" y="201" text-anchor="middle" class="t-b">GPU-A · speech to text</text>
+        <text x="170" y="220" text-anchor="middle" class="t-sm">faster-whisper turbo · process exits</text>
+        <rect x="40" y="284" width="260" height="62" rx="4" class="box gpu"/>
+        <text x="170" y="309" text-anchor="middle" class="t-b">GPU-B · VLM, visual-delta only</text>
+        <text x="170" y="328" text-anchor="middle" class="t-sm">Qwen3.5-4B · self-test first · exits</text>
+        <rect x="40" y="392" width="260" height="52" rx="4" class="box dash"/>
+        <text x="170" y="415" text-anchor="middle" class="t-b">optional text layers</text>
+        <text x="170" y="433" text-anchor="middle" class="t-sm">card summary · claims · English gloss</text>
+        <rect x="40" y="470" width="260" height="52" rx="4" class="box dash"/>
+        <text x="170" y="493" text-anchor="middle" class="t-b">on demand · grounding</text>
+        <text x="170" y="511" text-anchor="middle" class="t-sm">TimeLens2-4B, queued by find</text>
+        <line x1="170" y1="130" x2="170" y2="174" class="ln gpu" marker-end="url(#a2g)"/>
+        <line x1="170" y1="238" x2="170" y2="282" class="ln gpu" marker-end="url(#a2g)"/>
+        <line x1="170" y1="346" x2="170" y2="390" class="ln gpu dash" marker-end="url(#a2g)"/>
+        <text x="178" y="158" class="t-sm lbl-gpu">1st</text>
+        <text x="178" y="266" class="t-sm lbl-gpu">then</text>
+
+        <rect x="420" y="76" width="160" height="54" rx="4" class="box mac"/>
+        <text x="500" y="100" text-anchor="middle" class="t-b t-mono">inbox/</text>
+        <text x="500" y="118" text-anchor="middle" class="t-sm">new videos</text>
+        <rect x="420" y="176" width="160" height="62" rx="4" class="box mac"/>
+        <text x="500" y="201" text-anchor="middle" class="t-b">ingest · analyze</text>
+        <text x="500" y="220" text-anchor="middle" class="t-sm">CPU · candidate times</text>
+        <rect x="420" y="284" width="230" height="96" rx="4" class="box mac"/>
+        <text x="535" y="308" text-anchor="middle" class="t-b t-mono">lib/&lt;audio-hash&gt;/</text>
+        <text x="535" y="328" text-anchor="middle" class="t-sm">source.json · audio.opus · keyframes</text>
+        <text x="535" y="346" text-anchor="middle" class="t-sm t-mono">layers/&lt;stage&gt;@&lt;model&gt;-&lt;cfg&gt;/</text>
+        <text x="535" y="366" text-anchor="middle" class="t-sm">source of truth · immutable</text>
+        <rect x="710" y="284" width="230" height="96" rx="4" class="box mac"/>
+        <text x="825" y="314" text-anchor="middle" class="t-b t-mono">library.sqlite</text>
+        <text x="825" y="334" text-anchor="middle" class="t-sm">FTS5 + sqlite-vec</text>
+        <text x="825" y="352" text-anchor="middle" class="t-sm">rebuilt by framesift reindex</text>
+        <rect x="710" y="176" width="230" height="62" rx="4" class="box mac"/>
+        <text x="825" y="201" text-anchor="middle" class="t-b">framesift verbs</text>
+        <text x="825" y="220" text-anchor="middle" class="t-sm t-mono">card · find · read · look · status</text>
+        <rect x="710" y="76" width="230" height="54" rx="4" class="box"/>
+        <text x="825" y="100" text-anchor="middle" class="t-b">Claude · coding agent</text>
+        <text x="825" y="118" text-anchor="middle" class="t-sm">skill now, read-only MCP later</text>
+        <rect x="420" y="430" width="230" height="52" rx="4" class="box dash"/>
+        <text x="535" y="453" text-anchor="middle" class="t-b">fallback · MLX speech</text>
+        <text x="535" y="471" text-anchor="middle" class="t-sm">when the box is off</text>
+
+        <line x1="500" y1="130" x2="500" y2="174" class="ln mac" marker-end="url(#a2m)"/>
+        <text x="508" y="158" class="t-sm">analyze</text>
+        <line x1="500" y1="238" x2="500" y2="282" class="ln mac" marker-end="url(#a2m)"/>
+        <text x="508" y="266" class="t-sm">writes inputs</text>
+        <path d="M420 300 L380 300 L380 96 L302 96" class="ln gpu" marker-end="url(#a2g)"/>
+        <text x="392" y="200" class="t-sm lbl-gpu" transform="rotate(-90 392 200)" text-anchor="middle">pending inputs</text>
+        <path d="M300 116 L350 116 L350 360 L418 360" class="ln gpu" marker-end="url(#a2g)"/>
+        <text x="343" y="240" class="t-sm lbl-gpu" transform="rotate(-90 343 240)" text-anchor="middle">finished layers</text>
+        <line x1="650" y1="332" x2="708" y2="332" class="ln mac" marker-end="url(#a2m)"/>
+        <text x="679" y="324" text-anchor="middle" class="t-sm">reindex</text>
+        <line x1="825" y1="284" x2="825" y2="240" class="ln mac" marker-end="url(#a2m)"/>
+        <text x="833" y="266" class="t-sm">query</text>
+        <line x1="800" y1="130" x2="800" y2="174" class="ln" marker-end="url(#a2)"/>
+        <text x="792" y="158" text-anchor="end" class="t-sm">calls</text>
+        <line x1="850" y1="174" x2="850" y2="132" class="ln" marker-end="url(#a2)"/>
+        <text x="858" y="158" class="t-sm t-mono">fs1: handles</text>
+        <path d="M710 216 L620 216 L620 282" class="ln dash" marker-end="url(#a2)"/>
+        <text x="665" y="209" text-anchor="middle" class="t-sm">look</text>
+        <path d="M710 92 L600 92 L600 150 L640 150 L640 282" class="ln dash" marker-end="url(#a2)"/>
+        <text x="648" y="166" class="t-sm">write-back</text>
+        <line x1="535" y1="430" x2="535" y2="382" class="ln dash" marker-end="url(#a2)"/>
+        <text x="543" y="410" class="t-sm">asr layer</text>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i class="sw mac"></i>lives with the agent</span>
+      <span><i class="sw gpu"></i>GPU batch: runs, then exits</span>
+      <span><i class="sw dash"></i>optional or on demand</span>
+    </div>
+    <figcaption>Nothing on the Ubuntu box needs to stay up. The only paths into the GPU are the two batch arrows; the agent's calls stay inside the Mac. When Claude looks at a frame to answer a question, it writes its observation back as a layer, so those pixels are paid for once.</figcaption>
+  </figure>
+</section>
+
+<section id="layers">
+  <span class="eyebrow">Data flow</span>
+  <h2>Layers and what re-runs when a model changes</h2>
+  <p>Every stage writes a layer folder keyed by stage, model and settings, for example <code>layers/asr@whisper-turbo-3f9a/</code>. A layer records the hashes of the layers it was built from. Upgrade one model, and only that layer and the layers that depend on it are rebuilt. The same mechanism lets an interrupted job resume and records which on-demand results agents actually ask for.</p>
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 980 300" role="img" aria-label="Layer dependency graph. The video produces signals, keyframes and audio. Audio feeds ASR. Signals and keyframes feed the visual-delta VLM. ASR feeds the card and embeddings; the VLM also feeds embeddings. Card and embeddings feed the library index. When the ASR model changes, only ASR, card, embeddings and index re-run.">
+        <defs>
+          <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-dim"/></marker>
+          <marker id="a3g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="fill-gpu"/></marker>
+        </defs>
+        <text x="20" y="22" class="zone-label">source</text>
+        <text x="200" y="22" class="zone-label">ingest · durable</text>
+        <text x="410" y="22" class="zone-label">GPU layers</text>
+        <text x="620" y="22" class="zone-label">derived</text>
+        <text x="830" y="22" class="zone-label">index</text>
+
+        <rect x="20" y="120" width="150" height="44" rx="4" class="box"/>
+        <text x="95" y="147" text-anchor="middle" class="t-b">video</text>
+        <rect x="200" y="40" width="160" height="44" rx="4" class="box"/>
+        <text x="280" y="60" text-anchor="middle" class="t-b">signals</text>
+        <text x="280" y="76" text-anchor="middle" class="t-sm">change · speech ratio</text>
+        <rect x="200" y="120" width="160" height="44" rx="4" class="box"/>
+        <text x="280" y="140" text-anchor="middle" class="t-b">keyframes</text>
+        <text x="280" y="156" text-anchor="middle" class="t-sm">768 px, kept</text>
+        <rect x="200" y="200" width="160" height="44" rx="4" class="box"/>
+        <text x="280" y="220" text-anchor="middle" class="t-b t-mono">audio.opus</text>
+        <text x="280" y="236" text-anchor="middle" class="t-sm">≈10 MB/h, kept</text>
+        <rect x="410" y="80" width="170" height="44" rx="4" class="box"/>
+        <text x="495" y="100" text-anchor="middle" class="t-b">vlm-delta</text>
+        <text x="495" y="116" text-anchor="middle" class="t-sm">only frames speech lacks</text>
+        <rect x="410" y="200" width="170" height="44" rx="4" class="box gpu"/>
+        <text x="495" y="220" text-anchor="middle" class="t-b">asr</text>
+        <text x="495" y="236" text-anchor="middle" class="t-sm lbl-gpu">model changed</text>
+        <rect x="620" y="80" width="170" height="44" rx="4" class="box gpu"/>
+        <text x="705" y="100" text-anchor="middle" class="t-b">embeddings</text>
+        <text x="705" y="116" text-anchor="middle" class="t-sm">text + frames</text>
+        <rect x="620" y="200" width="170" height="44" rx="4" class="box gpu"/>
+        <text x="705" y="220" text-anchor="middle" class="t-b">card</text>
+        <text x="705" y="236" text-anchor="middle" class="t-sm">chapters · central lines</text>
+        <rect x="830" y="140" width="130" height="44" rx="4" class="box gpu"/>
+        <text x="895" y="160" text-anchor="middle" class="t-b t-mono">library.sqlite</text>
+        <text x="895" y="176" text-anchor="middle" class="t-sm">rebuilt</text>
+
+        <path d="M170 142 L185 142 L185 62 L198 62" class="ln dim" marker-end="url(#a3)"/>
+        <line x1="170" y1="142" x2="198" y2="142" class="ln dim" marker-end="url(#a3)"/>
+        <path d="M170 142 L185 142 L185 222 L198 222" class="ln dim" marker-end="url(#a3)"/>
+        <path d="M360 62 L385 62 L385 96 L408 96" class="ln dim" marker-end="url(#a3)"/>
+        <path d="M360 142 L385 142 L385 108 L408 108" class="ln dim" marker-end="url(#a3)"/>
+        <line x1="360" y1="222" x2="408" y2="222" class="ln dim" marker-end="url(#a3)"/>
+        <line x1="580" y1="102" x2="618" y2="102" class="ln dim" marker-end="url(#a3)"/>
+        <path d="M580 216 L600 216 L600 112 L618 112" class="ln gpu" marker-end="url(#a3g)"/>
+        <line x1="580" y1="228" x2="618" y2="228" class="ln gpu" marker-end="url(#a3g)"/>
+        <path d="M790 102 L810 102 L810 154 L828 154" class="ln gpu" marker-end="url(#a3g)"/>
+        <path d="M790 222 L810 222 L810 170 L828 170" class="ln gpu" marker-end="url(#a3g)"/>
+        <text x="20" y="288" class="t-sm">ochre = rebuilt after an ASR upgrade · grey = reused as is</text>
+      </svg>
+    </div>
+    <figcaption>Swap the speech model and four layers rebuild; signals, keyframes and VLM text are reused. Keeping <code>audio.opus</code> and the keyframes means a better model can still reach a video whose source file was deleted. That choice cannot be made later.</figcaption>
+  </figure>
+</section>
+
+<section id="query">
+  <span class="eyebrow">Read path</span>
+  <h2>What answering one question costs</h2>
+  <p>The agent works down a ladder and stops as soon as it can answer. Every response carries <code>fs1:&lt;video&gt;@&lt;start&gt;-&lt;end&gt;</code> handles, so it can cite a time range or drop one level for more detail. <code>find</code> reports scores and says plainly when a match is weak, so a missing answer does not look like a confident one.</p>
+  <figure>
+    <div class="diagram narrow">
+      <svg viewBox="0 0 900 230" role="img" aria-label="Token cost per question on the 1 hour 45 minute podcast, drawn to scale. Today about 60 thousand tokens. Proposed about 1.7 thousand without a frame and 3.2 thousand with one frame.">
+        <text x="20" y="22" class="zone-label">tokens per question · 1 h 45 min podcast · to scale</text>
+        <text x="20" y="62" class="t-b">today</text>
+        <rect x="150" y="46" width="720" height="24" class="fill-dim"/>
+        <text x="860" y="63" text-anchor="end" class="t-sm" style="fill: var(--fg)">read storyboard ≈ 60,000 (measured size)</text>
+        <text x="20" y="112" class="t-b">proposed</text>
+        <rect x="150" y="96" width="6" height="24" class="fill-mac"/>
+        <rect x="156" y="96" width="9.6" height="24" class="fill-mac" opacity="0.75"/>
+        <rect x="165.6" y="96" width="4.8" height="24" class="fill-mac" opacity="0.5"/>
+        <rect x="170.4" y="96" width="18" height="24" class="fill-gpu" opacity="0.6"/>
+        <text x="198" y="113" class="t-sm" style="fill: var(--fg)">≈ 1,700 without a frame · ≈ 3,200 with one frame (est.)</text>
+        <line x1="150" y1="138" x2="870" y2="138" class="ln dim"/>
+        <line x1="150" y1="134" x2="150" y2="142" class="ln"/>
+        <line x1="390" y1="134" x2="390" y2="142" class="ln"/>
+        <line x1="630" y1="134" x2="630" y2="142" class="ln"/>
+        <line x1="870" y1="134" x2="870" y2="142" class="ln"/>
+        <text x="150" y="158" text-anchor="middle" class="t-sm">0</text>
+        <text x="390" y="158" text-anchor="middle" class="t-sm">20k</text>
+        <text x="630" y="158" text-anchor="middle" class="t-sm">40k</text>
+        <text x="870" y="158" text-anchor="middle" class="t-sm">60k</text>
+        <rect x="150" y="188" width="12" height="12" class="fill-mac"/><text x="168" y="199" class="t-sm">card ≈ 500</text>
+        <rect x="270" y="188" width="12" height="12" class="fill-mac" opacity="0.75"/><text x="288" y="199" class="t-sm">find ≈ 800</text>
+        <rect x="390" y="188" width="12" height="12" class="fill-mac" opacity="0.5"/><text x="408" y="199" class="t-sm">read 60 s ≈ 400</text>
+        <rect x="540" y="188" width="12" height="12" class="fill-gpu" opacity="0.6"/><text x="558" y="199" class="t-sm">look, one frame ≈ 1,500</text>
+      </svg>
+    </div>
+    <figcaption>Drawn on one linear scale, so the proposed bar is meant to be hard to see. The today figure comes from the measured 188 KB storyboard. The proposed figures are per-step estimates and must be confirmed by the question-answering eval before they are quoted.</figcaption>
+  </figure>
+</section>
+
+<section id="applied">
+  <span class="eyebrow">How the components are applied</span>
+  <h2>Every part, its evidence, and its new role</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Component</th><th>Evidence so far</th><th>Role in this architecture</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Change-driven segmentation (picture, sound, codec)</td><td>Beats uniform sampling on 5 of 5 test videos (podcast: 96.1% vs 91.2% of distinct moments at the same image count)</td><td>Internal. Picks keyframes and candidate times; the agent never reads segments</td><td><span class="chip keep">keep</span></td></tr>
+        <tr><td>Camera-switch detection</td><td>Podcast segments 791 → 487; segments with an image 120 → 265</td><td>Internal input to keyframe choice</td><td><span class="chip keep">keep</span></td></tr>
+        <tr><td>Keyframe drift, dedupe, time-spread budget</td><td>CS50 lecture: same full coverage with 66 → 37 frames</td><td>Writes the durable keyframes layer (768 px)</td><td><span class="chip keep">keep</span></td></tr>
+        <tr><td>Software decode with ffmpeg</td><td>VideoToolbox 4–20× slower on M1; NVDEC about 1.45× slower on the 3060</td><td>Ingest on CPU, on either machine</td><td><span class="chip keep">keep</span></td></tr>
+        <tr><td>faster-whisper turbo, batched</td><td>55–64× realtime on the RTX 3060; 99 s for the 1 h 45 min podcast</td><td>GPU-A stage of the batch job</td><td><span class="chip keep">keep</span></td></tr>
+        <tr><td>Vietnamese speech models</td><td>Unmeasured on dubbed audio; authors' tables favour ChunkFormer and Parakeet-vi over Whisper</td><td>Candidates for GPU-A; measured on a 20–30 min hand-checked sample first</td><td><span class="chip test">test</span></td></tr>
+        <tr><td>Qwen3.5-4B vision model</td><td>About 2 frames/s; ran out of memory beside Whisper; 3–5 min server start</td><td>GPU-B stage, only on frames where the picture adds what speech lacks. Kept only if the eval shows a gain</td><td><span class="chip change">change</span></td></tr>
+        <tr><td>Vision self-test</td><td>Caught a broken on-the-fly FP8 model that called a forest "completely white"</td><td>Runs at the start of every GPU-B job</td><td><span class="chip keep">keep</span></td></tr>
+        <tr><td>TextTiling chapters</td><td>Exist only in the meaning step today</td><td>Extractive card: chapters plus the most central sentences, deterministic, CPU</td><td><span class="chip change">move</span></td></tr>
+        <tr><td>Text embeddings</td><td>Current MiniLM scores MMTEB 48.8; gte-multilingual VN-MTEB 65.2</td><td>gte-multilingual-base or e5-small on CPU, for chapters and <code>find</code></td><td><span class="chip change">change</span></td></tr>
+        <tr><td>SigLIP2 + DINOv2</td><td>From research; thresholds not calibrated</td><td>Frame search by text and semantic dedupe</td><td><span class="chip new">new</span></td></tr>
+        <tr><td>TimeLens2-4B</td><td>Charades-TL 57.7 vs Gemini 2.5 Pro 52.8 (paper)</td><td>Grounding on demand for the top few <code>find</code> hits, cached as a layer</td><td><span class="chip lazy">lazy</span></td></tr>
+        <tr><td><code>storyboard.md</code>, <code>meaning.md</code></td><td>Podcast storyboard 188 KB, about 50–65k tokens</td><td>Generated drill-down views, not the entry point</td><td><span class="chip change">demote</span></td></tr>
+        <tr><td>MCP server</td><td>Not built</td><td>Thin read-only wrapper over the verbs, later</td><td><span class="chip lazy">defer</span></td></tr>
+        <tr><td>Always-on vLLM server</td><td>Startup, memory fights and an environment overlay</td><td>Replaced by the one-shot drain</td><td><span class="chip remove">remove</span></td></tr>
+        <tr><td>TensorFold</td><td>Needs compute capability 8.9 or newer; the 3060 is 8.6</td><td>Not used on current hardware</td><td><span class="chip remove">skip</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="trail">
+  <span class="eyebrow">How we got here</span>
+  <h2>The evidence trail</h2>
+  <ul class="timeline">
+    <li><span class="when">30 Sep</span><div><b>v0.1 built and tested on real footage.</b> Real screen recordings showed a whole-frame average misses a new chat message, so changed-area detection was added. A dark stage fooled the screen detector, so it now counts identical frames.</div></li>
+    <li><span class="when">30 Sep</span><div><b>The podcast exposed fragmentation.</b> A 1 h 45 min interview produced 791 segments, and v0.1 spent most of its frame budget on the cold open. Camera-switch detection and a time-spread budget fixed coverage: 90.8% → 96.1%.</div></li>
+    <li><span class="when">30 Sep</span><div><b>Ubuntu benchmarks.</b> GPU decode lost on both machines. Batched Whisper turbo reached 55–64× realtime on the RTX 3060.</div></li>
+    <li><span class="when">30 Sep</span><div><b>Meaning layer and a real failure.</b> On-the-fly FP8 broke the vision model, which then wrote fluent nonsense. A vision self-test now refuses a model that cannot see. Whisper and the VLM could not share 12 GB reliably.</div></li>
+    <li><span class="when">1 Oct</span><div><b>Model research.</b> Six agents across English, Chinese, Taiwanese and Vietnamese sources: keep Qwen3.5-4B, change the text embeddings, test Vietnamese speech models, add SigLIP2 and TimeLens2 where they earn it.</div></li>
+    <li><span class="when">2 Oct</span><div><b>Architecture brainstorm.</b> Five lenses (agent consumer, home operator, first principles, minimalist, platform futurist) agreed on index over documents and no GPU on the read path. This design scored 77.5 on the decision rubric, ahead of the minimalist design (74.5) and today's v0.2 (57).</div></li>
+  </ul>
+</section>
+
+<section id="decide">
+  <span class="eyebrow">Decisions</span>
+  <h2>Fix now, build in order, leave out</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Fix now: these cannot change later</h3>
+      <ul>
+        <li>Citation format <code>fs1:&lt;video&gt;@&lt;start&gt;-&lt;end&gt;</code>, versioned from day one.</li>
+        <li>Time base: source timestamps normalised to start at 0, in seconds.</li>
+        <li>Keep <code>audio.opus</code> and 768 px keyframes for every video, about 15 MB per hour.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Build in this order</h3>
+      <ol>
+        <li>Question-answering eval: correct answers per agent token.</li>
+        <li>Vietnamese speech measurement on 20–30 checked minutes.</li>
+        <li>Layer store and the five verbs, with the extractive card.</li>
+        <li>One-shot GPU drain with keyed done-markers and a GPU lock.</li>
+        <li>Eval: transcript plus <code>look</code>, against adding VLM text.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Leave out for now</h3>
+      <ul>
+        <li>Any model server that stays running.</li>
+        <li>An MCP server, a vector database server, a job queue service.</li>
+        <li>Two-way sync between the Mac and the Ubuntu box.</li>
+        <li>Segments or detector numbers in what the agent reads.</li>
+        <li>Speaker labels by default; a cross-video knowledge graph.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note">Open risk: retrieval can fail without anyone seeing it, because the agent cannot know what it did not find. The safeguards are scores and weak-match warnings in <code>find</code>, the entity list in the card, and a rule that the agent reads a span before it cites it.</p>
+</section>
+
+</div>

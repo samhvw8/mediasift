@@ -1,0 +1,245 @@
+{
+ "video": "tears_of_steel",
+ "questions": [
+  {
+   "id": "q01",
+   "type": "image",
+   "question": "What project name appears on the opening title card, below the studio credit?",
+   "answer": "the Mango Open Movie project",
+   "accept": [
+    "Mango Open Movie",
+    "Mango Open Movie project",
+    "Mango"
+   ],
+   "evidence": [
+    [
+     6,
+     9
+    ]
+   ]
+  },
+  {
+   "id": "q02",
+   "type": "image",
+   "question": "Which organization is credited in the on-screen caption as supporting the film, shown over the industrial skyline?",
+   "answer": "the Netherlands Film Fund",
+   "accept": [
+    "Netherlands Film Fund",
+    "Dutch Film Fund"
+   ],
+   "evidence": [
+    [
+     19.5,
+     24
+    ]
+   ]
+  },
+  {
+   "id": "q03",
+   "type": "image",
+   "question": "What does the headline on the newspaper say?",
+   "answer": "Roboticist creates killer robots",
+   "accept": [
+    "Roboticist gets killer robot",
+    "Roboticist gets killer robots"
+   ],
+   "evidence": [
+    [
+     20,
+     23
+    ]
+   ],
+   "note": "corrected 2026-10-07: the writer read 'gets' from a 480 px oracle tile; the 768 px frame at 80 s reads CREATES"
+  },
+  {
+   "id": "q04",
+   "type": "image",
+   "question": "What two-word status message is shown on the holographic display behind the lab technician with long hair?",
+   "answer": "Simulation ready",
+   "accept": [
+    "SIMULATION READY",
+    "Simulation Ready"
+   ],
+   "evidence": [
+    [
+     54,
+     57
+    ]
+   ]
+  },
+  {
+   "id": "q05",
+   "type": "image",
+   "question": "What small container does the sniper pick up and drink from?",
+   "answer": "a juice carton",
+   "accept": [
+    "juice box",
+    "carton",
+    "drink carton",
+    "juice carton",
+    "small carton"
+   ],
+   "evidence": [
+    [
+     26,
+     32
+    ]
+   ]
+  },
+  {
+   "id": "q06",
+   "type": "image",
+   "question": "What colour is the top worn under the vest by the woman on the bridge?",
+   "answer": "blue",
+   "accept": [
+    "blue top",
+    "blue shirt",
+    "turquoise",
+    "teal"
+   ],
+   "evidence": [
+    [
+     24,
+     40
+    ]
+   ]
+  },
+  {
+   "id": "q07",
+   "type": "image",
+   "question": "What pattern is on the older grey-haired man's coat as he walks across the plaza and stands in the cluttered room?",
+   "answer": "plaid",
+   "accept": [
+    "tartan",
+    "checked",
+    "checkered",
+    "check",
+    "plaid shirt"
+   ],
+   "evidence": [
+    [
+     121,
+     192
+    ]
+   ]
+  },
+  {
+   "id": "q08",
+   "type": "image",
+   "question": "What is the film title shown on the dark card after the lab scene?",
+   "answer": "Tears of Steel",
+   "accept": [
+    "TEARS OF STEEL"
+   ],
+   "evidence": [
+    [
+     64,
+     70.5
+    ]
+   ]
+  },
+  {
+   "id": "q09",
+   "type": "speech",
+   "question": "What does the young man say he wants to be awesome in?",
+   "answer": "space",
+   "accept": [
+    "in space",
+    "outer space"
+   ],
+   "evidence": [
+    [
+     26,
+     31
+    ]
+   ]
+  },
+  {
+   "id": "q10",
+   "type": "speech",
+   "question": "According to the young man, what is he dreaming of being chased by in his nightmares?",
+   "answer": "giant robotic claws",
+   "accept": [
+    "giant robot claws",
+    "robotic claws",
+    "robot claws",
+    "claws"
+   ],
+   "evidence": [
+    [
+     38,
+     43
+    ]
+   ]
+  },
+  {
+   "id": "q11",
+   "type": "speech",
+   "question": "How much time does Barley say they should have?",
+   "answer": "about ten minutes",
+   "accept": [
+    "ten minutes",
+    "10 minutes",
+    "ten"
+   ],
+   "evidence": [
+    [
+     197,
+     202
+    ]
+   ]
+  },
+  {
+   "id": "q12",
+   "type": "both",
+   "question": "After the voice counts down to one, what do we see igniting with bright flames?",
+   "answer": "rocket engines",
+   "accept": [
+    "engines",
+    "rocket engine",
+    "rocket nozzles",
+    "rocket thrusters",
+    "engine nozzles",
+    "rockets"
+   ],
+   "evidence": [
+    [
+     5,
+     18
+    ]
+   ]
+  },
+  {
+   "id": "q13",
+   "type": "both",
+   "question": "While the voice says the robot's memory is synced, what organ is shown on a plate in front of a man?",
+   "answer": "a brain",
+   "accept": [
+    "brain",
+    "human brain"
+   ],
+   "evidence": [
+    [
+     49,
+     65
+    ]
+   ]
+  },
+  {
+   "id": "q14",
+   "type": "both",
+   "question": "What caption appears on screen right after the young man talks about being chased by giant robotic claws?",
+   "answer": "40 years later",
+   "accept": [
+    "40 YEARS LATER",
+    "forty years later"
+   ],
+   "evidence": [
+    [
+     38,
+     47
+    ]
+   ]
+  }
+ ]
+}

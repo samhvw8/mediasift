@@ -1,0 +1,16 @@
+{"arm": "F", "images_read": 15, "answers": [
+{"id":"q01","answer":"CS50 Fair","sure":true},
+{"id":"q02","answer":"Yellow smiley-face (emoji) balloons","sure":true},
+{"id":"q03","answer":"Pink","sure":true},
+{"id":"q04","answer":"Dark gray (charcoal)","sure":true},
+{"id":"q05","answer":"Square","sure":true},
+{"id":"q06","answer":"Green","sure":false},
+{"id":"q07","answer":"unary","sure":false},
+{"id":"q08","answer":"Pale yellow","sure":true},
+{"id":"q09","answer":"31","sure":true},
+{"id":"q10","answer":"Transistors","sure":true},
+{"id":"q11","answer":"32","sure":true},
+{"id":"q12","answer":"representation","sure":false},
+{"id":"q13","answer":"unary","sure":true},
+{"id":"q14","answer":"One (1)","sure":true}
+]}

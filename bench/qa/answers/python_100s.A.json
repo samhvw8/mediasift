@@ -1,0 +1,16 @@
+{"arm": "A", "images_read": 0, "answers": [
+{"id":"q01","answer":"13%","sure":false},
+{"id":"q02","answer":"Hello World","sure":false},
+{"id":"q03","answer":"x","sure":false},
+{"id":"q04","answer":"Dog","sure":false},
+{"id":"q05","answer":"import this","sure":false},
+{"id":"q06","answer":"Open Source Computer Vision Library","sure":false},
+{"id":"q07","answer":"Python","sure":false},
+{"id":"q08","answer":"x","sure":false},
+{"id":"q09","answer":"indentation","sure":true},
+{"id":"q10","answer":"change in unexpected ways","sure":true},
+{"id":"q11","answer":"a Python web application","sure":true},
+{"id":"q12","answer":"x","sure":false},
+{"id":"q13","answer":"opencv-python","sure":false},
+{"id":"q14","answer":"y","sure":false}
+]}

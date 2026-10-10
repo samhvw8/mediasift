@@ -1,0 +1,1142 @@
+{
+  "framesift": "0.1.0",
+  "source": "samples/cs50_lecture.mp4",
+  "duration": 360.0,
+  "media": {
+    "width": 1280,
+    "height": 720,
+    "fps": 24.0,
+    "has_video": true,
+    "has_audio": true
+  },
+  "params": {
+    "fps": 5.0,
+    "fast": false,
+    "min_seg": 2.0,
+    "max_seg": 90.0,
+    "sensitivity": 4.0,
+    "cut_threshold": 0.12,
+    "drift": null,
+    "content": "auto",
+    "max_frames": 80,
+    "width": 768,
+    "sheets": true,
+    "asr": true,
+    "asr_model": "small",
+    "snap": 1.0
+  },
+  "content": {
+    "type": "camera",
+    "identical_frames": 0.057
+  },
+  "stats": {
+    "segments": 40,
+    "keyframe_images": 66,
+    "analysed_frames": 1800,
+    "source_frames_approx": 8640,
+    "hard_cuts": 21,
+    "codec_scenecuts": 22,
+    "pauses": 40,
+    "transcript_cues": 133
+  },
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 1.4,
+      "start_ts": "00:00.0",
+      "end_ts": "00:01.4",
+      "reasons": [
+        "start"
+      ],
+      "visual_change": 4.75,
+      "audio_change": 0.0,
+      "speech_ratio": 0.86,
+      "activity": 0.82,
+      "keyframes": [
+        {
+          "t": 0.0,
+          "file": "frames/f001_00000.00s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 2,
+      "start": 1.4,
+      "end": 6.8,
+      "start_ts": "00:01.4",
+      "end_ts": "00:06.8",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.13,
+      "audio_change": 0.03,
+      "speech_ratio": 0.96,
+      "activity": 1.3,
+      "keyframes": [
+        {
+          "t": 2.4,
+          "file": "frames/f002_00002.40s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "staff across campus whereby you'll be invited to a space like this. Bring your laptop. Bring your phone. Whatever it is you have built and created."
+    },
+    {
+      "id": 3,
+      "start": 6.8,
+      "end": 9.2,
+      "start_ts": "00:06.8",
+      "end_ts": "00:09.2",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 3.01,
+      "audio_change": 0.47,
+      "speech_ratio": 0.92,
+      "activity": 0.02,
+      "keyframes": [
+        {
+          "t": 7.2,
+          "file": "frames/f003_00007.20s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "And we'll just show it off for a bit of the afternoon, complete with music"
+    },
+    {
+      "id": 4,
+      "start": 9.2,
+      "end": 13.0,
+      "start_ts": "00:09.2",
+      "end_ts": "00:13.0",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.9,
+      "speech_ratio": 0.89,
+      "activity": 0.02,
+      "keyframes": [
+        {
+          "t": 9.6,
+          "file": "frames/f004_00009.60s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "and friends from industry and candy and all what"
+    },
+    {
+      "id": 5,
+      "start": 13.0,
+      "end": 20.4,
+      "start_ts": "00:13.0",
+      "end_ts": "00:20.4",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 1.73,
+      "audio_change": 0.09,
+      "speech_ratio": 0.95,
+      "activity": 0.02,
+      "keyframes": [
+        {
+          "t": 13.4,
+          "file": "frames/f005_00013.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 15.0,
+          "file": "frames/f006_00015.00s.jpg",
+          "why": "drift 0.25"
+        }
+      ],
+      "transcript": "makes gathering together a terms end fund. And you'll wear, ultimately, very proudly, we hope your very own,"
+    },
+    {
+      "id": 6,
+      "start": 20.4,
+      "end": 22.8,
+      "start_ts": "00:20.4",
+      "end_ts": "00:22.8",
+      "reasons": [
+        "at_pause",
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 2.51,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 1.17,
+      "keyframes": [
+        {
+          "t": 20.6,
+          "file": "frames/f007_00020.60s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 22.2,
+          "file": "frames/f008_00022.20s.jpg",
+          "why": "drift 0.13"
+        }
+      ],
+      "transcript": "I took, CS50, stating very matter of factly what I did some years ago"
+    },
+    {
+      "id": 7,
+      "start": 22.8,
+      "end": 25.7,
+      "start_ts": "00:22.8",
+      "end_ts": "00:25.7",
+      "reasons": [
+        "audio_change",
+        "visual_change"
+      ],
+      "visual_change": 2.71,
+      "audio_change": 1.31,
+      "speech_ratio": 0.8,
+      "activity": 1.18,
+      "keyframes": [
+        {
+          "t": 23.2,
+          "file": "frames/f009_00023.20s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 24.4,
+          "file": "frames/f010_00024.40s.jpg",
+          "why": "drift 0.15"
+        },
+        {
+          "t": 25.6,
+          "file": "frames/f011_00025.60s.jpg",
+          "why": "drift 0.19"
+        }
+      ],
+      "transcript": "that indeed this was a course I myself took."
+    },
+    {
+      "id": 8,
+      "start": 25.7,
+      "end": 28.3,
+      "start_ts": "00:25.7",
+      "end_ts": "00:28.3",
+      "reasons": [
+        "at_pause",
+        "audio_change",
+        "codec_scenecut",
+        "visual_change"
+      ],
+      "visual_change": 6.37,
+      "audio_change": 0.86,
+      "speech_ratio": 0.77,
+      "activity": 1.77,
+      "keyframes": [
+        {
+          "t": 25.8,
+          "file": "frames/f012_00025.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 26.8,
+          "file": "frames/f013_00026.80s.jpg",
+          "why": "drift 0.18"
+        },
+        {
+          "t": 28.2,
+          "file": "frames/f014_00028.20s.jpg",
+          "why": "drift 0.28"
+        }
+      ],
+      "transcript": "So today, let's focus in on computer science."
+    },
+    {
+      "id": 9,
+      "start": 28.3,
+      "end": 37.21,
+      "start_ts": "00:28.3",
+      "end_ts": "00:37.2",
+      "reasons": [
+        "at_pause",
+        "visual_change"
+      ],
+      "visual_change": 0.02,
+      "audio_change": 0.16,
+      "speech_ratio": 0.91,
+      "activity": 1.45,
+      "keyframes": [
+        {
+          "t": 29.6,
+          "file": "frames/f015_00029.60s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 37.2,
+          "file": "frames/f016_00037.20s.jpg",
+          "why": "drift 0.26"
+        }
+      ],
+      "transcript": "Like, what is it? Well, it's really like the study of information. But really, it's more specifically about solving problems, using certain ideas and techniques, all of which you'll exit the course with."
+    },
+    {
+      "id": 10,
+      "start": 37.21,
+      "end": 45.8,
+      "start_ts": "00:37.2",
+      "end_ts": "00:45.8",
+      "reasons": [
+        "codec_scenecut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.43,
+      "speech_ratio": 0.88,
+      "activity": 1.06,
+      "keyframes": [
+        {
+          "t": 39.2,
+          "same_as": "frames/f016_00037.20s.jpg"
+        }
+      ],
+      "transcript": "So as such, problem solving is a goal that will approach by way of something called computational thinking."
+    },
+    {
+      "id": 11,
+      "start": 45.8,
+      "end": 62.0,
+      "start_ts": "00:45.8",
+      "end_ts": "01:02.0",
+      "reasons": [
+        "audio_change",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 1.01,
+      "audio_change": 0.18,
+      "speech_ratio": 0.91,
+      "activity": 1.43,
+      "keyframes": [
+        {
+          "t": 49.0,
+          "file": "frames/f017_00049.00s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 54.2,
+          "file": "frames/f018_00054.20s.jpg",
+          "why": "drift 0.17"
+        },
+        {
+          "t": 55.6,
+          "file": "frames/f019_00055.60s.jpg",
+          "why": "drift 0.25"
+        },
+        {
+          "t": 57.2,
+          "file": "frames/f020_00057.20s.jpg",
+          "why": "drift 0.13"
+        },
+        {
+          "t": 61.6,
+          "file": "frames/f021_00061.60s.jpg",
+          "why": "drift 0.16"
+        }
+      ],
+      "transcript": "So computational thinking, you can kind of oversimplistically think about it as like thinking like a computer. But it's really the application of ideas that we'll dive into today and we'll finish some weeks from now that you can apply to problems from this field, or most any other, but in a computational."
+    },
+    {
+      "id": 12,
+      "start": 62.0,
+      "end": 64.8,
+      "start_ts": "01:02.0",
+      "end_ts": "01:04.8",
+      "reasons": [
+        "visual_change"
+      ],
+      "visual_change": 0.22,
+      "audio_change": 0.0,
+      "speech_ratio": 0.71,
+      "activity": 1.43,
+      "keyframes": [
+        {
+          "t": 62.4,
+          "file": "frames/f022_00062.40s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "That is a very methodical, very careful way."
+    },
+    {
+      "id": 13,
+      "start": 64.8,
+      "end": 82.6,
+      "start_ts": "01:04.8",
+      "end_ts": "01:22.6",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.44,
+      "speech_ratio": 0.94,
+      "activity": 1.03,
+      "keyframes": [
+        {
+          "t": 68.2,
+          "file": "frames/f023_00068.20s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "And that's what CS really did for me and does for a lot of people. It helps kind of clean up your thought processes. Even if you go off into the real world and do nothing in tech, you have an ability after classes like this to express yourself a little more correctly, more precisely, and generally having better command of your own ideas in your language."
+    },
+    {
+      "id": 14,
+      "start": 82.6,
+      "end": 107.92,
+      "start_ts": "01:22.6",
+      "end_ts": "01:47.9",
+      "reasons": [
+        "at_pause",
+        "audio_change",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.13,
+      "audio_change": 0.37,
+      "speech_ratio": 0.91,
+      "activity": 0.74,
+      "keyframes": [
+        {
+          "t": 84.4,
+          "file": "frames/f024_00084.40s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "So what's problem solving? Let me propose that this is it. Like, this is as simple as we can make today's goals and the semester's goals, problems to be solved look like this. You've got some input, the problem to be solved. You've got a goal being the output, like the solution there too. And then somewhere in the middle is the secret sauce where we'll spend the next several weeks figuring out how we can convert these inputs to outputs. But before we can do that, we all just kind of have to agree on how to represent these inputs and outputs,"
+    },
+    {
+      "id": 15,
+      "start": 107.92,
+      "end": 115.2,
+      "start_ts": "01:47.9",
+      "end_ts": "01:55.2",
+      "reasons": [
+        "codec_scenecut"
+      ],
+      "visual_change": 1.3,
+      "audio_change": 0.1,
+      "speech_ratio": 1.0,
+      "activity": 1.66,
+      "keyframes": [
+        {
+          "t": 108.2,
+          "file": "frames/f025_00108.20s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 109.6,
+          "file": "frames/f026_00109.60s.jpg",
+          "why": "drift 0.24"
+        },
+        {
+          "t": 111.0,
+          "file": "frames/f027_00111.00s.jpg",
+          "why": "drift 0.12"
+        },
+        {
+          "t": 114.4,
+          "file": "frames/f028_00114.40s.jpg",
+          "why": "drift 0.13"
+        }
+      ],
+      "transcript": "whether it's with English or really any type of language. But as I spoiled earlier, you probably came in here already"
+    },
+    {
+      "id": 16,
+      "start": 115.2,
+      "end": 120.4,
+      "start_ts": "01:55.2",
+      "end_ts": "02:00.4",
+      "reasons": [
+        "visual_change"
+      ],
+      "visual_change": 0.17,
+      "audio_change": 0.89,
+      "speech_ratio": 0.96,
+      "activity": 1.5,
+      "keyframes": [
+        {
+          "t": 116.2,
+          "file": "frames/f029_00116.20s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "with a general sense that, yeah, computers somehow only speak or know zeros and ones, the so-called binary system."
+    },
+    {
+      "id": 17,
+      "start": 120.4,
+      "end": 122.8,
+      "start_ts": "02:00.4",
+      "end_ts": "02:02.8",
+      "reasons": [
+        "visual_change"
+      ],
+      "visual_change": 3.6,
+      "audio_change": 0.02,
+      "speech_ratio": 1.0,
+      "activity": 1.45,
+      "keyframes": [
+        {
+          "t": 120.8,
+          "file": "frames/f030_00120.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 122.4,
+          "file": "frames/f031_00122.40s.jpg",
+          "why": "drift 0.12"
+        }
+      ],
+      "transcript": "But that's just one way of representing information."
+    },
+    {
+      "id": 18,
+      "start": 122.8,
+      "end": 126.4,
+      "start_ts": "02:02.8",
+      "end_ts": "02:06.4",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.52,
+      "audio_change": 0.52,
+      "speech_ratio": 0.94,
+      "activity": 1.06,
+      "keyframes": [
+        {
+          "t": 123.4,
+          "file": "frames/f032_00123.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 126.2,
+          "file": "frames/f033_00126.20s.jpg",
+          "why": "drift 0.12"
+        }
+      ],
+      "transcript": "Even simpler than binary is unary."
+    },
+    {
+      "id": 19,
+      "start": 126.4,
+      "end": 145.2,
+      "start_ts": "02:06.4",
+      "end_ts": "02:25.2",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.25,
+      "speech_ratio": 0.9,
+      "activity": 1.07,
+      "keyframes": [
+        {
+          "t": 130.8,
+          "file": "frames/f034_00130.80s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "So if you've ever, at this age or any prior age, sort of counted on your fingers, this is unary notation, whereby each of your digits, your fingers, literally represent some piece of information, taking attendance like 1, 2, 3, 4, 5. But on your one human hand, how high can you count in this unary notation?"
+    },
+    {
+      "id": 20,
+      "start": 145.2,
+      "end": 149.35,
+      "start_ts": "02:25.2",
+      "end_ts": "02:29.3",
+      "reasons": [
+        "at_pause",
+        "audio_change"
+      ],
+      "visual_change": 0.02,
+      "audio_change": 2.13,
+      "speech_ratio": 0.62,
+      "activity": 0.76,
+      "keyframes": [
+        {
+          "t": 145.6,
+          "file": "frames/f035_00145.60s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 149.2,
+          "file": "frames/f036_00149.20s.jpg",
+          "why": "drift 0.12"
+        }
+      ],
+      "transcript": "5, I'm hearing 5."
+    },
+    {
+      "id": 21,
+      "start": 149.35,
+      "end": 151.8,
+      "start_ts": "02:29.3",
+      "end_ts": "02:31.8",
+      "reasons": [
+        "at_pause",
+        "audio_change",
+        "codec_scenecut"
+      ],
+      "visual_change": 0.62,
+      "audio_change": 11.32,
+      "speech_ratio": 0.83,
+      "activity": 0.14,
+      "keyframes": [
+        {
+          "t": 149.4,
+          "same_as": "frames/f036_00149.20s.jpg"
+        }
+      ],
+      "transcript": "6, I heard 1, 6."
+    },
+    {
+      "id": 22,
+      "start": 151.8,
+      "end": 159.0,
+      "start_ts": "02:31.8",
+      "end_ts": "02:39.0",
+      "reasons": [
+        "audio_change",
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 1.92,
+      "speech_ratio": 0.83,
+      "activity": 0.45,
+      "keyframes": [
+        {
+          "t": 152.8,
+          "file": "frames/f037_00152.80s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "But I'm going to go further and say the answer, if you're clever about it, is actually not quite 40."
+    },
+    {
+      "id": 23,
+      "start": 159.0,
+      "end": 164.0,
+      "start_ts": "02:39.0",
+      "end_ts": "02:44.0",
+      "reasons": [
+        "at_pause",
+        "audio_change",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 5.35,
+      "speech_ratio": 0.84,
+      "activity": 0.99,
+      "keyframes": [
+        {
+          "t": 159.6,
+          "file": "frames/f038_00159.60s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "You overbid, but 31 is as high as I can actually count."
+    },
+    {
+      "id": 24,
+      "start": 164.0,
+      "end": 168.0,
+      "start_ts": "02:44.0",
+      "end_ts": "02:48.0",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 1.97,
+      "audio_change": 1.7,
+      "speech_ratio": 1.0,
+      "activity": 1.6,
+      "keyframes": [
+        {
+          "t": 164.2,
+          "file": "frames/f039_00164.20s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 165.6,
+          "file": "frames/f040_00165.60s.jpg",
+          "why": "drift 0.20"
+        },
+        {
+          "t": 167.8,
+          "file": "frames/f041_00167.80s.jpg",
+          "why": "drift 0.16"
+        }
+      ],
+      "transcript": "And that's because if I actually, and if you're thinking this is weirdly painful now, like it will be,"
+    },
+    {
+      "id": 25,
+      "start": 168.0,
+      "end": 190.75,
+      "start_ts": "02:48.0",
+      "end_ts": "03:10.8",
+      "reasons": [
+        "visual_change"
+      ],
+      "visual_change": 0.01,
+      "audio_change": 0.39,
+      "speech_ratio": 0.88,
+      "activity": 0.91,
+      "keyframes": [
+        {
+          "t": 172.4,
+          "file": "frames/f042_00172.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 190.6,
+          "file": "frames/f043_00190.60s.jpg",
+          "why": "drift 0.23"
+        }
+      ],
+      "transcript": "but this is my hand representing the number zero, normally in unary, this is 1, 2, 3, 4, 5, of course, obviously. But what if I take into account the order in which I'm putting my fingers up and down? So maybe this is still 0. Maybe this is still 1. But maybe this is now 2, where it's just the single second finger up, not two of them total. Maybe this is now 3."
+    },
+    {
+      "id": 26,
+      "start": 190.75,
+      "end": 195.97,
+      "start_ts": "03:10.8",
+      "end_ts": "03:16.0",
+      "reasons": [
+        "at_pause",
+        "audio_change",
+        "codec_scenecut",
+        "visual_change"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.08,
+      "speech_ratio": 0.92,
+      "activity": 1.03,
+      "keyframes": [
+        {
+          "t": 191.2,
+          "file": "frames/f044_00191.20s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "Maybe this is now often offensive, with just the middle finger up."
+    },
+    {
+      "id": 27,
+      "start": 195.97,
+      "end": 224.2,
+      "start_ts": "03:16.0",
+      "end_ts": "03:44.2",
+      "reasons": [
+        "at_pause",
+        "audio_change",
+        "codec_scenecut"
+      ],
+      "visual_change": 0.17,
+      "audio_change": 0.41,
+      "speech_ratio": 0.89,
+      "activity": 1.0,
+      "keyframes": [
+        {
+          "t": 196.8,
+          "file": "frames/f045_00196.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 204.2,
+          "same_as": "frames/f044_00191.20s.jpg"
+        },
+        {
+          "t": 223.4,
+          "file": "frames/f046_00223.40s.jpg",
+          "why": "drift 0.14"
+        }
+      ],
+      "transcript": "This is now 5. This is now 6. This is now 7. And my hand just hurts too much. If I try to count higher than 7. But theoretically, because each of my fingers can be down or up, and I've got five of them, that's actually 32 possible permutations up and down. But wait a minute, we said 31, but if you started 0, you kind of have to subtract one from the biggest possible value. So this is to say, you and I have been using unary because it's just simple, and it gets the job done."
+    },
+    {
+      "id": 28,
+      "start": 224.2,
+      "end": 234.4,
+      "start_ts": "03:44.2",
+      "end_ts": "03:54.4",
+      "reasons": [
+        "visual_change"
+      ],
+      "visual_change": 1.02,
+      "audio_change": 0.01,
+      "speech_ratio": 0.88,
+      "activity": 1.05,
+      "keyframes": [
+        {
+          "t": 226.4,
+          "file": "frames/f047_00226.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 227.8,
+          "file": "frames/f048_00227.80s.jpg",
+          "why": "drift 0.15"
+        }
+      ],
+      "transcript": "But if we just think about representation a little more cleverly, we can do exactly what computers do, using not what mathematicians call base 1, where the finger's either there or it's not, but base 2."
+    },
+    {
+      "id": 29,
+      "start": 234.4,
+      "end": 242.2,
+      "start_ts": "03:54.4",
+      "end_ts": "04:02.2",
+      "reasons": [
+        "at_pause",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.22,
+      "speech_ratio": 0.92,
+      "activity": 1.11,
+      "keyframes": [
+        {
+          "t": 234.8,
+          "same_as": "frames/f035_00145.60s.jpg"
+        }
+      ],
+      "transcript": "And in base 2, we just need two digits at our disposal. And we could call these digits 1 and 2, A and B, black or white."
+    },
+    {
+      "id": 30,
+      "start": 242.2,
+      "end": 255.2,
+      "start_ts": "04:02.2",
+      "end_ts": "04:15.2",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.77,
+      "audio_change": 0.18,
+      "speech_ratio": 0.91,
+      "activity": 1.16,
+      "keyframes": [
+        {
+          "t": 245.2,
+          "file": "frames/f049_00245.20s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 251.0,
+          "file": "frames/f050_00251.00s.jpg",
+          "why": "drift 0.16"
+        }
+      ],
+      "transcript": "We just need two words to describe two pieces of information. Computers keep it simple. And just like we humans start counting 0, 1, 2, 3 on up, computers use 0 and 1. And that's it. But that's by convention."
+    },
+    {
+      "id": 31,
+      "start": 255.2,
+      "end": 268.4,
+      "start_ts": "04:15.2",
+      "end_ts": "04:28.4",
+      "reasons": [
+        "at_pause",
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.77,
+      "speech_ratio": 0.85,
+      "activity": 1.03,
+      "keyframes": [
+        {
+          "t": 255.4,
+          "same_as": "frames/f035_00145.60s.jpg"
+        }
+      ],
+      "transcript": "But why do they do that? Well, it turns out when you use base 2, otherwise known as binary, well, it just maps really readily to the real world. Because at the end of the day, what do we all do if you've got a laptop or phone or any device?"
+    },
+    {
+      "id": 32,
+      "start": 268.4,
+      "end": 272.8,
+      "start_ts": "04:28.4",
+      "end_ts": "04:32.8",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 4.63,
+      "audio_change": 0.08,
+      "speech_ratio": 0.95,
+      "activity": 1.52,
+      "keyframes": [
+        {
+          "t": 269.0,
+          "file": "frames/f051_00269.00s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 270.4,
+          "file": "frames/f052_00270.40s.jpg",
+          "why": "drift 0.20"
+        }
+      ],
+      "transcript": "Like you plug it into the wall because it needs electricity at some point."
+    },
+    {
+      "id": 33,
+      "start": 272.8,
+      "end": 281.8,
+      "start_ts": "04:32.8",
+      "end_ts": "04:41.8",
+      "reasons": [
+        "visual_change"
+      ],
+      "visual_change": 0.4,
+      "audio_change": 0.67,
+      "speech_ratio": 0.93,
+      "activity": 1.31,
+      "keyframes": [
+        {
+          "t": 274.8,
+          "file": "frames/f053_00274.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 281.0,
+          "file": "frames/f054_00281.00s.jpg",
+          "why": "drift 0.14"
+        }
+      ],
+      "transcript": "And what if you have electricity or not, well, there's your sort of two possible values, either it's there or it's not. And because computers are electrical devices,"
+    },
+    {
+      "id": 34,
+      "start": 281.8,
+      "end": 289.0,
+      "start_ts": "04:41.8",
+      "end_ts": "04:49.0",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.45,
+      "audio_change": 0.3,
+      "speech_ratio": 0.92,
+      "activity": 1.18,
+      "keyframes": [
+        {
+          "t": 283.4,
+          "file": "frames/f055_00283.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 288.2,
+          "file": "frames/f056_00288.20s.jpg",
+          "why": "drift 0.12"
+        }
+      ],
+      "transcript": "this is why binary is just useful. It's nice and simple. Either electricity is there or it's not. So when you plug this device in and you've got all these electrons"
+    },
+    {
+      "id": 35,
+      "start": 289.0,
+      "end": 301.0,
+      "start_ts": "04:49.0",
+      "end_ts": "05:01.0",
+      "reasons": [
+        "visual_change"
+      ],
+      "visual_change": 0.02,
+      "audio_change": 0.55,
+      "speech_ratio": 0.95,
+      "activity": 0.95,
+      "keyframes": [
+        {
+          "t": 290.8,
+          "file": "frames/f057_00290.80s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "or whatever flowing, maybe if we just kind of hang on to some of that electricity, we can represent what we'll call a 1. And maybe if we let it dissipate or go away, that's a 0. So on and off maps very readily to this idea of just 0s and 1s."
+    },
+    {
+      "id": 36,
+      "start": 301.0,
+      "end": 312.6,
+      "start_ts": "05:01.0",
+      "end_ts": "05:12.6",
+      "reasons": [
+        "visual_change"
+      ],
+      "visual_change": 0.28,
+      "audio_change": 1.07,
+      "speech_ratio": 0.83,
+      "activity": 0.81,
+      "keyframes": [
+        {
+          "t": 303.6,
+          "file": "frames/f058_00303.60s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "And if you've ever thought of this now as binary digits by implying 2, 0 and 1, well, if you've ever heard this term now, bit, it just means binary digit."
+    },
+    {
+      "id": 37,
+      "start": 312.6,
+      "end": 317.75,
+      "start_ts": "05:12.6",
+      "end_ts": "05:17.8",
+      "reasons": [
+        "visual_change"
+      ],
+      "visual_change": 0.43,
+      "audio_change": 0.72,
+      "speech_ratio": 0.88,
+      "activity": 1.43,
+      "keyframes": [
+        {
+          "t": 312.8,
+          "file": "frames/f059_00312.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 314.2,
+          "file": "frames/f060_00314.20s.jpg",
+          "why": "drift 0.15"
+        }
+      ],
+      "transcript": "A single bit is just a 0 or 1. But we could have called these things anything we want."
+    },
+    {
+      "id": 38,
+      "start": 317.75,
+      "end": 335.4,
+      "start_ts": "05:17.8",
+      "end_ts": "05:35.4",
+      "reasons": [
+        "at_pause",
+        "audio_change",
+        "visual_change"
+      ],
+      "visual_change": 0.6,
+      "audio_change": 0.13,
+      "speech_ratio": 0.94,
+      "activity": 1.39,
+      "keyframes": [
+        {
+          "t": 319.8,
+          "file": "frames/f061_00319.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 327.8,
+          "file": "frames/f062_00327.80s.jpg",
+          "why": "drift 0.21"
+        },
+        {
+          "t": 330.2,
+          "file": "frames/f063_00330.20s.jpg",
+          "why": "drift 0.13"
+        },
+        {
+          "t": 331.8,
+          "file": "frames/f064_00331.80s.jpg",
+          "why": "drift 0.13"
+        }
+      ],
+      "transcript": "Now, how does this map to be clear to the real world? Well, we can't see the tiny little switches inside of our Mac's, PCs, and our phones that are actually turning the electricity on or off, storing electricity or not. But they're called transistors. They've got like millions of them in today's hardware. And they're just on or off like a switch or a light bulb."
+    },
+    {
+      "id": 39,
+      "start": 335.4,
+      "end": 351.8,
+      "start_ts": "05:35.4",
+      "end_ts": "05:51.8",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.09,
+      "audio_change": 0.55,
+      "speech_ratio": 0.96,
+      "activity": 0.73,
+      "keyframes": [
+        {
+          "t": 338.8,
+          "file": "frames/f065_00338.80s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "So for instance, if there's no electricity, the switch is off. We would call this by convention a 0. If though you throw the switch and it actually turns on, we would call this an on, exactly a 1. We could have reversed it, but this is just the way the world decided to standardize. And that's it."
+    },
+    {
+      "id": 40,
+      "start": 351.8,
+      "end": 360.0,
+      "start_ts": "05:51.8",
+      "end_ts": "06:00.0",
+      "reasons": [
+        "at_pause",
+        "audio_change",
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.74,
+      "speech_ratio": 0.88,
+      "activity": 0.95,
+      "keyframes": [
+        {
+          "t": 352.0,
+          "file": "frames/f066_00352.00s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": "So you've either got something on or off, a 1 or 0. And this then is this thing we know now as a binary digit or bit."
+    }
+  ],
+  "sheets": [
+    "sheet_01.jpg",
+    "sheet_02.jpg",
+    "sheet_03.jpg",
+    "sheet_04.jpg",
+    "sheet_05.jpg",
+    "sheet_06.jpg"
+  ]
+}

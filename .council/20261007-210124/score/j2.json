@@ -1,0 +1,36 @@
+{
+  "scores": {
+    "C01": {"value": 7, "feasibility": 7, "running_cost": 7, "novelty": 6, "specificity": 8, "off_brief": false},
+    "C02": {"value": 7, "feasibility": 5, "running_cost": 9, "novelty": 6, "specificity": 7, "off_brief": false},
+    "C03": {"value": 6, "feasibility": 6, "running_cost": 6, "novelty": 6, "specificity": 7, "off_brief": false},
+    "C04": {"value": 5, "feasibility": 5, "running_cost": 6, "novelty": 5, "specificity": 7, "off_brief": false},
+    "C05": {"value": 7, "feasibility": 7, "running_cost": 6, "novelty": 4, "specificity": 6, "off_brief": false},
+    "C06": {"value": 6, "feasibility": 6, "running_cost": 8, "novelty": 5, "specificity": 5, "off_brief": false},
+    "C07": {"value": 7, "feasibility": 6, "running_cost": 7, "novelty": 7, "specificity": 7, "off_brief": false},
+    "C08": {"value": 4, "feasibility": 5, "running_cost": 6, "novelty": 5, "specificity": 5, "off_brief": false},
+    "C09": {"value": 6, "feasibility": 5, "running_cost": 6, "novelty": 6, "specificity": 6, "off_brief": false},
+    "C10": {"value": 4, "feasibility": 6, "running_cost": 6, "novelty": 4, "specificity": 8, "off_brief": false},
+    "C11": {"value": 7, "feasibility": 8, "running_cost": 7, "novelty": 4, "specificity": 7, "off_brief": false},
+    "C12": {"value": 5, "feasibility": 6, "running_cost": 7, "novelty": 5, "specificity": 6, "off_brief": false},
+    "C13": {"value": 3, "feasibility": 8, "running_cost": 6, "novelty": 3, "specificity": 6, "off_brief": false},
+    "C14": {"value": 4, "feasibility": 9, "running_cost": 9, "novelty": 3, "specificity": 9, "off_brief": false},
+    "C15": {"value": 2, "feasibility": 8, "running_cost": 5, "novelty": 3, "specificity": 4, "off_brief": true}
+  },
+  "notes": {
+    "C01": "One signal across speech and frames does demotion, caption skip and tagging, with a clear bench test.",
+    "C02": "Deletes the metered VLM, the biggest running cost, but rests on retrieval quality that is unproven.",
+    "C03": "Return map is useful on recurring footage but adds layout logic gated by a measured ratio.",
+    "C04": "Replaces proven keyframe heuristics with embedding of every sample, so it risks cost and regressions.",
+    "C05": "Ask-conditioned sheets with a coverage floor are sound but close to the already-proposed find command.",
+    "C06": "Text-only default cuts tokens sharply but drifts from the user's stated goal of sending image grids.",
+    "C07": "Checking the agent's own summary against frames is a fresh, label-free grounding loop and doubles as a bench score.",
+    "C08": "Three-modality agreement is tidy but needs the audio tower and has weak payoff.",
+    "C09": "Per-video calibration removes knobs but adds its own calibration machinery and fallback states.",
+    "C10": "Admission gate is disciplined, but the value is only a tag line for silent windows.",
+    "C11": "A paired-arm bench is the cheap way to prove every other idea, though it is meta and not new.",
+    "C12": "An audit sheet and a gap trace make omissions visible, but they are diagnostics and not new capability.",
+    "C13": "Recording deletions in decisions is good hygiene, but it is process and does not use the model.",
+    "C14": "Cheap, concrete recall test for the MRL dimension that also shrinks signals.npz, but small in impact.",
+    "C15": "A scope-tracking checklist is process about the session and not a use of the model, so it answers a different question."
+  }
+}

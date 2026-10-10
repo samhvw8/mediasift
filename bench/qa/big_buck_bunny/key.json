@@ -1,0 +1,16 @@
+{"video": "big_buck_bunny", "questions": [
+{"id":"q01","type":"image","question":"What colour is the title lettering of the opening logo card?","answer":"blue","accept":["light blue","cyan","sky blue"],"evidence":[[0,4.5]]},
+{"id":"q02","type":"image","question":"What colour is the small bird's beak?","answer":"orange","accept":["yellow-orange","orange-yellow","yellow"],"evidence":[[20,26.5]]},
+{"id":"q03","type":"image","question":"What object is thrown or flying above the bird's head just before the bird leaves the branch?","answer":"a pine cone","accept":["pinecone","cone","nut","acorn","seed"],"evidence":[[24,26.5]]},
+{"id":"q04","type":"image","question":"What colour is the large cloud in the opening landscape shots?","answer":"pink","accept":["light pink","pinkish"],"evidence":[[4,16]]},
+{"id":"q05","type":"image","question":"What kind of tree stands tall beside the round leafy trees in the opening landscape shots?","answer":"a fir tree","accept":["pine tree","pine","fir","conifer","evergreen","spruce"],"evidence":[[8,16]]},
+{"id":"q06","type":"image","question":"What is the big character standing in front of right after he comes out of his hole?","answer":"a stone slab","accept":["rock","rocks","stone structure","stone ruins","flat rock","stone platform","stones"],"evidence":[[52,61]]},
+{"id":"q07","type":"image","question":"What colour are the centres of the large white flowers in the foreground?","answer":"yellow","accept":["yellow centres","yellow centers"],"evidence":[[67,76]]},
+{"id":"q08","type":"image","question":"What colour is the butterfly that lands near the big character's face while he lies on the grass?","answer":"purple","accept":["pink","violet","pink and purple","purple and pink","magenta"],"evidence":[[79,85]]},
+{"id":"q09","type":"image","question":"What red fruit does the big character pick up and hold?","answer":"an apple","accept":["apple","red apple"],"evidence":[[87,104]]},
+{"id":"q10","type":"image","question":"What is the grey chinchilla-like animal holding in its paws when it first appears next to the other two small animals?","answer":"a nut","accept":["acorn","chestnut","brown nut","seed","dark brown nut"],"evidence":[[119,127],[153,160]]},
+{"id":"q11","type":"image","question":"What colour are the eyes of the brown squirrel with the big head?","answer":"blue","accept":["light blue","pale blue"],"evidence":[[121,127],[152,160]]},
+{"id":"q12","type":"image","question":"What small dark brown object flies through the air in the last shot of the video?","answer":"a nut","accept":["acorn","chestnut","seed","brown nut","nut-like object"],"evidence":[[176,180]]},
+{"id":"q13","type":"image","question":"What animal is seen sleeping in the dark hole under the tree before it comes out?","answer":"a rabbit","accept":["bunny","big rabbit","giant rabbit","big bunny","hare"],"evidence":[[39,52]]},
+{"id":"q14","type":"image","question":"What colour is the bird's body?","answer":"purple","accept":["grey-purple","purple-grey","dark purple","blue-grey","grey","gray","violet"],"evidence":[[20,26.5]]}
+]}

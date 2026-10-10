@@ -1,0 +1,889 @@
+{
+  "framesift": "0.1.0",
+  "source": "samples/big_buck_bunny.mp4",
+  "duration": 180.0,
+  "media": {
+    "width": 1280,
+    "height": 720,
+    "fps": 60.0,
+    "has_video": true,
+    "has_audio": true
+  },
+  "params": {
+    "fps": 5.0,
+    "fast": false,
+    "min_seg": 2.0,
+    "max_seg": 90.0,
+    "sensitivity": 4.0,
+    "cut_threshold": 0.12,
+    "drift": null,
+    "content": "auto",
+    "max_frames": 80,
+    "width": 768,
+    "sheets": true,
+    "asr": false,
+    "asr_model": "small",
+    "snap": 1.0
+  },
+  "content": {
+    "type": "camera",
+    "identical_frames": 0.043
+  },
+  "stats": {
+    "segments": 30,
+    "keyframe_images": 56,
+    "analysed_frames": 900,
+    "source_frames_approx": 10800,
+    "hard_cuts": 33,
+    "codec_scenecuts": 22,
+    "pauses": 26,
+    "transcript_cues": 0
+  },
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 16.2,
+      "start_ts": "00:00.0",
+      "end_ts": "00:16.2",
+      "reasons": [
+        "start"
+      ],
+      "visual_change": 0.26,
+      "audio_change": 0.28,
+      "speech_ratio": 0.99,
+      "activity": 1.36,
+      "keyframes": [
+        {
+          "t": 2.8,
+          "file": "frames/f001_00002.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 4.2,
+          "file": "frames/f002_00004.20s.jpg",
+          "why": "drift 0.44"
+        },
+        {
+          "t": 5.2,
+          "file": "frames/f003_00005.20s.jpg",
+          "why": "drift 0.43"
+        },
+        {
+          "t": 8.4,
+          "file": "frames/f004_00008.40s.jpg",
+          "why": "drift 0.22"
+        },
+        {
+          "t": 9.8,
+          "file": "frames/f005_00009.80s.jpg",
+          "why": "drift 0.14"
+        },
+        {
+          "t": 11.6,
+          "file": "frames/f006_00011.60s.jpg",
+          "why": "drift 0.17"
+        },
+        {
+          "t": 13.8,
+          "file": "frames/f007_00013.80s.jpg",
+          "why": "drift 0.16"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 2,
+      "start": 16.2,
+      "end": 20.2,
+      "start_ts": "00:16.2",
+      "end_ts": "00:20.2",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 3.32,
+      "keyframes": [
+        {
+          "t": 16.8,
+          "file": "frames/f008_00016.80s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 3,
+      "start": 20.2,
+      "end": 27.4,
+      "start_ts": "00:20.2",
+      "end_ts": "00:27.4",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.09,
+      "audio_change": 0.45,
+      "speech_ratio": 0.94,
+      "activity": 0.72,
+      "keyframes": [
+        {
+          "t": 21.4,
+          "file": "frames/f009_00021.40s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 4,
+      "start": 27.4,
+      "end": 39.8,
+      "start_ts": "00:27.4",
+      "end_ts": "00:39.8",
+      "reasons": [
+        "at_pause",
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.09,
+      "speech_ratio": 1.0,
+      "activity": 2.24,
+      "keyframes": [
+        {
+          "t": 30.2,
+          "file": "frames/f010_00030.20s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 38.4,
+          "file": "frames/f011_00038.40s.jpg",
+          "why": "drift 0.12"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 5,
+      "start": 39.8,
+      "end": 52.2,
+      "start_ts": "00:39.8",
+      "end_ts": "00:52.2",
+      "reasons": [
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.35,
+      "speech_ratio": 0.92,
+      "activity": 1.23,
+      "keyframes": [
+        {
+          "t": 40.4,
+          "file": "frames/f012_00040.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 48.0,
+          "file": "frames/f013_00048.00s.jpg",
+          "why": "drift 0.12"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 6,
+      "start": 52.2,
+      "end": 60.4,
+      "start_ts": "00:52.2",
+      "end_ts": "01:00.4",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.02,
+      "audio_change": 1.21,
+      "speech_ratio": 0.8,
+      "activity": 1.78,
+      "keyframes": [
+        {
+          "t": 52.6,
+          "file": "frames/f014_00052.60s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 59.0,
+          "file": "frames/f015_00059.00s.jpg",
+          "why": "drift 0.13"
+        },
+        {
+          "t": 60.0,
+          "file": "frames/f016_00060.00s.jpg",
+          "why": "drift 0.13"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 7,
+      "start": 60.4,
+      "end": 65.0,
+      "start_ts": "01:00.4",
+      "end_ts": "01:05.0",
+      "reasons": [
+        "visual_cut"
+      ],
+      "visual_change": 0.09,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 0.43,
+      "keyframes": [
+        {
+          "t": 60.6,
+          "file": "frames/f017_00060.60s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 63.2,
+          "file": "frames/f018_00063.20s.jpg",
+          "why": "drift 0.12"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 8,
+      "start": 65.0,
+      "end": 68.2,
+      "start_ts": "01:05.0",
+      "end_ts": "01:08.2",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 0.65,
+      "keyframes": [
+        {
+          "t": 65.2,
+          "file": "frames/f019_00065.20s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 9,
+      "start": 68.2,
+      "end": 75.6,
+      "start_ts": "01:08.2",
+      "end_ts": "01:15.6",
+      "reasons": [
+        "codec_scenecut",
+        "visual_cut"
+      ],
+      "visual_change": 1.48,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 1.15,
+      "keyframes": [
+        {
+          "t": 68.4,
+          "file": "frames/f020_00068.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 70.6,
+          "file": "frames/f021_00070.60s.jpg",
+          "why": "drift 0.14"
+        },
+        {
+          "t": 72.0,
+          "file": "frames/f022_00072.00s.jpg",
+          "why": "drift 0.26"
+        },
+        {
+          "t": 73.4,
+          "file": "frames/f023_00073.40s.jpg",
+          "why": "drift 0.16"
+        },
+        {
+          "t": 74.6,
+          "file": "frames/f024_00074.60s.jpg",
+          "why": "drift 0.44"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 10,
+      "start": 75.6,
+      "end": 77.8,
+      "start_ts": "01:15.6",
+      "end_ts": "01:17.8",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.56,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 0.66,
+      "keyframes": [
+        {
+          "t": 76.0,
+          "file": "frames/f025_00076.00s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 11,
+      "start": 77.8,
+      "end": 80.0,
+      "start_ts": "01:17.8",
+      "end_ts": "01:20.0",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.8,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 1.56,
+      "keyframes": [
+        {
+          "t": 78.0,
+          "file": "frames/f026_00078.00s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 79.6,
+          "file": "frames/f027_00079.60s.jpg",
+          "why": "drift 0.20"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 12,
+      "start": 80.0,
+      "end": 84.4,
+      "start_ts": "01:20.0",
+      "end_ts": "01:24.4",
+      "reasons": [
+        "codec_scenecut",
+        "visual_cut"
+      ],
+      "visual_change": 0.01,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 3.07,
+      "keyframes": [
+        {
+          "t": 80.6,
+          "file": "frames/f028_00080.60s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 82.8,
+          "file": "frames/f029_00082.80s.jpg",
+          "why": "drift 0.13"
+        },
+        {
+          "t": 83.8,
+          "file": "frames/f030_00083.80s.jpg",
+          "why": "drift 0.12"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 13,
+      "start": 84.4,
+      "end": 90.17,
+      "start_ts": "01:24.4",
+      "end_ts": "01:30.2",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 1.04,
+      "speech_ratio": 0.79,
+      "activity": 1.05,
+      "keyframes": [
+        {
+          "t": 85.6,
+          "file": "frames/f031_00085.60s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 14,
+      "start": 90.17,
+      "end": 94.2,
+      "start_ts": "01:30.2",
+      "end_ts": "01:34.2",
+      "reasons": [
+        "at_pause",
+        "audio_change"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.0,
+      "speech_ratio": 0.0,
+      "activity": 0.45,
+      "keyframes": [
+        {
+          "t": 90.6,
+          "file": "frames/f032_00090.60s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 15,
+      "start": 94.2,
+      "end": 104.2,
+      "start_ts": "01:34.2",
+      "end_ts": "01:44.2",
+      "reasons": [
+        "codec_scenecut",
+        "visual_cut"
+      ],
+      "visual_change": 0.41,
+      "audio_change": 0.62,
+      "speech_ratio": 0.64,
+      "activity": 0.49,
+      "keyframes": [
+        {
+          "t": 94.4,
+          "file": "frames/f033_00094.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 96.0,
+          "same_as": "frames/f032_00090.60s.jpg"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 16,
+      "start": 104.2,
+      "end": 106.2,
+      "start_ts": "01:44.2",
+      "end_ts": "01:46.2",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 1.51,
+      "audio_change": 1.04,
+      "speech_ratio": 1.0,
+      "activity": 0.74,
+      "keyframes": [
+        {
+          "t": 104.4,
+          "file": "frames/f034_00104.40s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 17,
+      "start": 106.2,
+      "end": 108.4,
+      "start_ts": "01:46.2",
+      "end_ts": "01:48.4",
+      "reasons": [
+        "visual_cut"
+      ],
+      "visual_change": 0.94,
+      "audio_change": 1.31,
+      "speech_ratio": 1.0,
+      "activity": 0.82,
+      "keyframes": [
+        {
+          "t": 106.6,
+          "file": "frames/f035_00106.60s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 18,
+      "start": 108.4,
+      "end": 117.0,
+      "start_ts": "01:48.4",
+      "end_ts": "01:57.0",
+      "reasons": [
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.08,
+      "speech_ratio": 0.98,
+      "activity": 1.07,
+      "keyframes": [
+        {
+          "t": 109.4,
+          "file": "frames/f036_00109.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 116.6,
+          "file": "frames/f037_00116.60s.jpg",
+          "why": "drift 0.15"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 19,
+      "start": 117.0,
+      "end": 122.4,
+      "start_ts": "01:57.0",
+      "end_ts": "02:02.4",
+      "reasons": [
+        "codec_scenecut",
+        "visual_cut"
+      ],
+      "visual_change": 0.36,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 1.07,
+      "keyframes": [
+        {
+          "t": 118.0,
+          "file": "frames/f038_00118.00s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 120.4,
+          "file": "frames/f039_00120.40s.jpg",
+          "why": "drift 0.14"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 20,
+      "start": 122.4,
+      "end": 125.2,
+      "start_ts": "02:02.4",
+      "end_ts": "02:05.2",
+      "reasons": [
+        "codec_scenecut",
+        "visual_cut"
+      ],
+      "visual_change": 0.53,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 1.88,
+      "keyframes": [
+        {
+          "t": 122.6,
+          "file": "frames/f040_00122.60s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 124.0,
+          "file": "frames/f041_00124.00s.jpg",
+          "why": "drift 0.16"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 21,
+      "start": 125.2,
+      "end": 127.8,
+      "start_ts": "02:05.2",
+      "end_ts": "02:07.8",
+      "reasons": [
+        "at_pause",
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.08,
+      "audio_change": 0.14,
+      "speech_ratio": 0.38,
+      "activity": 1.39,
+      "keyframes": [
+        {
+          "t": 125.4,
+          "file": "frames/f042_00125.40s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 22,
+      "start": 127.8,
+      "end": 131.2,
+      "start_ts": "02:07.8",
+      "end_ts": "02:11.2",
+      "reasons": [
+        "at_pause",
+        "audio_change",
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 0.83,
+      "keyframes": [
+        {
+          "t": 128.0,
+          "file": "frames/f043_00128.00s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 23,
+      "start": 131.2,
+      "end": 150.8,
+      "start_ts": "02:11.2",
+      "end_ts": "02:30.8",
+      "reasons": [
+        "visual_cut"
+      ],
+      "visual_change": 0.02,
+      "audio_change": 0.71,
+      "speech_ratio": 0.76,
+      "activity": 1.07,
+      "keyframes": [
+        {
+          "t": 134.4,
+          "file": "frames/f044_00134.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 148.0,
+          "file": "frames/f045_00148.00s.jpg",
+          "why": "drift 0.17"
+        },
+        {
+          "t": 149.4,
+          "file": "frames/f046_00149.40s.jpg",
+          "why": "drift 0.13"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 24,
+      "start": 150.8,
+      "end": 153.4,
+      "start_ts": "02:30.8",
+      "end_ts": "02:33.4",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.0,
+      "speech_ratio": 1.0,
+      "activity": 0.2,
+      "keyframes": [
+        {
+          "t": 151.2,
+          "file": "frames/f047_00151.20s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 25,
+      "start": 153.4,
+      "end": 160.4,
+      "start_ts": "02:33.4",
+      "end_ts": "02:40.4",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.56,
+      "speech_ratio": 0.77,
+      "activity": 1.18,
+      "keyframes": [
+        {
+          "t": 154.2,
+          "file": "frames/f048_00154.20s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 26,
+      "start": 160.4,
+      "end": 165.2,
+      "start_ts": "02:40.4",
+      "end_ts": "02:45.2",
+      "reasons": [
+        "at_pause",
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.7,
+      "speech_ratio": 0.83,
+      "activity": 0.36,
+      "keyframes": [
+        {
+          "t": 160.6,
+          "file": "frames/f049_00160.60s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 27,
+      "start": 165.2,
+      "end": 167.8,
+      "start_ts": "02:45.2",
+      "end_ts": "02:47.8",
+      "reasons": [
+        "at_pause",
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 3.08,
+      "audio_change": 0.38,
+      "speech_ratio": 0.54,
+      "activity": 0.84,
+      "keyframes": [
+        {
+          "t": 165.4,
+          "file": "frames/f050_00165.40s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 167.2,
+          "file": "frames/f051_00167.20s.jpg",
+          "why": "drift 0.44"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 28,
+      "start": 167.8,
+      "end": 170.6,
+      "start_ts": "02:47.8",
+      "end_ts": "02:50.6",
+      "reasons": [
+        "codec_scenecut",
+        "visual_cut"
+      ],
+      "visual_change": 0.0,
+      "audio_change": 0.03,
+      "speech_ratio": 0.5,
+      "activity": 1.03,
+      "keyframes": [
+        {
+          "t": 168.0,
+          "file": "frames/f052_00168.00s.jpg",
+          "why": "anchor"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 29,
+      "start": 170.6,
+      "end": 174.0,
+      "start_ts": "02:50.6",
+      "end_ts": "02:54.0",
+      "reasons": [
+        "at_pause",
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 4.82,
+      "audio_change": 1.02,
+      "speech_ratio": 1.0,
+      "activity": 0.75,
+      "keyframes": [
+        {
+          "t": 171.2,
+          "file": "frames/f053_00171.20s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 172.6,
+          "file": "frames/f054_00172.60s.jpg",
+          "why": "drift 0.46"
+        }
+      ],
+      "transcript": ""
+    },
+    {
+      "id": 30,
+      "start": 174.0,
+      "end": 180.0,
+      "start_ts": "02:54.0",
+      "end_ts": "03:00.0",
+      "reasons": [
+        "codec_scenecut",
+        "visual_change",
+        "visual_cut"
+      ],
+      "visual_change": 0.15,
+      "audio_change": 0.46,
+      "speech_ratio": 0.73,
+      "activity": 0.63,
+      "keyframes": [
+        {
+          "t": 174.8,
+          "file": "frames/f055_00174.80s.jpg",
+          "why": "anchor"
+        },
+        {
+          "t": 178.2,
+          "file": "frames/f056_00178.20s.jpg",
+          "why": "drift 0.16"
+        }
+      ],
+      "transcript": ""
+    }
+  ],
+  "sheets": [
+    "sheet_01.jpg",
+    "sheet_02.jpg",
+    "sheet_03.jpg",
+    "sheet_04.jpg",
+    "sheet_05.jpg"
+  ]
+}

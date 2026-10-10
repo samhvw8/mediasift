@@ -1,0 +1,931 @@
+[00:00-00:02] Bạn có tò mò Sam Anmang ghi chú thế nào?
+[00:02-00:03] Lên kế hoạch năm ra sao?
+[00:03-00:05] Nghĩ gì về kỳ nghỉ Saba Tiết ta?
+[00:06-00:06] Sẽ làm gì?
+[00:06-00:08] Và vì sao chọn A-R-I không?
+[00:08-00:10] Đó chính là những gì ta bàn trong tập này
+[00:10-00:11] và có câu trả lời.
+[00:12-00:14] Cùng trò chuyện với Sam Anmang.
+[00:15-00:18] Được rồi Sam, tôi muốn bắt đầu với câu hỏi.
+[00:18-00:20] Hiểu về LLM đã thay đổi cách bạn nghĩ
+[00:20-00:22] về viết lách và giao tiếp ra sao?
+[00:25-00:26] Tôi nghĩ trong tương lai,
+[00:27-00:28] không phải tất cả,
+[00:28-00:30] nhưng nhiều người trong chúng ta sẽ viết theo một cách khác.
+[00:32-00:35] Ý tôi không phải là mọi người sẽ chỉ nhờ LLM viết hộ
+[00:35-00:37] vì có một điều rất lạ.
+[00:38-00:40] Người ta nhập vài gạch đầu dòng vào LLM
+[00:40-00:45] để nó viết thành email đẹp, gửi đi,
+[00:45-00:46] rồi bên kia lại tóm tắt.
+[00:47-00:50] Chỉ vì ta không chịu thống nhất cứ gửi gạch đầu dòng qua lại,
+[00:50-00:52] xã hội vẫn còn phép lịch sự đó,
+[00:52-00:54] nhưng rồi sẽ có người xây dựng,
+[00:54-00:56] có khi đã có người làm bản đầu tiên rồi.
+[00:58-01:06] Một công cụ tuyệt vời để viết theo cách mới, không phải mở rộng các gạt đầu dòng, mà giúp ta khám phá những điều mới trong không gian ý tưởng.
+[01:14-01:21] Tuyệt thật. Máy tính giỏi nhất ở chỗ này là công cụ giúp ta làm điều mình vốn không làm được.
+[01:21-01:31] Tôi luôn thấy lạ là ý tưởng công cụ hỗ trợ tư duy đã có hàng chục năm, vậy mà đa số người viết vẫn mở Microsoft Word lên và gần như chẳng có máy tính nào hỗ trợ.
+[01:32-01:35] Như máy đánh chữ.
+[01:36-01:41] Ừ. Thực ra thì viết lách vốn đã khá tốt rồi.
+[01:41-01:45] Chắc chắn cải thiện được, nhưng tôi hiểu vì sao mọi thứ đang như vậy.
+[01:45-01:54] Hãy cho tôi biết điều này vô căn cứ hay đúng, hoặc nằm ở đâu đó giữa, nhưng tôi thấy thú vị khi chữ ngày càng quan trọng ở đầu vào, trong khi đầu ra lại rời xa chữ.
+[01:59-02:09] Sura, Yer-E-L-E, tôi nghĩ ngôn từ sẽ là phần rất lớn trong cách chúng ta giao tiếp với máy tính, cách chúng ta lập trình cho máy tính.
+[02:09-02:14] và tôi nghĩ ngôn ngữ tự nhiên chính là giao diện mà con người muốn dùng với máy tính.
+[02:18-02:20] Khoa học viễn tưởng dự đoán điều này từ lâu rồi,
+[02:20-02:26] nhưng phần lớn của cách mạng của Jack là ai cũng có thể nói chuyện với máy tính bằng tiếng thường ngày để nó làm đủ thứ.
+[02:30-02:33] Tất nhiên đó sẽ không phải cách duy nhất để ta tương tác với máy tính,
+[02:33-02:35] sẽ có cả đầu vào lẫn đầu ra đa phương thức,
+[02:36-02:39] nhưng con người đã được tiến hóa rất tinh vi để dùng ngôn ngữ.
+[02:39-02:45] Văn bản cũng rất đặc biệt.
+[02:46-02:47] Chuẩn.
+[02:48-02:50] Tìm kiếm được, chỉnh sửa được.
+[02:50-02:53] Có lý do để ngôn ngữ là một phần quan trọng như vậy.
+[02:54-02:56] Thử tưởng tượng văn hóa nhân loại mà không có ngôn ngữ
+[02:56-02:58] nghe như điều bất khả thi.
+[03:01-03:01] Tôi chịu.
+[03:02-03:05] Và ngay cả văn bản cũng có sự chặt chẽ riêng.
+[03:07-03:09] Nghĩ bằng chữ rất chặt chẽ.
+[03:09-03:16] Đúng, tôi hiểu, vì ta có thể chỉ ra đúng từ và câu mình không đồng tình, chứ không chỉ nói về cảm nhận chung chung.
+[03:18-03:25] Khi trò chuyện, tôi khó nhớ chính xác bạn nói từ nào, nhưng có bản ghi thì tôi nói được, chỗ này tôi rất thích, chỗ này mình chỉnh nhẹ thôi.
+[03:29-03:31] Jack nên đổi cách dạy trẻ viết ra sao?
+[03:33-03:36] Tôi nghĩ ta chưa biết quy trình viết trong tương lai sẽ ra sao.
+[03:36-03:42] Tôi đoán an toàn nhất là nó sẽ không thay đổi nhiều
+[03:42-03:46] Tôi nghĩ sẽ có công cụ mới giúp người ta viết theo những cách khác
+[03:46-03:49] và hy vọng quá trình đó giúp mài dũa và tạo ra nhiều ý tưởng hơn
+[03:49-03:55] Nhưng cái câu người ta hay nói
+[03:55-03:58] sẽ chẳng ai học viết nữa vì giờ có sẵn rồi
+[03:58-04:02] Đâu phải vì thế mà người ta viết
+[04:02-04:04] kiểu viết mà ta có thể giao hết cho chát
+[04:04-04:06] như nhờ nó làm bài luận cho lớp văn.
+[04:10-04:11] Không thật đâu.
+[04:11-04:12] Đâu phải chuyện ấy.
+[04:12-04:15] Và nếu chát giúp người ta là một hoạt động giống như viết
+[04:15-04:17] để tư duy có chất lượng cao hơn
+[04:17-04:18] thì thật tuyệt vời.
+[04:23-04:24] Ừm, nói thêm đi.
+[04:24-04:26] Nếu ta tin rằng một phần giá trị lớn của việc viết
+[04:26-04:28] là làm rõ suy nghĩ của chính mình
+[04:28-04:31] và có công cụ mới giúp làm điều đó tốt hơn trước
+[04:31-04:33] thì đó sẽ là một bước tiến lớn.
+[04:34-04:40] Theo tôi, Chatt đang nâng cao giá trị của hạt giống ban đầu, khoảnh khắc Big Bang của một ý tưởng.
+[04:45-04:50] Tôi thích dùng Chatt theo cách này nếu nó không đồng ý với tôi, tức là tôi có một ý tưởng rõ ràng.
+[04:53-05:00] Khi đã có ý tưởng đó, nếu tôi làm rõ được nó, Chatt sẽ giúp tôi tìm ví dụ, câu chuyện, những thứ nuôi lớn hạt giống mà tôi đã gieo.
+[05:04-05:10] Chủng, tôi luôn thích quan sát những người ở đủ mọi hoàn cảnh sử dụng chát và lần nào cũng thấy rất mở mang.
+[05:14-05:19] Gần đây tôi thấy hai sinh viên dùng nó để làm bài tập, nói thẳng ra là nhờ nó làm hộ luôn.
+[05:22-05:25] Một bạn chỉ việc dán đề vào, rồi nó viết ra cả bài luận.
+[05:28-05:34] Tôi sốc thật. Tôi biết là có người làm vậy, số lượng còn không nhỏ, nhưng nghe kể là một chuyện.
+[05:34-05:35] Còn.
+[05:38-05:39] Khi tận mắt thấy ai đó làm vậy,
+[05:39-05:42] rồi nhận về một bài luận dở nhưng vẫn tạm chấp nhận được,
+[05:43-05:44] thì đó đúng là khoảnh khắc tự hỏi,
+[05:44-05:46] chúng ta đã làm gì thế này?
+[05:51-05:52] Cảm giác đó rất mạnh,
+[05:52-05:54] vì trước giờ tôi chưa từng thấy ai làm vậy.
+[05:56-05:59] Sau đó tôi thấy một người khác dùng nó theo cách hoàn toàn khác,
+[05:59-06:00] tương tác hơn,
+[06:00-06:02] để làm việc giống như điều bạn đang nói.
+[06:02-06:03] Tôi có một ý tưởng.
+[06:04-06:09] chưa diễn đạt được, bị kè trôi,
+[06:10-06:10] giúp tôi thoát bí,
+[06:11-06:12] nghĩ thêm thật nhiều ý tưởng,
+[06:13-06:15] kết quả hay hơn hẳn những gì bất kỳ ai tự làm được.
+[06:18-06:20] Tôi đã suy ngẩm rất nhiều về điều đó.
+[06:22-06:23] Câu hỏi ban đầu là một câu hỏi dở.
+[06:25-06:27] Nếu chỉ cần dán đề vào là có ngay một câu trả lời thú vị,
+[06:27-06:30] à không, một câu trả lời tạm qua được.
+[06:30-06:35] Tôi nghĩ ta đang bắt người ta làm sai việc
+[06:35-06:39] Còn nếu đó là thứ khiến họ muốn nghĩ về vấn đề theo một cách khác
+[06:39-06:43] Rồi dùng công cụ để đi đến nơi mà tự mình không thể tới được
+[06:43-06:47] Thú vị thật
+[06:47-06:50] Hằng ngày bạn dùng chát thế nào?
+[06:51-06:53] Trước tôi chỉ dùng cho vài việc
+[06:53-06:54] Giờ chát tốt hơn
+[06:54-06:55] Tôi cũng dùng nhiều hơn
+[06:55-07:01] Điều hay là giờ tôi dùng nó như một công cụ đa năng
+[07:01-07:03] Tôi hy vọng vài năm nữa
+[07:03-07:04] Câu trả lời sẽ là
+[07:04-07:07] Dùng cho hầu hết mọi việc
+[07:07-07:10] Cứ vài tháng tôi lại thấy thêm cách dùng và tích hợp mới
+[07:10-07:14] Hiển nhiên nó vẫn chưa hòa vào quy trình làm việc của đa số mọi người
+[07:14-07:17] Nhưng sẽ ngày càng tốt hơn
+[07:17-07:21] Khi bạn khuyên bạn bè
+[07:21-07:24] Nên dùng chat cho việc gì đó
+[07:24-07:26] thì đó thường là những việc gì?
+[07:29-07:31] Bạn bè tôi kể là họ mê nhất khoản hỗ trợ lập trình
+[07:31-07:33] dưới hình thức này hay hình thức khác.
+[07:38-07:40] Và rất nhiều người nói nó đã thay đổi cuộc đời họ.
+[07:42-07:44] Vâng, nghe vậy tôi thấy rất mãn nguyện.
+[07:45-07:48] Vui lắm, có những người nói nó thay đổi cách con họ học.
+[07:48-07:50] Giáo viên thì nói nó thay đổi cách họ dạy.
+[07:52-07:53] Cũng tuyệt.
+[07:53-07:55] rồi còn những ví dụ đáng kinh ngạc trong y tế
+[07:55-07:58] và cách người ta dùng nó cho công việc sáng tạo.
+[08:00-08:02] Nhưng lập trình là thứ tôi đặc biệt quý.
+[08:02-08:04] Nhiều bạn tôi làm lập trình nên nghe hoài.
+[08:05-08:05] Email.
+[08:06-08:08] Vâng, bạn viết rất nhiều qua email.
+[08:08-08:11] Và tôi viết rất nhiều email cực ngắn.
+[08:13-08:14] Kiểu như toàn email 7 chữ.
+[08:15-08:16] Chắc giúp bạn thế nào?
+[08:18-08:20] Nó tóm tắt email dài cực giỏi.
+[08:20-08:24] Nói thật, hầu hết email dài tôi bỏ luôn.
+[08:24-08:31] Tôi còn không đọc, nhưng nếu buộc phải đọc thì chát tóm tắt nội dung dài rất hiệu quả.
+[08:37-08:40] Như chuỗi thư rất dài, rất ấn tượng.
+[08:40-08:43] Vâng, tôi vừa được tham quan thư viện ở đây.
+[08:43-08:44] Vâng, đẹp, thật tiện thể.
+[08:45-08:46] Làm tốt lắm, tôi rất thích.
+[08:46-08:47] Đẹp lắm, cảm ơn.
+[08:47-08:50] tôi thấy Inseto của Nassim Taleb trên tường
+[08:50-08:51] ông ấy nói về cơ bản
+[08:51-08:54] định nghĩa của một cuốn sách hay là cuốn không thể tóm tắt
+[08:54-08:57] và có lẽ GPT cũng có điều tương tự
+[08:57-09:01] ở đây có một điều rất thú vị
+[09:01-09:03] về một mặt nào đó
+[09:03-09:05] tôi phải mất nhiều năm mới thực sự hiểu ra
+[09:05-09:07] nhưng Ilya thì lúc nào cũng nói rằng
+[09:07-09:14] các mô hình này thực chất là về nén thông tin
+[09:14-09:19] và ta sẽ tìm cách nén được càng nhiều tri thức càng tốt.
+[09:20-09:21] Đó là thứ ta sẽ tạo ra.
+[09:23-09:24] Nén chính là bí mật của trí thông minh.
+[09:25-09:27] Tôi đã phải suy ngẩm về điều đó rất lâu.
+[09:30-09:31] Chắc chắn là tôi vẫn chưa hiểu hết,
+[09:32-09:34] nhưng có điều gì đó rất sâu sắc ở đây.
+[09:36-09:38] Tôi vừa nói chuyện với trợ lý của anh.
+[09:39-09:42] Cô ấy nói anh suy nghĩ rất rõ ràng, kiệm lời,
+[09:42-09:46] nhưng khi đã nói thì anh biết rõ mình muốn gì và thông điệp rất cô động.
+[09:49-09:52] Điều tôi thấy đúng là tôi luôn cố nắm được bản chất của vấn đề
+[09:52-09:58] và tôi chắc chắn không thích khi người khác diễn đạt thiếu rõ ràng.
+[10:04-10:09] Trong cuộc trò chuyện với Johansson, tôi thấy rất thú vị khi anh kể về cách anh gỡ bỏ nỗi lo âu khỏi cuộc sống.
+[10:12-10:17] Sự thay đổi nội tâm đó thể hiện ra trong tư duy của anh thế nào?
+[10:19-10:21] Tôi không nhớ ai đã nói.
+[10:21-10:22] Có một câu nổi tiếng thế này.
+[10:22-10:27] Hầu hết mọi người còn không dám cho phép mình nghĩ những điều thú vị, húng chi nói ra.
+[10:30-10:33] Tôi nghĩ ở điểm đó, thế giới đã đi sai một cách khủng khiếp.
+[10:35-10:38] Và chắc chắn là khi lo âu cứ chạy ngầm như một tiến trình nền,
+[10:39-10:41] việc nghĩ ra ý mới và tập trung sẽ khó hơn nhiều.
+[10:42-10:48] Nếu bạn đầy lo âu
+[10:48-10:50] còn tiếng nói trong đầu kéo đi đủ hướng
+[10:50-10:51] thì khó mà ngồi xuống tập trung.
+[10:53-10:54] Còn nếu bạn cứ tự chê mình mãi
+[10:54-10:56] cứ bằng khoăn người khác sẽ nghĩ sao?
+[10:57-10:59] Tôi nghĩ nhiều người như thế
+[10:59-11:00] tôi từng nghe họ nói
+[11:00-11:01] ý tưởng đó có thể hay đấy
+[11:01-11:03] nhưng tôi sẽ thấy xấu hổ
+[11:03-11:04] thấy mình ngớ ngẩn nếu.
+[11:10-11:12] Thậm chí nói là mình đang nghĩ hay làm nó
+[11:13-11:19] Nếu bạn còn không cho phép mình đi khá xa trên con đường khám phá một ý tưởng mà đã lo người khác sẽ nghĩ gì, thì thật tệ.
+[11:24-11:30] Người ta dành quá nhiều thời gian nghĩ cách làm việc năng suất hơn, nhưng anh lại nói, khoan đã, khoan đã.
+[11:31-11:34] Hãy bàn xem thực sự nên chọn làm việc gì ngay từ đầu.
+[11:35-11:37] Ừ, việc viết giúp gì cho anh.
+[11:37-11:48] Trước hết, tôi hoàn toàn đồng ý, nếu phải chọn giữa việc bỏ công nghỉ xem nên làm gì và việc tìm cách năng suất hơn một chút bằng phương pháp này hay phương pháp nọ, thì ta nên đặt ngưỡng rất cao.
+[11:49-11:56] Với mọi thứ, trừ việc chọn nên làm gì, tôi nghĩ đó là việc tác động lớn hơn nhiều.
+[11:58-12:06] Thường vậy, không phải lúc nào cũng vậy, đó là khi bạn thật sự phải bắt tay vào làm, nhưng tôi hay thấy những người mà tôi cho là
+[12:06-12:10] rất tài năng, làm việc cực chăm chỉ hoặc cực năng suất,
+[12:10-12:12] nhưng lại không dành mấy thời gian,
+[12:12-12:15] thậm chí đáng ngạc nhiên là hay chẳng dành chút thời gian nào
+[12:15-12:16] để nghiêm túc nghĩ xem mình sẽ làm gì.
+[12:20-12:21] Đó mới là điều then chốt.
+[12:22-12:23] Đó là phần một.
+[12:24-12:25] Còn về việc viết giúp làm điều đó,
+[12:25-12:28] tôi coi viết như một kiểu tư duy được đưa ra bên ngoài.
+[12:30-12:32] Nếu gặp vấn đề thật khó hoặc thấy hơi rối về điều gì,
+[12:32-12:36] tôi vẫn chưa tìm ra cách nào hay hơn là ngồi xuống và ép mình viết ra.
+[12:39-12:41] Viết ra xem mình đang nghĩ về nó thế nào,
+[12:41-12:44] thử tìm cách giải thích nó cho chính mình hoặc cho người khác.
+[12:46-12:48] Tôi nghĩ đó là công cụ tư duy cực mạnh.
+[12:49-12:51] Tôi viết nhiều nhất cho bản thân,
+[12:51-12:53] nhiều gì là cho các nhóm riêng,
+[12:53-12:54] còn công khai thì hiện giờ rất hiếm.
+[12:59-13:01] Giao tiếp rõ ràng gồm những gì?
+[13:01-13:02] Có phần khẩu hiệu?
+[13:02-13:06] Một câu tag liên hay và chiều sâu, mê cung ý tưởng.
+[13:06-13:10] Ừ, thật ra, giao tiếp rõ ràng kém quan trọng hơn nhiều.
+[13:10-13:11] Nó chỉ là hệ quả của tư duy rõ ràng.
+[13:12-13:16] Nên nếu bạn biết mình sẽ làm gì và đã tìm ra cách rút gọn nó về bản chất,
+[13:16-13:19] vì sau đó là ý hay và kế hoạch sẽ diễn ra,
+[13:20-13:23] sẽ ra sao, thứ tự ưu tiên là gì,
+[13:23-13:25] thì truyền đạt rõ ràng về điều đó không quá khó.
+[13:26-13:29] Nhưng làm rõ chính những ý tưởng mới thật sự khó.
+[13:29-13:33] nên tôi nghĩ giao tiếp thiếu rõ ràng
+[13:33-13:35] phần lớn là dấu hiệu của tư duy thiếu tập trung
+[13:35-13:38] Napoleon có một câu nói
+[13:38-13:40] về tầm quan trọng của chỉ thị rõ ràng
+[13:40-13:41] giao tiếp rõ ràng
+[13:41-13:42] vì ngoài chiến trường
+[13:42-13:45] bạn phải diễn đạt mọi thứ thật đơn giản và có được
+[13:45-13:51] sự đồng thuận của cả đội
+[13:51-13:53] khá giống điều bạn nói
+[13:53-13:54] không chỉ mình Napoleon
+[13:54-13:56] tôi chưa nghiên cứu nhiều sự quân sự
+[13:56-13:58] nhưng nghe đây là quan điểm khá phổ biến
+[13:58-14:02] lịch sử dường như đã chứng minh điều đó
+[14:02-14:04] nhưng tôi nghĩ trong kinh doanh cũng vậy
+[14:04-14:05] sự rõ ràng
+[14:05-14:08] tốc độ và chất lượng thực thi đều gắn liền với nhau
+[14:08-14:13] bạn tự hào nhất về bài viết nào?
+[14:15-14:16] không phải khiêm tốn đâu
+[14:16-14:17] chẳng cái nào
+[14:17-14:20] tôi không có khiếu viết
+[14:20-14:21] và ổn thôi
+[14:21-14:21] với tôi
+[14:21-14:23] viết là công cụ rất giá trị để suy nghĩ
+[14:23-14:25] và trao đổi nội bộ trong tổ chức
+[14:25-14:26] nhưng không có gì cả
+[14:26-14:35] Tôi hy vọng mình sẽ làm được những điều trường tồn
+[14:35-14:36] và có ý nghĩa với thế giới
+[14:36-14:40] Sẽ không phải văn của tôi
+[14:40-14:41] Nhưng viết vẫn rất có
+[14:41-14:45] Tôi nghĩ mình nên công bằng hơn
+[14:45-14:47] Có thể văn hoa Mỹ không phải sở trường của bạn
+[14:47-14:49] Nhưng bài How To Be Successful
+[14:49-14:51] đã ảnh hưởng tôi rất nhiều
+[14:51-14:55] Cảm ơn
+[14:55-14:56] Cảm kích lắm
+[14:56-14:59] Mỗi việc tiếp theo đều là chú thích cho việc bạn đã làm
+[14:59-15:02] Ý tưởng rất sâu sắc
+[15:02-15:07] Ừ, tôi hy vọng mình sẽ đóng góp cho thế giới vài ý tưởng có ý nghĩa
+[15:07-15:11] Nhưng đều kém quan trọng hơn Open AI nhiều
+[15:11-15:12] Bạn nói vậy thật tốt
+[15:12-15:15] Tôi thực sự trân trọng
+[15:15-15:17] Sao bạn bắt đầu viết blog cá nhân
+[15:17-15:18] Tôi muốn tập viết cho tốt
+[15:18-15:21] Tôi từng quan sát Paul Graham
+[15:21-15:23] Một cây bút tuyệt vời
+[15:23-15:25] Tôi chưa bao giờ mong mình được như vậy
+[15:25-15:29] nhưng tôi thấy viết lách giúp ích rất nhiều cho các nhà sáng lập startup
+[15:29-15:31] và giúp đầu tư vào những nhà sáng lập giỏi.
+[15:34-15:36] Vì vậy tôi muốn cố gắng viết cho giỏi.
+[15:38-15:40] Tôi không có năng khiếu viết,
+[15:40-15:42] nhưng tôi tin rằng luyện tập thì ai cũng giỏi lên được nhiều thứ.
+[15:45-15:48] Tôi muốn tiếp tục làm điều có vẻ rất hiệu quả với IC
+[15:48-15:50] là thu hút những nhà sáng lập giỏi.
+[15:55-15:59] Nhưng thật lòng, đó không phải thiên hướng của đời tôi
+[15:59-16:04] Giờ tôi bỏ rồi
+[16:04-16:05] Bạn muốn làm nhà văn?
+[16:05-16:06] Tôi ngạc nhiên
+[16:06-16:10] Có, nhưng chỉ vì cuộc sống lãng mạn của nó
+[16:10-16:12] Không phải vì nghĩ mình sẽ viết giỏi
+[16:12-16:15] Chỉ thấy ngồi hút thuốc trong quán cà phê ở Paris Nghè rất ngầu
+[16:15-16:19] Giờ vẫn làm được mà
+[16:19-16:20] Làm được, được
+[16:20-16:24] Chắc không phải đường của tôi, nhưng được
+[16:24-16:29] Hóa ra tôi viết không giỏi, cũng sẽ không làm blogger, và không sao cả.
+[16:32-16:37] Nhưng tôi vẫn rất vui vì đã thử, vì tôi học được cách viết cho chính mình để làm rõ suy nghĩ.
+[16:40-16:41] Và điều đó cực kỳ hiệu quả.
+[16:42-16:46] Kể cả việc viết tin nhắn giải thích cho cả nhóm về kế hoạch và lý do ta làm nó.
+[16:48-16:51] Tôi nghĩ làm vậy bằng văn bản thường hiệu quả hơn là học.
+[16:54-16:55] Gần đây làm chưa?
+[16:55-16:59] Như khi mình bắt đầu một dự án mới, hay lên một kế hoạch nào đó để triển khai.
+[16:59-17:03] Việc ép bản thân viết ra thay vì ngồi học rồi cùng nhau tung ý tưởng đã rất hiệu quả.
+[17:06-17:07] Anh có khuôn mẫu nào không?
+[17:09-17:10] Không, không.
+[17:11-17:13] Tôi cố giữ cho nó gọn, dài thì không hay.
+[17:13-17:15] Ừ, nên tôi cố viết ngắn.
+[17:15-17:16] Ngoài ra không ràng buộc gì.
+[17:17-17:21] Hãy kể về những bài học giao tiếp anh học được từ Peter Thiel.
+[17:21-17:23] Ông ấy có cách giao tiếp rất riêng.
+[17:23-17:28] Anh từng kề cận ông ấy từ sớm
+[17:28-17:29] Ông ấy giao tiếp cực đỉnh
+[17:29-17:32] Và điều ông ấy làm cực tốt là nghĩ ra những câu rất ngắn
+[17:32-17:33] Rất gợi hình
+[17:33-17:35] Cứ thế in sâu vào đầu người nghe
+[17:35-17:41] Còn tôi thì không rõ
+[17:41-17:42] Tôi chẳng biết làm sao
+[17:42-17:44] Tôi cũng không biết ai khác làm được như ông ấy
+[17:44-17:47] Nhưng ông ấy có nhiều điều rất thú vị để nói
+[17:47-17:49] Và cả cách nói cũng rất thú vị
+[17:49-17:53] Phần đông chỉ có được một trong hai
+[17:53-17:56] Ông ấy có cả hai, rất hiếm
+[17:56-17:59] Quá ấn tượng, anh nghĩ do đâu?
+[17:59-18:02] Ông ấy nghĩ về thế giới theo cách rất phóng khoáng
+[18:02-18:03] Không bị ràng buộc
+[18:03-18:07] Điều đầu tiên ai cũng sẽ nói về ông ấy là
+[18:07-18:11] Ông thực sự là một nhà tư tưởng độc đáo, xuất chúng
+[18:11-18:13] Mà điều đó rất hiếm
+[18:13-18:18] Tư duy của anh có một sự không giới hạn rất nổi bật
+[18:18-18:22] Tôi thấy anh cũng không bị gò bó như vậy
+[18:23-18:24] Tôi nghĩ ông ấy thiên về kiểu
+[18:24-18:28] đây là một góc nhìn
+[18:28-18:33] hoàn toàn khác về điều chưa ai từng nói ra
+[18:33-18:35] mà giờ nghe thì ít nhất cũng thú vị
+[18:35-18:37] và thường thì hiển nhiên là đúng.
+[18:42-18:43] Còn cách nhìn của tôi thường thiên về kiểu
+[18:43-18:49] mình có một hướng đi, làm nhiều hơn được không?
+[18:50-18:51] Đẩy mạnh hơn nữa.
+[18:52-18:58] Có phải theo ý David Dauduk là mọi thứ đều có thể, không bị giới hạn bởi quy luật vật lý?
+[18:58-19:00] Ừ, và cũng là không có đủ.
+[19:02-19:03] Người ta không.
+[19:04-19:10] Quay lại chuyện Peter, tôi nhớ có lần trước lâu rồi có người hỏi ông ấy, sai lầm đầu tư lớn nhất của ông là gì?
+[19:12-19:16] Ai cũng đợi ông kể chuyện đầu tư vào một công ty nọ rồi nó sụp đổ.
+[19:16-19:21] Ông nói sai lầm lớn nhất, chẳng hạn, là không đầu tư vào vòng CVB của Facebook.
+[19:22-19:27] Và đó là kiểu sai làm tôi cố không mắc phải.
+[19:27-19:33] Nên tôi rất tin vào việc tìm ra thứ đang hiệu quả rồi dốc sức mạnh tay theo đuổi nó.
+[19:33-19:38] Ý tưởng theo luật lũy thừa, cốt là tìm ra điều cốt lõi rồi dồn gấp đôi, gấp ba.
+[19:38-19:44] Ừ. Tôi nghĩ những ý tưởng thật sự hay là rất hiếm.
+[19:44-19:51] Và khi tìm được một ý, bạn nên dồn gấp bốn lần, và nó phải là thứ duy nhất bạn thúc đẩy.
+[19:51-19:54] chỉ nên tập trung vào vài thứ, trồng viết lách hay kinh doanh.
+[19:55-19:58] Tôi thực sự rất tin vào nguyên tắc này.
+[19:59-20:02] Nên tôi nghĩ hầu hết sách kinh doanh đều dở, đúng không?
+[20:02-20:04] Thường chỉ có ba ý hay trong 300 trang,
+[20:04-20:07] mà người đọc thì muốn ba ý hay đó gói gọn trong một trang.
+[20:10-20:10] Ừ.
+[20:11-20:13] Paul Graham có dạy anh gì cụ thể về viết không?
+[20:14-20:17] Vâng, chủ yếu là đọc bài của ổng, giống nhiều người khác.
+[20:17-20:21] Tôi đến với Startup và thấy hào hứng là nhờ đọc các bài essay của Piri.
+[20:21-20:24] Ông ấy viết cực đỉnh
+[20:24-20:27] và đó là chủ đề tôi cùng nhiều người khác rất quan tâm.
+[20:28-20:32] Tôi nghĩ cả một thế hệ chúng tôi đã bắt trước PG ở đủ mọi mặt.
+[20:35-20:38] Và dù ông ấy chưa bao giờ nói kiểu để để tôi dạy các bạn cách viết,
+[20:43-20:45] tôi và nhiều người vẫn lấy rất nhiều cảm hứng
+[20:45-20:47] vì phong cách của ông chạm đến người đọc.
+[20:47-20:52] Rõ ràng, chính xác, cô động
+[20:52-20:55] Ừ, đọc một cuốn sách kinh doanh bình thường rồi đọc một bài của Piri
+[20:55-20:57] Cả hai đều là viết về kinh doanh
+[20:57-21:01] Ngoài ra, khác nhau hoàn toàn
+[21:01-21:03] Không màu mè
+[21:03-21:04] Nói điều thú vị
+[21:04-21:06] Nói rõ ràng, không phí thời gian
+[21:06-21:08] Không gì giả tạo
+[21:08-21:09] Ừm
+[21:09-21:10] Pitching
+[21:10-21:12] Dựng câu chuyện
+[21:12-21:15] Viết lách đóng vai trò gì ở đó
+[21:15-21:17] Tôi lại xem viết lách như một công cụ để
+[21:17-21:25] nghĩ rõ hơn hoặc nắm được cốt lõi của vấn đề
+[21:25-21:29] rồi hy vọng khi ngồi trong buổi tích cho startup hay gì đó
+[21:29-21:32] bạn đã biết cách cô động nó về phần cốt lõi rõ ràng
+[21:32-21:35] Ừ, và nếu làm được
+[21:35-21:40] khác biệt rất lớn khi ngồi phía bên kia buổi tích
+[21:40-21:42] tùy người đó đã nghĩ thấu đáo từ trước hay chưa
+[21:42-21:47] nếu họ còn truyền đạt rõ ràng
+[21:47-21:49] thì càng là điểm cộng.
+[21:49-21:51] Tôi nghĩ được vài người tư duy cực kỳ rõ ràng
+[21:51-21:52] nhưng giao tiếp thì rất tệ.
+[21:58-21:59] Nhưng hiếm.
+[21:59-22:01] Như lúc nãy anh nói, tôi cũng phải ngồi nghĩ đã.
+[22:02-22:04] Nên nếu ai đó nghĩ thông suốt trước buổi tích,
+[22:05-22:07] họ sẽ truyền đạt được cho bạn điều họ đang cố làm.
+[22:10-22:12] Nhiều người không viết vẫn làm được.
+[22:12-22:14] Nhưng tôi thấy viết lách thật sự rất hữu ích.
+[22:14-22:19] Tôi hay gặp những ý tưởng mà tôi tưởng mình nắm rất rõ
+[22:19-22:23] Rồi tôi ép mình viết ra bản tóm tắt một trang
+[22:23-22:25] Rồi ồ, hóa ra mình chưa hiểu
+[22:25-22:29] Anh hay trao đổi Google Doc với bạn không?
+[22:33-22:34] Trước thì có, trước đây có
+[22:34-22:36] Nhưng như mọi thứ trong đời
+[22:36-22:38] Một năm rưỡi qua cứ như đi xuyên qua tấm gương vậy
+[22:38-22:41] Mà cũng không nhiều
+[22:41-22:46] Từ khi chát ra mắt, mọi thứ vui thường ngày của tôi gần như đều mai mộ
+[22:46-22:52] Hồi đó làm vậy, nó giúp ích thế nào?
+[22:53-22:55] Anh nhờ gì?
+[22:56-22:57] Tôi đang nghĩ về việc này
+[22:57-22:59] Tôi định làm việc này
+[22:59-23:01] Ý này thú vị nên tôi nghĩ tới
+[23:01-23:02] Bước tiếp theo là gì?
+[23:02-23:03] Hay chỉ ra chỗ tôi sai đi?
+[23:05-23:08] Nhiều chuyện có thể bàn ngay trong bữa tối và tiến triển được khá nhiều
+[23:08-23:11] Mời bạn bè đến chơi cuối tuần
+[23:11-23:12] bạn mãi một chuyện
+[23:12-23:13] cũng tiến được rất nhiều
+[23:13-23:16] nhưng khi cô động ý tưởng lên một tờ giấy
+[23:16-23:17] nó buộc phải chặt chẽ
+[23:17-23:19] nhất quán từ trong ra ngoài
+[23:19-23:24] nó không cho bạn trốn tránh điểm yếu
+[23:24-23:26] giới hạn tôi hay đặt ra
+[23:26-23:27] là ý tưởng phải đủ ngắn
+[23:27-23:30] để bạn gửi cho tôi bằng một ảnh chụp màn hình
+[23:30-23:35] chụp màn hình điện thoại à
+[23:35-23:37] không phải lúc nào
+[23:37-23:39] nhưng tôi thích thế
+[23:39-23:42] Với tôi, thế có khi quá gò bó với vài ý tưởng quan trọng.
+[23:43-23:47] Dù về đại thể, tôi rất đồng ý là ngắn gọn là điều then chốt.
+[23:47-23:49] Cảm hứng viết của bạn bao nhiêu phần đến từ trò chuyện.
+[23:52-23:57] Nhiều, nhưng nó đến với tôi như một mớ ý tưởng hỗn độn và viết lách giúp ích ở chỗ đó.
+[23:58-24:02] Tôi coi trò chuyện là một quá trình rất sáng tạo, sinh ra thật nhiều ý.
+[24:04-24:06] Sau đó phải mài nó xuống còn cốt lõi.
+[24:06-24:10] và cách tốt nhất là ngồi trước màn hình lớn, không có ai xung quanh.
+[24:13-24:15] Tôi chợt nghĩ đến cuộn tai nghe bị rối.
+[24:16-24:16] Hay.
+[24:17-24:20] Với tôi, hình ảnh ấy giống như mài mòn những tảng đá hơn nhiều,
+[24:20-24:22] chứ không phải gỡ rối một thứ gì đó.
+[24:27-24:30] Bởi đó là quá trình gọt bớt đi, chứ không phải gỡ rối.
+[24:32-24:34] Khi nhiều ý tưởng hơi khác nhau và đập vào nhau,
+[24:34-24:36] cuối cùng bạn sẽ có được cái lõi đúng.
+[24:36-24:41] Nếu viết sách, bạn sẽ viết về gì?
+[24:42-24:44] Người ta hay nói, AI có vẻ quan trọng đấy.
+[24:45-24:46] Có cuốn nào nên đọc không?
+[24:47-24:50] Tôi nghĩ rồi đáp, thật ra là không có,
+[24:50-24:53] nên tôi nghĩ mình sẽ viết cuốn sách ấy cho những ai hỏi nên đọc gì về AI.
+[24:56-25:00] Tôi sẽ mở đầu bằng bối cảnh lịch sử của những cuộc cách mạng công nghệ trước đây.
+[25:03-25:05] Vì sao lần này giống, vì sao khác?
+[25:06-25:08] Công nghệ vận hành thế nào?
+[25:09-25:11] Hiện giờ có thể làm được những gì?
+[25:12-25:13] Năm nay nó ảnh hưởng đến bạn.
+[25:14-25:15] Năm năm nữa có thể làm được những gì?
+[25:16-25:17] Rồi tác động đến bạn ra sao?
+[25:17-25:19] Rồi nếu cho phép mình mơ xa hơn,
+[25:20-25:20] một trăm năm nữa,
+[25:23-25:24] nó nghĩa là gì với chúng ta?
+[25:25-25:27] Nếu tôi là biên tập viên hỏi,
+[25:27-25:29] Sam, mọi người đang bỏ lỡ điều gì lớn nhất?
+[25:30-25:31] Bạn trả lời sao?
+[25:31-25:32] Nên tôi mới không viết sách.
+[25:32-25:35] Tôi chưa có thời gian nghĩ về chuyện đó.
+[25:35-25:36] Chắc sắp tới cũng chưa.
+[25:36-25:39] Thói quen viết thường từ đâu ra?
+[25:40-25:43] Ờ, hồi nhỏ tôi sống trên mạng suốt
+[25:43-25:45] Cứ thế thôi, tôi cũng không biết nữa
+[25:45-25:48] Tôi thôi dùng phím ship
+[25:48-25:52] Tôi vẫn thế, còn nếu viết thứ gì đó giống bài luận ở trường
+[25:52-25:56] Thì tôi vừa viết một bài có thể đăng blog, nhưng dài kinh khủng
+[25:56-26:02] 20 trang, dài quá, có thể tôi không kịp cắt gọn, nhưng viết rất thú vị
+[26:02-26:05] Nhưng với thứ như vậy, tôi vẫn viết hoa đầy đủ, chuẩn chỉnh
+[26:05-26:08] nên nó vẫn còn đâu đó.
+[26:08-26:09] Thích đấy.
+[26:09-26:11] Có thể tôi không kịp cắt gọn.
+[26:12-26:13] Có gì đó ở đây.
+[26:13-26:15] Chính khâu biên tập mới tốn công.
+[26:15-26:15] Đúng vậy.
+[26:16-26:17] OVV có một câu rất hay.
+[26:17-26:18] Ông nói, tôi viết dở,
+[26:19-26:20] nhưng biên tập rất giỏi,
+[26:20-26:21] kỹ năng thật đấy.
+[26:22-26:23] Rất khó làm,
+[26:23-26:24] nhất là với bài của chính mình.
+[26:25-26:26] Có nhờ ai biên tập không?
+[26:26-26:26] Kiểu như ở đây,
+[26:27-26:29] mọi người biên tập trên Google Docs
+[26:29-26:31] hay bạn nghĩ sao?
+[26:31-26:33] Những thứ chỉ viết cho tài liệu nội bộ
+[26:33-26:35] thì thường không được biên tập gì cả.
+[26:35-26:41] Tôi viết một lần là xong, rảnh thì đọc lại một lần rồi gửi đi luôn.
+[26:43-26:46] Nhưng để phối hợp nội bộ, viết lách cực kỳ giá trị.
+[26:47-26:48] Vậy nó không phải để xuất bản.
+[26:49-26:52] Phối hợp nội bộ, sao dùng từ đó?
+[26:52-26:55] À, khi nhiều nhóm phải thống nhất mình đang làm gì?
+[26:56-26:57] Có văn bản rõ ràng thì tốt.
+[26:57-27:01] Ở đây văn hóa tài liệu khá đậm, tôi nghĩ đó là điều tốt.
+[27:01-27:06] Văn hóa tài liệu đó có phải học từ Mark Mochary không?
+[27:07-27:09] Không, có từ trước đó rồi.
+[27:09-27:10] YC có không?
+[27:12-27:12] Không.
+[27:14-27:18] Mà hay đấy, tôi đoán nó bắt nguồn từ văn hóa học thuật của các nhà nghiên cứu ở đây.
+[27:18-27:21] Các suy nghĩ của mọi người lộ ra thế nào qua cách họ viết đơn YC?
+[27:25-27:29] Điều lớn nhất tôi rút ra, trong hầu hết các trường hợp, là
+[27:29-27:34] sự rõ ràng hiếm đến mức nào
+[27:34-27:37] trong cách diễn đạt của một đơn sinh vào IC.
+[27:40-27:43] Hiếm thật, dù ai cũng biết là rất quan trọng
+[27:43-27:46] và rõ ràng đó là điều nên làm.
+[27:47-27:48] Nhưng nhìn chúng tôi thấy,
+[27:48-27:50] người nào không diễn đạt rõ ràng trong đơn IC
+[27:50-27:54] thì cũng điều hành công ty không rõ ràng,
+[27:55-27:57] không nói rõ với đội ngũ mình làm gì,
+[27:57-27:59] không nói rõ với nhà đầu tư, khách hàng,
+[27:59-28:01] hay ai khác một cách rõ ràng.
+[28:02-28:04] Và như vậy thì rất khó để công ty có cơ hội thành công.
+[28:08-28:09] Phần lớn công việc của một founder
+[28:09-28:13] hay bất kỳ ai dẫn dắt công ty
+[28:13-28:14] chính là
+[28:14-28:18] người truyền bá số một
+[28:18-28:21] và khó mà truyền bá hiệu quả nếu thiếu.
+[28:23-28:25] Giao tiếp rõ ràng.
+[28:26-28:27] Hồi ở eCombinato,
+[28:27-28:31] bạn có sáng kiến lớn là mở nguồn kiến thức xoay quanh một khóa học
+[28:31-28:33] và bạn viết cuốn sách tên là
+[28:33-28:36] Set the Playbook chỉ là tập sách mỏng thôi.
+[28:36-28:40] Ừ, thôi, không sao, anh viết sách 50 trang, hãy kể về.
+[28:41-28:43] Vì sao anh viết nó và quá trình viết sách?
+[28:44-28:47] Tôi nghĩ việc chia sẻ kiến thức về cách làm startup
+[28:47-28:49] đúng là một điều có lợi rõ ràng.
+[28:50-28:53] Cho thế giới, đó không phải phần quan trọng nhất ở IC
+[28:53-28:56] như là kèm cặp 1-1, mạng lưới hỗ trợ
+[28:56-28:58] mới quan trọng hơn.
+[28:58-29:00] Còn đưa kiến thức ra ngoài thì
+[29:00-29:01] tôi nghĩ là việc hay và dễ làm.
+[29:03-29:04] Vậy điều gì anh đã học được
+[29:04-29:07] khi điều hành IC
+[29:07-29:11] và ảnh hưởng mạnh đến cách anh điều hành Open AI?
+[29:12-29:13] Một phần lớn của IC là
+[29:13-29:16] thúc đẩy founder tham vọng hơn
+[29:16-29:18] và dám theo đuổi điều họ tin tưởng.
+[29:19-29:19] Tôi nghĩ
+[29:19-29:22] có rất nhiều, công ty cũng vậy, có điều gì
+[29:22-29:26] mà anh háo hức làm khi viết cùng GPT?
+[29:26-29:27] hiện chưa làm được.
+[29:30-29:31] Điều tôi vẫn đang nghĩ đến
+[29:31-29:33] là
+[29:33-29:36] làm sao dùng chát
+[29:36-29:37] để
+[29:37-29:39] khiến việc viết trở nên
+[29:39-29:41] nhiều hơn mà ít áp lực.
+[29:42-29:42] Như là
+[29:42-29:43] tôi vẫn thấy
+[29:43-29:46] nếu phải ngồi viết một bài 10 trang
+[29:46-29:47] thì nó vẫn
+[29:47-29:48] là một việc rất lớn
+[29:48-29:49] phải làm.
+[29:50-29:51] Cần nhiều năng lượng khởi động
+[29:51-29:52] tôi phải viết
+[29:52-29:54] thời gian đúng tâm trạng
+[29:54-29:55] rồi có hàng giờ tập trung liền mạch.
+[29:56-30:06] Và nếu, nơ, nơ, dùng, chắc, tôi chưa nghĩ ra, nhưng tôi có nghĩ đến, có thể hiểu là, tôi hay làm thế lúc đi Uber 15 phút.
+[30:07-30:10] Vì nó hạ rào cảng bắt đầu xuống rất thấp, sẽ rất tuyệt.
+[30:12-30:15] Làm sao để GPT huyết đại các cá tính khác nhau?
+[30:15-30:21] Ừ, việc tôi hay dùng nó để là viết lại theo phong cách của Amortoled hoặc Tyler Cowen.
+[30:21-30:24] Làm sao để GPT tiếp tục làm vậy?
+[30:24-30:28] Chà, sau tương lai các phiên bản
+[30:28-30:31] Repetor sẽ làm được rất tốt
+[30:31-30:34] Vì điều công bằng với Tyler Cowen lúc đó là
+[30:34-30:36] Chúng tôi đang cố tìm hiểu
+[30:36-30:37] Nên
+[30:37-30:40] Nó không phải một
+[30:40-30:43] Câu hỏi dễ
+[30:43-30:44] Nhưng
+[30:44-30:48] Chắc chắn điều ai cũng đồng ý là
+[30:48-30:51] Có thể có nhiều cá tính không dựa trên người thật
+[30:51-30:54] Và đó là điều rất hay
+[30:54-30:55] và việc
+[30:55-30:58] ta có thể có
+[30:58-31:01] tạm gọi là các person cho chat
+[31:01-31:03] remix mọi thứ theo từng person.
+[31:03-31:06] Tôi nghĩ điều đó sẽ giúp ích cho quá trình sáng tạo.
+[31:08-31:09] Điều tôi hy vọng
+[31:09-31:13] hơn bất cứ điều gì
+[31:13-31:15] ở chat và các phiên bản sau này
+[31:15-31:16] là
+[31:16-31:17] nó sẽ là công cụ
+[31:17-31:20] giúp chúng ta làm được nhiều việc
+[31:20-31:23] mà trước giờ chưa làm được.
+[31:24-31:29] Nghĩ ý tưởng, những ý tưởng ta chưa từng có sáng tạo hơn những gì ta từng làm được.
+[31:29-31:31] Và đây cũng là hành trình của công nghệ.
+[31:32-31:35] Nhưng tôi nghĩ đây sẽ là một ví dụ thật điển hình cho điều này.
+[31:36-31:41] Sáng tạo không bị giới hạn bởi kỹ năng, mà bởi khả năng nghĩ ra ý tưởng từ đầu.
+[31:41-31:41] Không hẳn vậy.
+[31:42-31:47] Ờ, nếu những công cụ này giúp bạn nghĩ ra ý tưởng, nhưng bạn cần phải có, phải là người chọn lọc giỏi.
+[31:47-31:50] Ừm, tôi không biết chính xác nó sẽ ra sao.
+[31:50-31:56] Nhưng tôi biết con người sẽ rất thành thảo khi dùng nó như với mọi công cụ mới
+[31:56-31:59] Và điều đó sẽ mở rộng khả năng của con người
+[31:59-32:05] Này, tôi muốn giới thiệu một trang web tôi mới làm tên Reading eSamp
+[32:05-32:10] Chúng tôi lấy các nhà văn như Steinberg, Order, Senfo
+[32:10-32:13] Rồi mổ sẻ, điều khiến văn của họ hay đến thế
+[32:13-32:18] Nè, điều đó nghe hợp gu bạn thì vào retainsome.com
+[32:18-32:20] Và khi bạn vào, bạn nhập email
+[32:20-32:22] Tôi sẽ gửi ba số tôi thích nhất
+[32:22-32:23] Ngay thôi
+[32:23-32:25] Nào, trở lại tập này
+[32:25-32:28] Một trong những điều tôi thực sự
+[32:28-32:33] Điều tôi ngưỡng mộ là bạn rất cẩn trọng khi suy nghĩ xem nên làm gì
+[32:33-32:35] Và tôi tò mò bạn nghĩ thế nào
+[32:35-32:38] Về lựa chọn làm việc về array
+[32:38-32:41] Và quá trình đó
+[32:41-32:43] Hình dung ra
+[32:43-32:45] Một điều bạn sẽ tập trung là gì
+[32:45-32:48] Quy trình chữ này đúng nhất nhỉ
+[32:48-32:51] Kiểu mọi thứ như vậy thường bắt đầu như là gần như đùa
+[32:51-32:52] Nên không hẳn đùa
+[32:52-32:53] Nhưng kiểu như
+[32:53-32:56] Một ý tưởng khá điên rồ
+[32:56-32:58] Giờ làm về array
+[32:58-33:01] Thành lựa chọn hiển nhiên và duy nhất với tôi thôi
+[33:01-33:03] Nhưng hồi đó
+[33:03-33:04] Nghe như mơ hảo
+[33:04-33:06] Nhưng tôi nghĩ
+[33:06-33:09] Ý tưởng nói chung rất mong manh
+[33:09-33:10] Ừ, ý tưởng hay
+[33:10-33:12] Ý tưởng tuyệt nhất cực kỳ mong manh
+[33:12-33:13] Và
+[33:13-33:22] Có một lượng giá trị khổng lồ khi tìm ra một cơ chế, phương pháp gọi sao cũng được để không bóp chết.
+[33:22-33:25] Thứ rất mong manh nhưng tiềm năng, những ý tưởng rất hay.
+[33:25-33:31] Tất cả quy về các bạn suy nghĩ, quy trình, ra quyết định, rốt cuộc là bạn ở cạnh những ai.
+[33:33-33:41] Tôi nghĩ có một kiểu độc hại đặc thù cần tránh những người vốn quá thông minh, họ hiểu vì sao ý tưởng hay đều dở.
+[33:41-33:44] Nhưng tôi nghĩ ở giai đoạn rất sớm
+[33:44-33:47] Điều chính yếu là đừng vô tình
+[33:47-33:49] Về ý tưởng hay
+[33:49-33:52] Vậy nói về mong manh
+[33:52-33:54] Và việc viết lách đóng vai trò gì
+[33:54-33:57] Điều mà quan trọng nhất với riêng tôi
+[33:57-33:57] Về việc
+[33:57-34:01] Viết chính là ngoại hóa tư duy
+[34:01-34:03] Và tổ chức
+[34:03-34:05] Huếch đại gọi sao cũng được
+[34:05-34:07] Những ý tưởng mơ hồ
+[34:07-34:10] Tôi thấy thật đáng kinh ngạc
+[34:10-34:12] Khi việc, việc chỉ cho riêng mình.
+[34:13-34:13] Ừ.
+[34:14-34:17] Đôi khi, cho nhóm nhỏ, người khác, bạn đang khám phá ý tưởng,
+[34:17-34:22] nhưng chủ yếu viết cho riêng mình giúp làm rõ điều mà.
+[34:22-34:26] Bạn thực sự nghĩ cũng giúp mài dũa tất cả theo cách mà.
+[34:26-34:28] Với tôi và nhiều người khác nữa,
+[34:28-34:33] dường như không thể để làm được kiểu như nghĩ kỹ khi đi bộ dài trong đầu.
+[34:33-34:36] Ừ, khó che giấu hơn nhiều những suy nghĩ rối bơi.
+[34:36-34:39] Khi bạn buộc phải viết ra rồi nhìn như chăm chăm,
+[34:39-34:40] Vậy hãy nói thêm về quy trình.
+[34:40-34:43] Khi bạn suy nghĩ về kế hoạch của bạn,
+[34:43-34:44] những ngày đầu opening,
+[34:45-34:46] về việc tập trung vào đó,
+[34:47-34:48] đầu ra cuối cùng là gì?
+[34:49-34:50] Của quá trình đó khi bạn nói,
+[34:51-34:51] bắt đầu thôi.
+[34:52-34:54] Tôi nhớ bước trung gian kiểu như là
+[34:54-34:56] nói với nhiều người
+[34:56-34:59] có đủ thứ ý tưởng viết ra như
+[34:59-35:00] ok, ta sẽ làm thế này, như
+[35:00-35:03] đây là kế hoạch của ta, bạn sẽ ghi và ý ra
+[35:03-35:06] và sẽ thấy rõ như ban ngày.
+[35:06-35:07] Tức thì,
+[35:07-35:11] Kiểu, cái này thật ra chẳng hợp lý, bạn cảm nhận được hoặc nghĩ kỹ lại.
+[35:11-35:19] Và khi bạn soi kỹ nó, kiểu, một chuyện là ngồi uống vài lon bia cùng bạn bè, nói ta say array.
+[35:20-35:21] Còn một chuyện khác là nói,
+[35:23-35:27] Nào, đây là, đây là một kế hoạch trọn vẹn, nó sẽ ra sao?
+[35:27-35:29] Và làm đóng nhảm nhí, biến mất.
+[35:30-35:34] Nhiều thứ như vậy, tụi tôi viết khi nghĩ về các hướng đi khả thi và làm sao?
+[35:34-35:36] sẽ là một tổ chức.
+[35:36-35:39] Biết đây, cả bọn sẽ vào phòng nghiên cứu đại học.
+[35:39-35:41] Kiểu, nó giúp loại bớt mấy thứ ngớ ngẩn.
+[35:42-35:43] Nhắc lại, giờ thì mọi thứ quá hiển nhiên.
+[35:44-35:45] Đến mức nói ra cũng thấy lạ.
+[35:45-35:47] Vì, dĩ nhiên, ta sẽ làm vậy.
+[35:47-35:49] Nhưng hồi đó, hoàn toàn không hiển nhiên.
+[35:49-35:51] Hoặc nhiều người khác cũng làm vậy.
+[35:51-35:53] Thì đó sẽ là một bằng chứng ủng hộ.
+[35:53-35:55] Cuối cùng, nếu bạn viết ra thứ gì,
+[35:55-35:56] trông khá đáng tin cậy.
+[35:56-35:58] Rồi gửi cho mọi người xem.
+[35:58-35:59] Họ cũng cảm thấy vậy.
+[35:59-36:00] Có thể viết lại, hoặc sửa.
+[36:00-36:06] nhưng họ cũng sẽ nói kiểu được khi tôi phải nhìn vào giấy và mực thì cảm giác hơi khác.
+[36:06-36:14] Tôi rất tin vào việc nhận ý kiến từ thật nhiều người, nhất là với kiểu những câu hỏi khó về nên làm gì theo nghĩa rộng.
+[36:15-36:23] Còn bây giờ, khi bạn làm kế hoạch năm và nghĩ về khung một có khi ba năm, quy trình đó giống hay khác?
+[36:24-36:27] Tôi không làm đồ chặt chẽ như đáng ra, không phải mỗi năm mà cỡ.
+[36:27-36:29] 2 năm 1 lần tôi viết 1 tài liệu
+[36:29-36:31] O'Pennie, tên đúng là Kế Hoạch
+[36:31-36:33] và bản đầu tiên thì
+[36:33-36:34] 25 trang
+[36:34-36:37] và đó là hàng giờ đồng hồ
+[36:37-36:38] bàn với mọi người xin phản hồi
+[36:38-36:40] nhưng là quá trình mai dũa toàn bộ
+[36:40-36:43] sau đó có 1 bản khác chỉ khoảng 15
+[36:43-36:45] lại có bản chỉ khoảng 4
+[36:45-36:47] tôi tin ta có thể làm bản nửa trang
+[36:47-36:48] và tôi nghĩ đó là 1
+[36:48-36:50] đó là dấu hiệu tiến bộ tuyệt vời
+[36:50-36:52] vâng, giờ anh viết nhiều cỡ nào
+[36:52-36:55] mỗi ngày, mỗi cuối tuần
+[36:55-36:57] ý là cuối tuần tôi đều viết gì đó
+[36:57-37:00] và thường chia sẻ cho khoảng 10 người nội bộ
+[37:00-37:02] hay gì kiểu một ý tôi nghĩ tới
+[37:02-37:03] nên làm
+[37:03-37:04] Vâng, tôi đang viết một bài
+[37:04-37:06] Thực ra tôi định đăng
+[37:06-37:07] Giờ thì hiếm lắm
+[37:07-37:08] về kiểu như
+[37:08-37:11] Thế giới sẽ ra sao
+[37:11-37:13] nếu có sự dồi dào nhờ AI
+[37:13-37:15] và vì sao quan trọng
+[37:15-37:17] Nhưng mà còn xa lắm
+[37:17-37:19] Khi bạn nghĩ về việc
+[37:19-37:22] AI sẽ thay đổi việc viết lách
+[37:22-37:23] Ừ, đâu là
+[37:23-37:25] so sánh kỹ năng nào sẽ đáng giá hơn
+[37:25-37:26] và kém giá trị hơn
+[37:27-37:34] Trong một thế giới mà AI làm thay bạn nhiều thứ, có ý tưởng hay biết mình muốn AI làm gì, AI làm hết rất quan trọng.
+[37:34-37:42] Vù sáng tạo như là tầm chuyên gia, ừ, như là bất cứ thứ gì Thierry làm, ừ, sẽ cực kỳ đáng giá.
+[37:43-37:48] Tôi rất thích dùng, chắc, để giúp tôi viết gì đó.
+[37:49-37:55] Nhất là kiểu lúc tôi đang viết cái này, nếu tôi bị, bị, nó giống như siêu từ điển.
+[37:55-37:57] nếu tôi không nghĩ ra được cách diễn đạt nào
+[37:57-37:59] hoặc khi đang vật lộn với vài chỗ
+[37:59-38:01] hay là mãi không mượt được
+[38:01-38:03] nhưng chắc chắn nó không
+[38:03-38:04] sẽ thay thế
+[38:04-38:06] việc nghĩ ra ý tưởng
+[38:06-38:07] một sớm một chiều
+[38:07-38:09] công cụ tuyệt vời cho người viết
+[38:09-38:10] thật tuyệt vời cho người viết
+[38:10-38:12] nhưng chắc chắn không phải nhà văn
+[38:12-38:13] như một bạn đấu tập
+[38:13-38:15] như một cộng sự
+[38:15-38:18] kiểu người mà bạn có thể giao việc nhỏ
+[38:18-38:20] tôi hay dùng nó như vậy
+[38:20-38:22] là nhiều khi tôi có một từ
+[38:22-38:24] mà tôi đang bí
+[38:24-38:27] Tôi sẽ bảo cho tôi 10 từ hợp với câu này
+[38:27-38:29] Rồi tôi lấy câu đó
+[38:29-38:30] Trích lại
+[38:30-38:31] Nó sẽ trả kết quả
+[38:31-38:32] Nó làm việc đó rất giỏi
+[38:32-38:34] Ừ, bạn nghĩ chúng ta nên
+[38:34-38:36] Đào tạo người viết khác đi
+[38:36-38:38] Trong thế giới chắc
+[38:38-38:39] Tôi từng nghe
+[38:39-38:42] Một câu chuyện không biết thật hay không
+[38:42-38:43] Là một cô giáo dạy viết sáng tạo
+[38:43-38:46] Sinh viên bước vào lớp
+[38:46-38:46] Và
+[38:46-38:49] Thì buổi đầu tiên cô ra bài tập
+[38:49-38:51] Là viết đoạn mở đầu của
+[38:51-38:52] Tiểu thuyết của bạn
+[38:52-38:57] và ai cũng mang đến toàn lỗi kinh điển của sinh viên năm nhất kiểu
+[38:57-39:02] đây quá nhiều những ẩn dụ kéo dài lê thê, quá nhiều ngôn ngữ hoa mỹ.
+[39:04-39:08] Rồi cô cho cả lớp làm một bài tập, trước hết là bài cơ bản,
+[39:08-39:11] tức là cắt một phép ẩn dụ mỗi trang,
+[39:12-39:15] cắt một từ thừa trong mỗi câu,
+[39:15-39:18] cắt cái này, cắt nửa, cắt, lấy bài 10 trang này,
+[39:18-39:20] rồi cắt súng còn một trang
+[39:20-39:22] thì nó sẽ đỡ rối rắm khổ sợ thế.
+[39:23-39:25] Đúng, rồi, cả lớp đọc bài
+[39:25-39:27] và họ bảo kiểu, ừm,
+[39:27-39:28] chuyện gì thế này, kiểu như là
+[39:28-39:31] và câu trả lời là
+[39:31-39:33] thực ra, chẳng có chuyện nào cả.
+[39:34-39:35] Có, bản năng là cố,
+[39:36-39:37] viết, cho thật hay,
+[39:38-39:39] gì đó, viết thì khá đã tay,
+[39:39-39:41] nhưng đọc thì chán,
+[39:41-39:42] kiểu, người đọc muốn.
+[39:43-39:45] Một câu chuyện, vâng, và bài học từ thầy giáo
+[39:45-39:47] là ta có thể dạy người ta
+[39:48-39:50] Việc, thật hay, nhưng...
+[39:50-39:53] Mà, chẳng có chuyện gì hay.
+[39:54-39:56] Ngược lại, có những...
+[39:56-39:59] Kiểu như, cực kỳ, đại chúng, thành công đại chúng.
+[40:00-40:04] Tôi cũng không biết nữa, kiểu, tôi lấy ví dụ như bộ Toi Lai chẳng hạn,
+[40:04-40:06] chuyện khá thú vị, văn dở tệ, ừ.
+[40:07-40:10] Và câu hỏi đặt ra là, liệu ta có thể có cả hai dễ hơn?
+[40:11-40:13] Và có dạy được mọi người dùng công cụ này?
+[40:14-40:17] Bạn hình dung khả năng kể chuyện của chát giỏi cỡ nào?
+[40:17-40:22] Tôi bật chế độ giọng nói, đọc cho bé nghe hay hơn được bao nhiêu so với mẹ.
+[40:22-40:27] Tôi nghĩ kể chuyện thì chưa giỏi lắm, nhưng tôi tin là nó sẽ tốt hơn.
+[40:27-40:30] Hiện giờ các mô hình vẫn đang cải thiện rất nhiều nói chung.
+[40:30-40:37] Ý là có mạng ta còn đẩy được sẽ tốt cho kể, nhưng nếu mô hình chỉ cần thông minh hơn hẳn,
+[40:37-40:41] và nếu ta cũng huấn luyện nó kể chuyện hay, cũng có.
+[40:41-40:42] Làm sao?
+[40:42-40:45] Cho nó xem nhiều ví dụ, thế nào là chuyện hay và chuyện dở.
+[40:46-40:47] Cái đó đâu phải phép màu.
+[40:47-40:50] Tôi nghĩ ta hiểu rõ điều đó, chỉ là ta chưa thử.
+[40:51-40:52] Làm vậy, ừ.
+[40:52-40:54] Khi bạn ngồi xuống để viết và nghĩ về,
+[40:55-40:57] để tạo trạng thái tập trung,
+[40:57-41:00] bạn thực sự làm gì trong quy trình của mình để tạo ra nó?
+[41:00-41:01] Tôi từng nghĩ rằng,
+[41:02-41:04] ồ, phải ở nơi hoàn hảo, tôi phải hẹn giờ trước,
+[41:04-41:07] rồi ra quán cà phê này, đeo tay nghe chống ồn,
+[41:07-41:08] và vào chế độ viết.
+[41:09-41:11] Giờ thì tôi tận dụng bất kỳ 11 phút nào.
+[41:13-41:15] Liền mạch mà có được, như ngồi sau xe hơi.
+[41:15-41:18] nằm trên giường lúc nào cũng được.
+[41:19-41:20] Ý tôi là nếu có được
+[41:20-41:22] một điều kiện hoàn hảo
+[41:22-41:24] thì sẽ là sáng thứ bảy
+[41:24-41:25] cùng tách cà phê không lịch trình.
+[41:26-41:28] Vậy là tuyệt nếu được ngồi xuống
+[41:28-41:30] và viết một bài dài
+[41:30-41:32] tôi sẽ cố sắp xếp vậy.
+[41:32-41:34] Nhưng phần lớn thì diễn ra.
+[41:35-41:36] Trong những đoạn ngắn trên xe
+[41:36-41:38] thứ tôi hay dùng
+[41:38-41:40] là tính năng giọng nói.
+[41:41-41:41] Tôi nói vào đó
+[41:41-41:43] rồi nhờ nó chỉnh cho gọn
+[41:43-41:46] và tôi thấy chắc giúp ích rất nhiều khoảng này
+[41:46-41:50] vì miệng tôi sáng tạo hơn nhiều so với ngón tay.
+[41:51-41:52] Thú vị, tôi thì ngược lại.
+[41:52-41:56] Thật ca, ừ, tôi tin có những ý tưởng chẳng bao giờ có
+[41:56-41:59] khi ngồi trò chuyện mà phải ngồi yên và gõ.
+[42:00-42:02] Đây rõ ràng là một nhận xét rất phổ biến
+[42:02-42:05] nhưng để tìm ra mức độ phù hợp của việc
+[42:05-42:08] ở bên mọi người trò chuyện
+[42:08-42:11] tiếp xúc với nhiều ý tưởng
+[42:11-42:14] rồi có được chút thời gian một mình
+[42:14-42:16] để suy nghĩ, để viết
+[42:16-42:18] kiểu như là làm việc thật sâu
+[42:18-42:19] gọi sao cũng được
+[42:19-42:20] tôi nghĩ
+[42:20-42:23] rõ ràng đây là một nhịp rất quan trọng
+[42:23-42:24] với nhiều người, chắc chắn
+[42:24-42:26] với tôi cũng vậy, nhịp của tôi, đại khái
+[42:26-42:29] là thế này, tôi sẽ, ừ, ở văn phòng
+[42:29-42:30] gần như không nghỉ, cả tuần
+[42:30-42:32] không có thời gian để nghỉ, cứ kiểu
+[42:32-42:34] kính lịch điên cuồng, rồi sau đó
+[42:34-42:37] đến cuối tuần tôi có những khoảng lặng dài
+[42:37-42:38] và tôi không ở gần ai cả
+[42:38-42:40] và vòng lập đó
+[42:40-42:41] rất quan trọng với tôi
+[42:41-42:43] Ừm, ở quy mô lớn cũng vậy
+[42:43-42:45] Như anh có thỉnh thoảng nghỉ vài tuần không?
+[42:45-42:46] Hay tương tự vậy?
+[42:46-42:47] Trước đây có
+[42:47-42:49] Tôi nghĩ điều đó rất tốt
+[42:49-42:51] Như lúc tôi nghỉ một khoảng thời gian dài
+[42:51-42:53] Liền tôi từng dành một tháng
+[42:53-42:55] Chỉ tụ tập với mọi người
+[42:55-42:56] Rồi lại một tháng
+[42:56-42:59] Đây, ở trong rừng, biển, đại loại
+[42:59-43:00] Giờ chẳng còn thế nữa
+[43:00-43:01] Ừ, anh ghi chú hàng tuần không?
+[43:02-43:02] Để xem lại
+[43:02-43:03] Hay chỉ trong đầu?
+[43:03-43:05] Không, tôi ghi chú rất nhiều
+[43:05-43:06] Ồ, kể nghe đi
+[43:06-43:07] Có đủ kiểu
+[43:07-43:08] Sổ tay xịn ngoài kia
+[43:08-43:09] Ừ, đừng dùng loại đó
+[43:09-43:17] Nhất định phải là sổ lò xo, vì có một điều quan trọng là xé giấy ra được, ừm, thường xuyên, và phải mở phẳng được, nằm phẳng trên bàn.
+[43:17-43:21] Nếu bạn mở trang ra, bạn muốn nó, bạn biết đấy, nằm được thế này.
+[43:21-43:24] Đại loại, nhất định phải xé được, xé trang ra.
+[43:24-43:31] Tôi rất tin rằng, cứ ghi thật nhiều, rồi tôi dứt khoát, xé ra, để xem nhiều trang, cùng lúc.
+[43:31-43:39] Rồi tôi có thể, vò nát, rồi ném súng sàn, xong luôn, như lúc cô giúp việc tới dọn, vào một, biết đó, kiểu, chỉ, toàn giấy,
+[43:39-43:41] vỏ nát chất đóng, còn tôi thì
+[43:41-43:43] gõ ghi chú, vì đó, dưới sang
+[43:43-43:45] chắc chắn bạn cần loại giấy
+[43:45-43:47] mà viết lên thấy sướng tay.
+[43:48-43:49] Cảm giác thôi mà,
+[43:49-43:51] đa số giấy viết rất dở.
+[43:51-43:52] Bạn muốn
+[43:52-43:55] bị cứng cả trước lẫn sau
+[43:55-43:57] cho sổ tay, nên và phải nhét
+[43:57-43:59] vừa túi nữa. Tôi định nói vậy.
+[43:59-44:00] Tôi thấy Unibo
+[44:00-44:02] micro
+[44:02-44:05] ngồi 0.5 là cây
+[44:05-44:06] bút tốt nhất nói chung, nhưng
+[44:06-44:07] bút muri
+[44:07-44:11] 0.36 hoặc 0.37
+[44:11-44:12] Mực xanh đậm cũng rất tuyệt
+[44:12-44:15] Vì lẽ khác tôi sẽ dùng 2 cây này
+[44:15-44:17] Nhưng tôi nghĩ loại sổ như thế này
+[44:17-44:19] Với một trong 2 bút là chuẩn
+[44:19-44:19] Và bao
+[44:19-44:21] Nhiều ghi chú một ngày
+[44:21-44:22] Trên đó
+[44:22-44:24] Tôi dùng hết một cuốn
+[44:24-44:26] Cứ mỗi 3, 2, 3 tuần
+[44:26-44:28] Ồ, vậy bạn ghi rất nhiều
+[44:28-44:29] Đây, thấy tôi xé nhiều chưa
+[44:29-44:31] Cuốn này từng có cả trăm trang
+[44:31-44:32] Bạn nghĩ về nó như vậy
+[44:32-44:34] Tức là bạn sẽ cầm cuốn sổ
+[44:34-44:36] Rồi bạn xé các trang ra
+[44:36-44:40] Ừ, không có cuốn sổ nào dùng hết, không cuốn nào, chà, cảm hứng từ đâu, thói quen này từ đâu.
+[44:40-44:44] Thử sai rất nhiều, đủ loại sổ, đủ loại bút, đủ kiểu cách.
+[44:45-44:46] Cuốn này rất tốt.
+[44:46-44:55] Còn một điều tôi đang nghĩ khi nói đến tác động của AGI lên các loại hình sáng tạo thì là năng lực viết lách đang tăng vọt.
+[44:55-44:56] Ý tôi là thế này.
+[44:56-45:03] Giờ đây, đây, Sora, bạn có thể tạo video chỉ bằng vài dòng văn bản, nhạc cũng vậy, ảnh cũng thế.
+[45:03-45:08] Đó là một thay đổi lớn xét về mức độ ảnh hưởng của chuyện viết với thế giới.
+[45:09-45:19] Lại với tôi thì viết là công cụ để tư duy quan trọng nhất là vậy và tôi không nghĩ nó sẽ biến mất nên tôi nghĩ điều này rất quan trọng, mọi người vẫn cần học viết.
+[45:20-45:27] Chính vì thế cũng như là dù sẽ có nghề có ích truyền thống hơn có là cách hay để học cách tư duy nên vẫn nên học có.
+[45:27-45:31] Vậy khi nói việc học viết rất quan trọng, điều đó nghĩa là gì?
+[45:31-45:36] Điều đó có nghĩa là, với tôi, tôi đã tìm ra công cụ để nghĩ rõ ràng hơn.
+[45:36-45:38] Giờ, nếu có cách hay để nghĩ rõ, tôi đồng ý.
+[45:39-45:41] Tôi chắc là chưa tìm ra nó.
+[45:42-45:47] Câu hỏi cuối cùng để mình kết thúc là ngoài kia có rất nhiều người đang nói rằng AI sẽ giết nghề viết.
+[45:47-45:50] Và họ đang rất bức xúc.
+[45:50-45:51] Về đó, bạn nghĩ sao?
+[45:51-45:55] Tôi không thấy bằng chứng nào cả cho thấy AI đang giết nó.
+[45:55-45:59] Ừ, chỉ là có cả đống bài viết AI dở tệ, kiểu tràn ngập trên mạng.
+[45:59-46:02] và cũng có rất nhiều bài tập sinh viên dở tệ
+[46:02-46:04] chắc là do AI viết
+[46:04-46:06] nhưng tôi không nghĩ ai nghiêm túc
+[46:06-46:08] tôi không nghĩ Graham
+[46:08-46:09] lại ngồi đó mà nghĩ
+[46:09-46:10] AI sắp kiểu
+[46:10-46:11] giết nghề viết của tôi
+[46:11-46:12] tôi nghĩ phải là kiểu
+[46:12-46:15] hoàn toàn siêu trí tuệ
+[46:15-46:16] trước khi tôi kiểu
+[46:16-46:16] ok
+[46:16-46:19] nó sẽ thay thế con người viết lách
+[46:19-46:20] chấm hết
+[46:20-46:23] và lúc đó còn nhiều vấn đề lớn hơn phải lo
+[46:23-46:24] dù điều đó có xảy ra
+[46:24-46:26] giả sử có hệ thống viết hay hơn con người
+[46:26-46:29] Bạn nghĩ
+[46:29-46:30] rằng
+[46:30-46:32] tiểu thuyết ăn khách nhất
+[46:32-46:34] của năm
+[46:34-46:35] 2027
+[46:35-46:37] có mang tên con người hay không?
+[46:38-46:39] Có nhà văn thật hay không?
+[46:40-46:41] Tôi nghĩ có, tôi cũng vậy
+[46:41-46:42] Đọc xong sách hay
+[46:42-46:44] Việc đầu tiên tôi làm là
+[46:44-46:45] tôi muốn
+[46:45-46:46] biết về tác giả
+[46:46-46:47] chuyện đời họ
+[46:47-46:49] Tôi không nghĩ mình sẽ bao giờ có
+[46:49-46:51] cảm giác ấy với
+[46:51-46:51] van A.I.
+[46:52-46:52] Ừ
+[46:52-46:55] Có, có một, có một điều gì đó
+[46:55-46:58] khi đọc cuốn sách tuyệt vời
+[46:58-46:59] bạn như là
+[46:59-47:01] được kết nối với một con người
+[47:01-47:02] dù không thật sự quen họ
+[47:02-47:06] mà như quen và thấy có chung một trải nghiệm làm người
+[47:06-47:07] và đó là một phần đáng kể
+[47:07-47:10] niềm vui đọc sách hay với tôi
+[47:10-47:13] và tôi cá là vẫn vậy
+[47:13-47:15] Được rồi Sam, vâng
+[47:15-47:16] Cảm ơn nhiều
+[47:16-47:18] Vui lắm, vui lắm, vui
