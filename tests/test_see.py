@@ -21,7 +21,7 @@ def clips(tmp_path_factory):
     out = tmp_path_factory.mktemp("synth")
     rng = np.random.default_rng(7)
     made = {}
-    for make in (make_synth.clip_count, make_synth.clip_ui):
+    for make in (make_synth.clip_count, make_synth.clip_ui, make_synth.clip_motion):
         name, frame, dur, size, track, _ = make(out, rng)
         make_synth.write(out / f"{name}.mp4", frame, int(dur * make_synth.FPS), size, track, out)
         made[name] = str(out / f"{name}.mp4")
@@ -160,3 +160,11 @@ def test_short_low_score_run_under_music_is_not_named():
     probs[3:5, thunder] = 0.22                # 1.0 s at a low score: the song bench's stray shape
     tags = sound.Tags(np.arange(8) * 0.5 + 1.5, probs, names, 0.5)
     assert not [b for b in sound.beds(tags, []) if "Thunder" in b.label]
+
+
+def test_moving_balls_stay_motion_not_drawn_in(clips):
+    """The drawn-in rule (net change over most of the region) must not swallow real travel:
+    a 0.5 cut-off turned the synthetic balls into 'kept changing in place' and 'changed'."""
+    evs = events.detect(grid(clips["motion"]))
+    big = [e for e in evs if e.region.area > 0.015 and e.end - e.start >= 0.9]
+    assert [e.kind for e in big if e.start < 9] == ["motion", "motion"], [(e.kind, round(e.start, 1)) for e in big]

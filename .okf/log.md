@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — drawn-in overlays are changes with lifetimes; colour from the most-changed block; card see-9.
 * **Updated**: [framesift see](decisions/see-sensor.md) — real bench r14: Big Buck Bunny 8/8 (camera moves + shot letters); 31/32.
 * **Updated**: [framesift see](decisions/see-sensor.md) — shot letters on the cut line (same letter = same place); card see-8.
 * **Updated**: [framesift see](decisions/see-sensor.md) — real bench r13: q02 (pan vs tilt) now right; 31/32.

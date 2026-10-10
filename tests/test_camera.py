@@ -89,3 +89,59 @@ def test_card_cut_line_carries_shot_letters(tmp_path):
     card = see.card(s, [], {}, "s.mp4")
     line = next(l for l in card.splitlines() if " pic CUT" in l)
     assert "2.0 B, 4.0 A s" in line, line
+
+
+def test_a_drawn_in_overlay_is_a_change_with_its_lifetime(tmp_path):
+    """python_100s: a red X drawn in over 0.5 s, held 3 s, then removed, came out as 'motion'
+    (no lifetime, colour 'black'); the real bench asks how long it stayed."""
+    import numpy as np
+    from PIL import Image, ImageDraw
+    fps, frames = 30, []
+    bg = Image.new("RGB", (640, 360), (25, 25, 30))
+    for i in range(int(6 * fps)):
+        t = i / fps
+        im = bg.copy()
+        d = ImageDraw.Draw(im)
+        if 1.0 <= t < 4.5:
+            k = min(1.0, (t - 1.0) / 0.5)          # strokes grow for 0.5 s
+            d.line((220, 100, 220 + 200 * k, 100 + 160 * k), fill=(230, 30, 30), width=18)
+            if k >= 0.5:
+                k2 = (k - 0.5) * 2
+                d.line((420, 100, 420 - 200 * k2, 100 + 160 * k2), fill=(230, 30, 30), width=18)
+        frames.append(np.asarray(im))
+    p = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", "640x360",
+                          "-r", str(fps), "-i", "-", "-pix_fmt", "yuv420p", str(tmp_path / "x.mp4")], stdin=subprocess.PIPE)
+    p.communicate(np.stack(frames).tobytes())
+    g = events.build_grid(decode.video_frames(str(tmp_path / "x.mp4"), 15, events.DECODE_W, events.DECODE_H))
+    shown = [e for e in events.detect(g) if e.shown_until is not None]
+    assert shown, [(e.kind, e.start, e.end) for e in events.detect(g)]
+    e = shown[0]
+    assert e.kind == "change" and e.region.colour == "red", (e.kind, e.region.colour)
+    assert abs((e.shown_until - e.start) - 3.5) < 0.6, (e.start, e.shown_until)
+
+
+def test_an_overlay_replaced_together_with_what_was_under_it_still_gets_a_lifetime(tmp_path):
+    """python_100s again: braces appear, a red X is drawn over them 1.5 s later, then both vanish at
+    once. The X's region then shows the page, not the braces: not 'undone', but it is gone."""
+    import numpy as np
+    from PIL import Image, ImageDraw
+    fps, frames = 30, []
+    bg = Image.new("RGB", (640, 360), (25, 25, 30))
+    for i in range(int(7 * fps)):
+        t = i / fps
+        im = bg.copy()
+        d = ImageDraw.Draw(im)
+        if 1.0 <= t < 5.6:
+            d.rectangle((180, 80, 460, 280), fill=(235, 235, 235))          # the braces card
+        if 2.5 <= t < 5.6:
+            d.line((220, 100, 420, 260), fill=(230, 30, 30), width=18)
+            d.line((420, 100, 220, 260), fill=(230, 30, 30), width=18)
+        frames.append(np.asarray(im))
+    p = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", "640x360",
+                          "-r", str(fps), "-i", "-", "-pix_fmt", "yuv420p", str(tmp_path / "y.mp4")], stdin=subprocess.PIPE)
+    p.communicate(np.stack(frames).tobytes())
+    g = events.build_grid(decode.video_frames(str(tmp_path / "y.mp4"), 15, events.DECODE_W, events.DECODE_H))
+    evs = events.detect(g)
+    x = [e for e in evs if e.region.colour == "red" and 2.3 <= e.start <= 2.8]
+    assert x and x[0].shown_until is not None, [(e.kind, round(e.start, 2), e.region.colour, e.shown_until) for e in evs]
+    assert abs((x[0].shown_until - x[0].start) - 3.1) < 0.4

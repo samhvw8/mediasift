@@ -263,6 +263,15 @@ Real bench r14 (C re-answered on all four videos): B 31/32, C 31/32, 56 vs 58 im
 Bunny 8/8 for the first time in any round: q07 "3" (sure) from the shot letters, q02 "tilts down"
 (sure) from the camera line. C's one miss: python_100s q08 (red X duration, variable since r7).
 
+That red X: drawn in over 0.5 s it came out as "motion" (no lifetime) coloured "black", and it went
+together with the card under it, so "undone" never matched. Now (1) a "motion" whose net change
+covers >= 85% of its region is a change (measured net/union: moving balls 0.20-0.80, the X 0.91);
+(2) a change's colour is the most-changed block's (the synthetic toast is red, not "pink"; the lamp
+flash white, not "gray"); (3) an overlay >= 2% of the frame that a later change wipes away gets a
+lifetime too. The X now reads red, 104.6-107.8 s (key: about 3 s). It still misses the card's line
+budget (rank 111 of 318, budget 36; a colour bonus reached rank 43 while lifting 46 groups), so the
+ranking was left alone.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read

@@ -426,7 +426,10 @@ def detect(g: Grid) -> list[Event]:
             kind = "cut" if n_area > 0.5 * u_area else "blink"
         elif mean_area > 0.5:
             kind = "scene"
-        elif dur >= 0.3 and travel > 0.15 and mean_area < 0.3:
+        elif dur >= 0.3 and travel > 0.15 and mean_area < 0.3 and n_area < 0.85 * u_area:
+            # (A thing that travels leaves a net change only where it started and ended; one that is
+            # drawn in, stroke by stroke, leaves its whole area changed: that is a change, with a lifetime.
+            # Measured net/union: moving balls 0.20-0.80, a red X drawn in over code 0.91.)
             kind = "motion"
         elif n_area < 0.3 * u_area and dur < 2.0:
             kind = "blink"
@@ -450,7 +453,13 @@ def detect(g: Grid) -> list[Event]:
                 reg.colour = _colour(stack[best][yy, xx])
             reg.x0, reg.y0, reg.x1, reg.y1 = _region(union, None).box()
         else:
-            reg = _region(mask, g.blocks[pk if kind == "blink" else a].astype(np.float32))
+            shown = g.blocks[pk if kind == "blink" else a].astype(np.float32)
+            reg = _region(mask, shown)
+            if kind in ("change", "blink") and mask.any():
+                # Colour of the block that changed most: a thin red X over a dark page averages to 'black'.
+                d = np.abs(shown - g.blocks[b].astype(np.float32)).max(axis=-1)
+                yy, xx = np.unravel_index(np.argmax(np.where(mask, d, -1)), mask.shape)
+                reg.colour = _colour(shown[yy, xx])
         events.append(Event(0, kind, float(g.times[i0]), float(g.times[i1]), float(g.times[b]),
                             float(g.times[a]), float(g.times[pk]), reg, path if kind == "motion" else []))
     events.sort(key=lambda e: e.start)
@@ -492,6 +501,19 @@ def _link_reverts(g: Grid, events: list[Event], horizon: float = 5.0) -> None:
             if (np.abs(now - pre).max(axis=-1) > g.thr).mean() < 0.15:
                 e.shown_until, f.undoes = f.start, e.id
                 break
+        if e.shown_until is None and e.region.area >= 0.02:
+            # An overlay can also go together with what was under it (a red X over a card, both
+            # removed): its region then shows neither. Wiped away is gone too; typing-sized edits
+            # stay out (area), so they still group into one line.
+            for f in events[i + 1:]:
+                if f.start - e.after > horizon:
+                    break
+                if f.kind not in ("change", "cut"):
+                    continue
+                now = frame(f.after)[y0:y1, x0:x1]
+                if (np.abs(now - post).max(axis=-1) > g.thr).mean() >= 0.6:
+                    e.shown_until = f.start
+                    break
 
 
 def group(events: list[Event], gap: float = 1.5) -> list[list[Event]]:
