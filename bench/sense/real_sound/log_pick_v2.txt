@@ -1,0 +1,44 @@
++ track1   1.0s door_wood_knock  -> knock; knock x3
++ track1   7.5s keyboard_typing  -> computer keyboard / typing; knock x1; computer keyboard x1; computer keyboard x8; computer keyboard x1
++ track1  14.0s laughing         -> snicker / chuckle, chortle; snicker x4
++ track1  20.5s rooster          -> crowing, cock-a-doodle-doo / chicken, rooster
++ track1  27.0s thunderstorm     -> thunder; thunder x1
+- track1  33.5s mouse_click      -> knock x1; computer keyboard x6
++ track1  40.0s thunderstorm     -> thunder / thunderstorm; thunder x1
++ track1  46.5s sneezing         -> sneeze; throat clearing; sigh x1; sigh x1; throat clearing x1; throat clearing x1
++ track1  53.0s glass_breaking   -> glass / breaking
++ track1  59.5s siren            -> emergency vehicle / siren
++ track2   1.0s rooster          -> chicken, rooster / crowing, cock-a-doodle-doo; animal
++ track2   7.5s dog              -> bow-wow / dog; bow-wow x1; bow-wow x1
++ track2  14.0s church_bells     -> church bell
+- track2  20.5s coughing         -> throat clearing; throat clearing x2
++ track2  27.0s church_bells     -> church bell
++ track2  33.5s crying_baby      -> baby cry, infant cry; baby cry, infant cry; baby cry, infant cry x1
++ track2  40.0s footsteps        -> walk, footsteps / firecracker; walk, footsteps x12
++ track2  46.5s laughing         -> chuckle, chortle / snicker
++ track2  53.0s engine           -> vehicle / truck
+- track2  59.5s coughing         -> plop x1; plop x1
++ track3   1.0s crying_baby      -> baby cry, infant cry; crying, sobbing; baby cry, infant cry
++ track3   7.5s glass_breaking   -> breaking / glass; machine gun; breaking x1
++ track3  14.0s car_horn         -> vehicle horn, car horn, honking
++ track3  20.5s car_horn         -> vehicle horn, car horn, honking; vehicle horn, car horn, honking x1
++ track3  27.0s engine           -> vehicle / truck
++ track3  33.5s cat              -> cat / animal
+- track3  40.0s clock_alarm      -> jackhammer
++ track3  46.5s clapping         -> clapping / applause; clapping x1
++ track3  53.0s clapping         -> clapping / applause; clapping x2
++ track3  59.5s footsteps        -> walk, footsteps / horse; walk, footsteps x9; animal x1; walk, footsteps x3
++ track4   1.0s crackling_fire   -> fire; rain on surface x5; rain on surface x1
++ track4   7.5s cat              -> siren / emergency vehicle; cat / animal
++ track4  14.0s dog              -> bark / bow-wow; bark x2
++ track4  20.5s door_wood_knock  -> knock; knock; knock x10
++ track4  27.0s mouse_click      -> rain on surface x9; clicking x1
++ track4  33.5s clock_alarm      -> alarm clock; alarm clock
++ track4  40.0s siren            -> buzzer; buzzer; siren; buzzer x1
++ track4  46.5s sneezing         -> sneeze; sneeze x1
++ track4  53.0s crackling_fire   -> knock x1; clicking x1; crackle x1; crackle x3; crack x1; rain on surface x1; rain on surface x1
++ track4  59.5s keyboard_typing  -> computer keyboard / typing; computer keyboard x13; computer keyboard x1
+
+named 36/40 clips (90%), false sound lines 3
+per class: car_horn 2/2, cat 2/2, church_bells 2/2, clapping 2/2, clock_alarm 1/2, coughing 0/2, crackling_fire 2/2, crying_baby 2/2, dog 2/2, door_wood_knock 2/2, engine 2/2, footsteps 2/2, glass_breaking 2/2, keyboard_typing 2/2, laughing 2/2, mouse_click 1/2, rooster 2/2, siren 2/2, sneezing 2/2, thunderstorm 2/2
+wrote bench/sense/real_sound/result_pick_none.json

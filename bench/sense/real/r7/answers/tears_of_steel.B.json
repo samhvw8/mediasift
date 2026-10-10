@@ -1,0 +1,10 @@
+{"arm": "B", "images_read": 20, "answers": [
+{"id": "q01", "answer": "A wide shot of an industrial refinery/city skyline with a rocket plume glowing, with the caption 'This film is supported by the Netherlands Film Fund'", "sure": true},
+{"id": "q02", "answer": "A brain on a plate with a man with a cybernetic eye looking at it", "sure": true},
+{"id": "q03", "answer": "About 3-4 seconds", "sure": true},
+{"id": "q04", "answer": "3", "sure": true},
+{"id": "q05", "answer": "Down the rope, from high up by the organ pipes to the floor", "sure": true},
+{"id": "q06", "answer": "Drinks from a juice carton, then reacts", "sure": true},
+{"id": "q07", "answer": "Left", "sure": false},
+{"id": "q08", "answer": "A giant white robot/machine", "sure": true}
+]}

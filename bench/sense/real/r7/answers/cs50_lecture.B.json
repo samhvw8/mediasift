@@ -1,0 +1,10 @@
+{"arm": "B", "images_read": 10, "answers": [
+{"id":"q01","answer":"light bulb (off/dim), 0, light bulb (lit/on), 1","sure":true},
+{"id":"q02","answer":"Walks left (toward the desk/podium at the left edge of the stage, away from the duck and screen) and ends up standing at the left-side desk","sure":true},
+{"id":"q03","answer":"Left to right (toward the giant duck and the screen)","sure":true},
+{"id":"q04","answer":"4 (crowd at the fair, people at a table, man with child at laptops, stacks of I took CS50 shirts)","sure":true},
+{"id":"q05","answer":"About 3 seconds","sure":true},
+{"id":"q06","answer":"The words 'binary digit' change to 'bit' (letters drop out via 'bi t' then 'bit')","sure":true},
+{"id":"q07","answer":"A diagram: input -> empty box -> output","sure":true},
+{"id":"q08","answer":"Closed fist (no fingers up)","sure":true}
+]}

@@ -1,0 +1,204 @@
++ track1   1.0s sheep            -> sheep / bleat; music
++ track1   7.5s crickets         -> music; cricket / insect
+- track1  14.0s can_opening      -> music
++ track1  20.5s crying_baby      -> music; baby cry, infant cry / crying, sobbing; music
++ track1  27.0s clock_tick       -> music; ticking / clock; clock / click
++ track1  33.5s pig              -> pig / oink; pig x2; pig x2
++ track1  40.0s hand_saw         -> music; sawing / wood
+- track1  46.5s breathing        -> music
++ track1  53.0s hen              -> chicken, rooster / cluck; chicken, rooster x1; chicken, rooster x1
++ track1  59.5s engine           -> vehicle / accelerating, revving, vroom
++ track2   1.0s laughing         -> music; laughter; laughter x1
++ track2   7.5s frog             -> frog
++ track2  14.0s hen              -> chicken, rooster / cluck
++ track2  20.5s crow             -> music; crow / caw
+- track2  27.0s door_wood_creaks -> music
+- track2  33.5s crackling_fire   -> music
++ track2  40.0s pouring_water    -> music; water / liquid
+- track2  46.5s wind             -> music; ocean / waves, surf; music
+- track2  53.0s clapping         -> music; firecracker; tap
+- track2  59.5s can_opening      -> music
+- track3   1.0s water_drops      -> music
+- track3   7.5s wind             -> music; waves, surf / ocean
+- track3  14.0s church_bells     -> music
+- track3  20.5s thunderstorm     -> music
++ track3  27.0s chirping_birds   -> bird / chirp, tweet
++ track3  33.5s chainsaw         -> chainsaw; vehicle x1
++ track3  40.0s keyboard_typing  -> music; computer keyboard / typing; music
+- track3  46.5s door_wood_knock  -> music
++ track3  53.0s sneezing         -> sneeze; music; sneeze x1
+- track3  59.5s helicopter       -> mechanical fan; vehicle
++ track4   1.0s car_horn         -> music; vehicle horn, car horn, honking
+- track4   7.5s mouse_click      -> music
++ track4  14.0s clock_tick       -> music; ticking; ticking / clock
++ track4  20.5s laughing         -> music; laughter
++ track4  27.0s cat              -> music; cat / meow
+- track4  33.5s mouse_click      -> music; computer keyboard
++ track4  40.0s dog              -> music; animal / bark; music; animal x1
+- track4  46.5s drinking_sipping -> music
++ track4  53.0s crow             -> music; caw / crow; music; crow x1
++ track4  59.5s rain             -> music; rain on surface
+- track5   1.0s drinking_sipping -> music
+- track5   7.5s crickets         -> music
++ track5  14.0s insects          -> insect / fly, housefly
++ track5  20.5s keyboard_typing  -> computer keyboard / typing
++ track5  27.0s cat              -> cat; music; cat x1
++ track5  33.5s chirping_birds   -> bird vocalization, bird call, bird song / chirp, tweet; honk / goose
++ track5  40.0s keyboard_typing  -> typing / computer keyboard
++ track5  46.5s frog             -> frog / croak
+- track5  53.0s coughing         -> music
++ track5  59.5s snoring          -> music; snoring
++ track6   1.0s train            -> train / rail transport
++ track6   7.5s door_wood_knock  -> knock; music
+- track6  14.0s crackling_fire   -> music
++ track6  20.5s fireworks        -> music; fireworks
++ track6  27.0s sea_waves        -> music; waves, surf / ocean; vehicle / propeller, airscrew
+- track6  33.5s airplane         -> vehicle / propeller, airscrew
++ track6  40.0s cat              -> cat / domestic animals, pets; music
++ track6  46.5s train            -> music; train / clickety-clack
+- track6  53.0s thunderstorm     -> music
++ track6  59.5s coughing         -> music; cough
++ track7   1.0s water_drops      -> music; drip; drip x1
++ track7   7.5s cat              -> music; cat / animal
++ track7  14.0s water_drops      -> music; plop
++ track7  20.5s dog              -> animal / dog; animal x5
+- track7  27.0s drinking_sipping -> music
++ track7  33.5s engine           -> music; vehicle; vehicle
+- track7  40.0s thunderstorm     -> music
++ track7  46.5s glass_breaking   -> music; breaking / glass
++ track7  53.0s rooster          -> chicken, rooster / crowing, cock-a-doodle-doo; music
++ track7  59.5s sneezing         -> music; sneeze
++ track8   1.0s sheep            -> sheep / bleat; music
++ track8   7.5s fireworks        -> music; fireworks / firecracker
+- track8  14.0s vacuum_cleaner   -> blender
++ track8  20.5s train            -> train / rail transport
+- track8  27.0s washing_machine  -> vehicle
+- track8  33.5s crackling_fire   -> clip-clop / horse; animal x1
++ track8  40.0s hand_saw         -> music; sawing / wood; sawing x1
++ track8  46.5s train            -> music; train / clickety-clack; train x1
+- track8  53.0s car_horn         -> music
+- track8  59.5s clock_tick       -> music
++ track9   1.0s snoring          -> snoring
++ track9   7.5s clock_alarm      -> alarm / alarm clock; alarm x3; alarm clock x3; alarm x2; alarm clock x2
++ track9  14.0s glass_breaking   -> music; breaking x1
++ track9  20.5s hen              -> chicken, rooster / fowl; chicken, rooster x1; chicken, rooster x2; chicken, rooster x1
+- track9  27.0s wind             -> music
+- track9  33.5s rain             -> (nothing)
+- track9  40.0s helicopter       -> music; vehicle; music
++ track9  46.5s hen              -> music; cluck / chicken, rooster
++ track9  53.0s chainsaw         -> music; vehicle; vehicle; chainsaw
+- track9  59.5s footsteps        -> music
++ track10   1.0s laughing         -> music; snicker
+- track10   7.5s door_wood_creaks -> music
+- track10  14.0s can_opening      -> music
++ track10  20.5s siren            -> ambulance (siren) / emergency vehicle
+- track10  27.0s airplane         -> vehicle
++ track10  33.5s clapping         -> applause
+- track10  40.0s breathing        -> snort
++ track10  46.5s chirping_birds   -> bird / chirp, tweet
++ track10  53.0s crow             -> crow / caw
+- track10  59.5s church_bells     -> change ringing (campanology)
++ track11   1.0s crying_baby      -> baby cry, infant cry / crying, sobbing; music
++ track11   7.5s clock_alarm      -> music; alarm; alarm
++ track11  14.0s dog              -> music; bow-wow / animal; bow-wow x1; bow-wow x1
++ track11  20.5s engine           -> music; vehicle / accelerating, revving, vroom
++ track11  27.0s coughing         -> music; cough
++ track11  33.5s rooster          -> chicken, rooster / fowl; music
++ track11  40.0s footsteps        -> music; walk, footsteps
+- track11  46.5s door_wood_creaks -> music; printer
++ track11  53.0s rain             -> music; waterfall; rain / rain on surface
++ track11  59.5s breathing        -> music; breathing; gasp
+- track12   1.0s can_opening      -> spray; slap, smack; gunshot, gunfire x1
++ track12   7.5s sheep            -> sheep / bleat
++ track12  14.0s cow              -> cowbell / livestock, farm animals, working animals
++ track12  20.5s pouring_water    -> liquid / drip; water / water tap, faucet; water x1
+- track12  27.0s mouse_click      -> music
++ track12  33.5s clapping         -> music; applause
+- track12  40.0s airplane         -> vehicle / motorboat, speedboat
+- track12  46.5s car_horn         -> vehicle / motorboat, speedboat; music
+- track12  53.0s helicopter       -> vehicle
++ track12  59.5s cow              -> livestock, farm animals, working animals / cowbell
++ track13   1.0s brushing_teeth   -> music; rub
++ track13   7.5s frog             -> frog
++ track13  14.0s clock_tick       -> clock / ticking; click x3; clock x3; clock x4; clock x2; clock x3
++ track13  20.5s brushing_teeth   -> toothbrush
++ track13  27.0s crickets         -> insect / cricket
++ track13  33.5s door_wood_knock  -> knock; music; knock x1
++ track13  40.0s sheep            -> sheep / bleat
++ track13  46.5s insects          -> insect / fly, housefly
+- track13  53.0s snoring          -> music
++ track13  59.5s chirping_birds   -> bird / duck
++ track14   1.0s dog              -> animal / dog
++ track14   7.5s toilet_flush     -> water
++ track14  14.0s cow              -> livestock, farm animals, working animals / moo
++ track14  20.5s chainsaw         -> music; chainsaw; vehicle
++ track14  27.0s door_wood_knock  -> music; knock
++ track14  33.5s clock_alarm      -> music; alarm / alarm clock
++ track14  40.0s crying_baby      -> music; baby cry, infant cry / crying, sobbing
++ track14  46.5s sneezing         -> music; sneeze; sneeze
+- track14  53.0s drinking_sipping -> music; music; breathing x1
+- track14  59.5s thunderstorm     -> music
++ track15   1.0s glass_breaking   -> music; breaking x1
++ track15   7.5s pig              -> oink / pig; music
++ track15  14.0s engine           -> music; vehicle / lawn mower; electronic tuner; vehicle / lawn mower
++ track15  20.5s footsteps        -> music; walk, footsteps; music
+- track15  27.0s laughing         -> music
++ track15  33.5s glass_breaking   -> music; glass / breaking
++ track15  40.0s sneezing         -> music; sneeze
++ track15  46.5s hand_saw         -> sawing / wood; engine
++ track15  53.0s vacuum_cleaner   -> vacuum cleaner / blender; music
++ track15  59.5s cow              -> livestock, farm animals, working animals / cattle, bovinae
++ track16   1.0s keyboard_typing  -> typing / computer keyboard; typing x1; typing x1
+- track16   7.5s washing_machine  -> music
++ track16  14.0s brushing_teeth   -> music; sanding / rub; rub
++ track16  20.5s chainsaw         -> music; vehicle; chainsaw; music
+- track16  27.0s fireworks        -> music
+- track16  33.5s church_bells     -> change ringing (campanology)
++ track16  40.0s helicopter       -> helicopter / vehicle
++ track16  46.5s rain             -> rain / rain on surface; music; rain on surface
++ track16  53.0s toilet_flush     -> music; toilet flush / water
++ track16  59.5s hand_saw         -> sawing / wood
+- track17   1.0s snoring          -> music
++ track17   7.5s sea_waves        -> vehicle / aircraft; waves, surf / ocean
++ track17  14.0s toilet_flush     -> toilet flush / water; toilet flush x1
++ track17  20.5s crying_baby      -> baby cry, infant cry
++ track17  27.0s breathing        -> breathing / snort
+- track17  33.5s door_wood_creaks -> music
+- track17  40.0s brushing_teeth   -> music
+- track17  46.5s wind             -> music; ocean / waves, surf; music
+- track17  53.0s clock_alarm      -> music
+- track17  59.5s washing_machine  -> vehicle
+- track18   1.0s washing_machine  -> vehicle / bus
++ track18   7.5s footsteps        -> walk, footsteps
+- track18  14.0s mouse_click      -> music; computer keyboard
++ track18  20.5s toilet_flush     -> toilet flush / water
++ track18  27.0s siren            -> emergency vehicle / fire engine, fire truck (siren)
+- track18  33.5s vacuum_cleaner   -> blender; vehicle
++ track18  40.0s clapping         -> applause
++ track18  46.5s siren            -> siren / civil defense siren
++ track18  53.0s frog             -> frog; music
++ track18  59.5s water_drops      -> music; drip
++ track19   1.0s pouring_water    -> water / liquid
++ track19   7.5s pig              -> pig / animal; pig x1
+- track19  14.0s vacuum_cleaner   -> (nothing)
++ track19  20.5s coughing         -> cough; music
++ track19  27.0s crackling_fire   -> fire; music
++ track19  33.5s pouring_water    -> music; liquid / water
++ track19  40.0s crow             -> music; crow / caw
++ track19  46.5s insects          -> insect / fly, housefly
+- track19  53.0s airplane         -> vehicle; music
++ track19  59.5s sea_waves        -> ocean / waves, surf
++ track20   1.0s car_horn         -> music; vehicle horn, car horn, honking
++ track20   7.5s rooster          -> chicken, rooster / crowing, cock-a-doodle-doo; music
++ track20  14.0s siren            -> civil defense siren
++ track20  20.5s insects          -> insect / fly, housefly
++ track20  27.0s sea_waves        -> ocean; ocean / waves, surf
+- track20  33.5s fireworks        -> music
+- track20  40.0s church_bells     -> music
++ track20  46.5s pig              -> music; pig / animal; pig x1
++ track20  53.0s rooster          -> crowing, cock-a-doodle-doo / chicken, rooster; music
++ track20  59.5s crickets         -> music; cricket / insect; cricket / insect
+
+named 136/200 clips (68%), false sound lines 6
+per class: airplane 0/4, breathing 2/4, brushing_teeth 3/4, can_opening 0/4, car_horn 2/4, cat 4/4, chainsaw 4/4, chirping_birds 4/4, church_bells 0/4, clapping 3/4, clock_alarm 3/4, clock_tick 3/4, coughing 3/4, cow 4/4, crackling_fire 1/4, crickets 3/4, crow 4/4, crying_baby 4/4, dog 4/4, door_wood_creaks 0/4, door_wood_knock 3/4, drinking_sipping 0/4, engine 4/4, fireworks 2/4, footsteps 3/4, frog 4/4, glass_breaking 4/4, hand_saw 4/4, helicopter 1/4, hen 4/4, insects 4/4, keyboard_typing 4/4, laughing 3/4, mouse_click 0/4, pig 4/4, pouring_water 4/4, rain 3/4, rooster 4/4, sea_waves 4/4, sheep 4/4, siren 4/4, sneezing 4/4, snoring 2/4, thunderstorm 0/4, toilet_flush 4/4, train 4/4, vacuum_cleaner 1/4, washing_machine 0/4, water_drops 3/4, wind 0/4
+wrote bench/sense/real_sound/result_full_music6.json

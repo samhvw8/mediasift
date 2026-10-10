@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 11, "answers": [
+{"id": "q01", "answer": "about 4 seconds", "sure": true},
+{"id": "q02", "answer": "tilts/pans down (and forward) toward the trees and meadow", "sure": false},
+{"id": "q03", "answer": "hit by a falling nut/acorn and knocked off the branch", "sure": true},
+{"id": "q04", "answer": "his hand reaching out onto the ground", "sure": true},
+{"id": "q05", "answer": "a shot of an apple tree (leafy branches with apples) with the rabbit's ear in the foreground", "sure": true},
+{"id": "q06", "answer": "left", "sure": true},
+{"id": "q07", "answer": "3", "sure": true},
+{"id": "q08", "answer": "a nut/acorn", "sure": true}
+]}

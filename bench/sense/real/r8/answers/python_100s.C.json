@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 10, "answers": [
+{"id": "q01", "answer": "NumPy", "sure": false},
+{"id": "q02", "answer": "import this", "sure": true},
+{"id": "q03", "answer": "Top to bottom; third line is 'Simple is better than complex.'", "sure": true},
+{"id": "q04", "answer": "3", "sure": true},
+{"id": "q05", "answer": "about 4 seconds", "sure": true},
+{"id": "q06", "answer": "A snake (python) with a large white number 3 over it", "sure": true},
+{"id": "q07", "answer": "curlyBracesSuck = True;", "sure": true},
+{"id": "q08", "answer": "about 4.5 seconds", "sure": true}
+]}
