@@ -1,0 +1,127 @@
+---
+type: Decision
+title: framesift see - a sensor card instead of a storyboard
+description: Why v0.3 replaced change-pruned keyframes with one cached command that writes a timeline card (picture events, named and counted sounds, speech, on-screen text) plus ~1 fps frame sheets, and how each part was kept or cut by the sense bench.
+tags: [see, sensor, bench, audio, ocr, resources]
+status: draft
+generated:
+  by: claude-code/opus-5.5
+  at: "2026-10-10T11:30:00Z"
+resource: src/framesift/see.py
+sources:
+  - id: council
+    resource: .council/20261010-074112
+    title: 5-member council (Contrarian, Daily operator, First principles, Agent harness, Film perception) - develop and stress files
+  - id: sense-synth
+    resource: bench/sense/make_synth.py
+    title: Synthetic clips with scripted ground truth (UI flow, motion, counting, audio scene, pointing)
+  - id: sense-real
+    resource: bench/sense/real.py
+    title: Real-footage temporal questions written from 2 fps oracle sheets by a separate agent
+  - id: lagprobe
+    resource: bench/lagprobe.py
+    title: Timer-lateness probe for "does the Mac feel slow while this runs"
+  - id: ced
+    resource: https://github.com/RicherMans/CED
+    title: CED, distilled AudioSet tagger (sherpa-onnx export, ced-small int8)
+---
+
+# Problem
+
+Agents (Claude Code) read text and still images; they cannot hear and cannot take video. v0.2 picked
+keyframes by drift and wrote a storyboard. Asked about time and sound, it failed: on 26 questions
+with scripted answers it scored 14/26, below plain uniform 1 fps sheets plus a transcript (22/26),
+because pruning dropped the sequence (4 keyframes for a 32 s UI flow) and nothing described
+non-speech sound.[^sense-synth] It was also awkward daily: an output folder, 2-3 flags, 63 s for a
+2:23 video, and full-priority work that made the Mac lag.
+
+# Decision
+
+`framesift see VIDEO|URL` (also `framesift VIDEO`): no flags, cached by file content under
+`~/.cache/framesift/see/<key>/`, prints `card.md`. The shape came out of a five-lens council, and every part
+below was then kept or cut by measurement.[^council]
+
+| part | what it is | kept because |
+|---|---|---|
+| picture events | every frame at 15 fps (5/2 fps for long files) as a 32x18 block grid at 256x144; space-time connected regions of change become `change`, `blink` (changed and back), `motion` (with path), `animating`, `cut`; a change undone later reports how long it lasted | counts and brief events: "flashed 8 times at 1.0, 2.1, 2.9 ..." matched the script exactly |
+| sound | CED tagger[^ced] on 1 s windows (music, siren, telephone...), short sounds found by a jump-and-fall-back level test and counted, pitch/decay words, silences that clicks break, burst counts inside a lasting sound, rough voice letters | sound questions went from 4-5/6 to 6/6; the transcript alone cannot answer them |
+| sync | a sound within 150 ms of a picture change is written on the change ("together with a beep: #3, #6 of the 8") | the only arm that answered the audio-visual question |
+| OCR | Apple Vision on changed regions only (region of interest), text appeared/vanished; burned-in captions that repeat speech are dropped | "Error 503: upstream timeout" from a 0.7 s toast |
+| flow sheets | about one frame per second (12 per sheet, 320 px tiles), every shot's first frame; screen recordings change-weighted with still frames dropped, camera footage clock-uniform | uniform 1 fps was the strongest baseline on real footage |
+| `look VIDEO A-B` | frames over a span plus a strip of the sound on the same axis | zoom without re-sensing |
+
+## Measured (Sonnet answerers, blind Sonnet graders)
+
+| round | questions | B: uniform 1 fps + transcript | C: framesift see |
+|---|---|---|---|
+| synthetic r1 (first build) | 26 | 22/26, 11 images | 24/26, 7 images |
+| synthetic r2 (final) | 26 | - | 26/26, 7 images |
+| real r2 (first build) | 32 | 29/32 | 27/32 |
+| real r3-r4 | 32 | 32/32 | 30/32 |
+| real r5 (final) | 32 | 32/32 | 31/32 (the miss is an item B also missed once) |
+
+On real footage the writer could only ask visual and speech questions (no agent hears), so parity
+there is the bar; the card's gains are the senses B lacks.[^sense-real] Session tokens on real
+footage: B ~86k, C ~92k (first build ~98k). What moved C to parity, each a measured change:
+
+- flow frames: ~24 change-weighted frames per 3 min lost to 180 uniform ones; now ~1/s and every shot.
+- camera footage: change-weighting starved a slide animation while a lecturer walked; now uniform.
+- card size: pixel events on camera footage were texture (2-7 KB of noise); now only cuts and text.
+- tiles 384 -> 320 px: 44% fewer tokens per sheet, no accuracy change.
+
+## Resources on a 16 GB M1 Pro
+
+| finding | measurement | action |
+|---|---|---|
+| CPU scheduling is not what lags the desktop | full-speed run: a normal-priority 5 ms timer stayed as punctual as idle (p99 2.6 ms)[^lagprobe] | plain `nice 10`, worker pools capped at 4 |
+| macOS background QoS band | 5x slower (48 s -> 256 s), no measured gain | not used |
+| MLX buffer cache | 5.5 GB kept after a 2-minute transcription on top of a 3.1 GB peak, on a Mac already deep in swap | `mx.set_cache_limit(0)`: same speed, swap churn per run 3.9 GB -> 125 MB |
+| GPU | 74-96% busy during MLX speech recognition (idle desktop 27-33%) | `--on HOST` / `FRAMESIFT_ON` sends audio as FLAC to `framesift asr -` over ssh |
+| CoreML for the tagger | sherpa-onnx CoreML provider 18.8 s vs CPU 4.8-7.4 s for 3 min (measured under load) | CPU |
+| OCR | 50 s on a 2:23 montage reading whole frames; 14.5 s with Vision's region of interest | region of interest, budget ~1 event per 2 s |
+| frame grabs | one ffmpeg seek per frame (~30 s for 230); one decode pass with `select` 0.8 s; long files use parallel seeks | `decode.frames_at` |
+
+Timings after the changes: 32 s UI clip 1.5 s (6 s with OCR), 2:23 explainer 19 s, 6 min lecture
+56 s, 1h45m podcast 9.4 min before the long-file fixes (speech recognition alone ~263 s at 24x
+realtime; offload is the answer there).
+
+# Real recordings (sound names, voices) and the GPU box
+
+| check | method | result |
+|---|---|---|
+| sound names on real recordings | 40 ESC-50 clips (20 classes) spliced at known times, scored by a synonym table, no LLM (`bench/sense/real_sound.py`) | 25/40 named (62%), 2-5 stray lines. Strong: dog, knock, clapping, siren, horn, engine, footsteps, typing, laughter, church bells. Weak in the model itself (CED's top classes are wrong): rooster, cough, sneeze, mouse click, thunder (reads as "low rumble"). CED-base tied (25/40) at 4x the size: not adopted. |
+| voice letters on real speech | 8 LibriSpeech dialogues, 2-3 real speakers, 12 turns (`bench/sense/voices.py`) | TitaNet-small speaker embeddings: 1.00 pairwise agreement, right voice count 8/8. The mean-spectrum heuristic shipped first: 0.73. CAM++ exports could not separate speakers under sherpa-onnx 1.13.8 (same-speaker and different-speaker similarities overlapped). On the 1h45m podcast: two voices (host 373 lines, guest 1,271). |
+| `--on gpu-box` | real ssh, RTX 3060 | whisper large-v3-turbo on CUDA, 58x realtime incl. transfer; the host also returns voice letters. 1h45m podcast: 309 s wall, Mac CPU time 390 s (785 s all-local), Mac GPU unused for speech. |
+
+Two pipeline fixes came from the real-sound check: music-branch classes that are everyday
+sounds (a church bell) are named instead of folded into "music", and one strong window (>= 0.5)
+is enough for intermittent sounds (a baby's cries). A substitution for implausible winners
+("Heart murmur" -> best other class) made labels worse ("cricket" for thunder) and was reverted.
+
+# Review fixes (2026-10-10)
+
+An independent review found 12 issues the bench never reached; each fixed, the first four with a
+failing test first (`tests/test_review_fixes.py`): variable-frame-rate files gave the next state as
+the "before" frame (now `fps=30` before `select`, non-discarding seek with absolute timestamps, and
+no cap at the file's average rate); rotated phone videos were squashed (probe swaps width and
+height); subtitle de-duplication merged real repeated speech lines; `look` crashed on audio-only
+files; the cache ignored `--asr`; a half-finished yt-dlp download or an interrupted run could be
+served as complete (card written last, atomically; `url.txt` marks a finished download); the card
+claimed sound tagging when audio was too short; a picture failure waited for speech recognition;
+remote ASR could hang (ssh keepalive, timeout) or choke on a login banner; onset detection and
+pitch words copied the whole recording (~1 GB per hour).
+
+# Not measured or open
+
+- Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read
+  speech; the podcast result (two voices) is plausible but has no answer key.
+- Sound names: 38% of real clips are misnamed or missed by CED itself; names stay hedged where
+  doubtful ("thump (heartbeat-like)").
+- Screen vs camera classification is a heuristic (identical-frame share); a static podcast can read
+  as a screen, so files over 20 minutes always get the lean picture policy.
+
+[^sense-synth]: bench/sense/r1 and r2: `uv run python bench/sense/report.py r1`.
+[^sense-real]: bench/sense/real/r2..r5: `uv run python bench/sense/report.py real/r5`.
+[^lagprobe]: `uv run python bench/lagprobe.py -- framesift see VIDEO --force`.
+[^council]: The council's shortlist (sound made legible, synthetic bench, event pairs, zero-invocation card) and its stress tests set the order: measure first, expect the simple arm to win.
+[^ced]: CED small, int8, 22 MB, pinned by SHA-256 in `sound.py`.
