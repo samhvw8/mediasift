@@ -135,7 +135,8 @@ python_100s (above), C missed Big Buck Bunny q02 (pan vs tilt, missed in r6 too)
 count; the CUTS line and landscape sheets are unchanged, so noise). Lesson: a cleanup that removes
 images an agent can see is a behaviour change; measure it like one.
 After the fix, full round r10 in the daily setup (ASR on the box): B 31/32, C 31/32, C reading
-51 images vs 58; C's one miss is the python_100s emoji count.
+51 images vs 58; C's one miss is the python_100s emoji count. Synthetic round r11 with the final code: 26/26 on
+7 images (unchanged from r5).
 
 # Not measured or open
 
