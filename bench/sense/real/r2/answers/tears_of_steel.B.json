@@ -1,0 +1,10 @@
+{"arm": "B", "images_read": 20, "answers": [
+{"id": "q01", "answer": "Wide shot of a hazy industrial city skyline/refinery with the rocket plume in the distance, with the caption 'This film is supported by the Netherlands Film Fund'", "sure": true},
+{"id": "q02", "answer": "A brain on a plate with pins in it, with a man with a cybernetic eye leaning over it", "sure": true},
+{"id": "q03", "answer": "About 4 seconds", "sure": true},
+{"id": "q04", "answer": "3", "sure": true},
+{"id": "q05", "answer": "Down the rope, from high up by the organ pipes to the floor of the cathedral", "sure": true},
+{"id": "q06", "answer": "Drinks from a small juice carton with a straw, then grimaces/winces", "sure": true},
+{"id": "q07", "answer": "To the left", "sure": false},
+{"id": "q08", "answer": "A giant white robot/machine standing on the bridge by the canal", "sure": true}
+]}

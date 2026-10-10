@@ -1,0 +1,17 @@
+{
+ "video": "count",
+ "questions": [
+  {
+   "id": "q01",
+   "question": "How many times did the lamp flash?"
+  },
+  {
+   "id": "q02",
+   "question": "How many beeps were heard?"
+  },
+  {
+   "id": "q03",
+   "question": "Which lamp flashes (1st, 2nd, ...) happened at the same moment as a beep?"
+  }
+ ]
+}

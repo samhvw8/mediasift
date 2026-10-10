@@ -1,0 +1,10 @@
+{"arm": "A", "images_read": 5, "answers": [
+{"id": "q01", "answer": "Error 503: upstream timeout", "sure": true},
+{"id": "q02", "answer": "A loading/spinner state (button probably showed a loading label)", "sure": false},
+{"id": "q03", "answer": "2", "sure": true},
+{"id": "q04", "answer": "They stayed unchanged (email sam@acme.io and masked password remained)", "sure": true},
+{"id": "q05", "answer": "Retry", "sure": true},
+{"id": "q06", "answer": "Error: a low/harsh buzz or error tone; success: a higher pleasant chime", "sure": false},
+{"id": "q07", "answer": "Invoices first, then Customers", "sure": false},
+{"id": "q08", "answer": "Invoices", "sure": false}
+]}

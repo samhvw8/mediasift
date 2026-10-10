@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 17, "answers": [
+{"id": "q01", "answer": "about 4 seconds", "sure": true},
+{"id": "q02", "answer": "pans right (and tilts down) toward the trees", "sure": false},
+{"id": "q03", "answer": "it is flung/falls up and off the branch out of frame (branch left empty)", "sure": false},
+{"id": "q04", "answer": "his hand reaching out onto the ground", "sure": false},
+{"id": "q05", "answer": "cut to a close-up of the apple tree (with red apples) and the rabbit's ear", "sure": true},
+{"id": "q06", "answer": "left", "sure": true},
+{"id": "q07", "answer": "3", "sure": true},
+{"id": "q08", "answer": "an acorn (nut)", "sure": true}
+]}

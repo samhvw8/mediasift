@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 12, "answers": [
+{"id": "q01", "answer": "about 3-4 seconds", "sure": true},
+{"id": "q02", "answer": "tilts down (and drifts slightly right) from the clouds to the grass", "sure": true},
+{"id": "q03", "answer": "it gets knocked off and falls down off the branch (hit by a falling nut)", "sure": false},
+{"id": "q04", "answer": "his hand reaching out onto the ground", "sure": true},
+{"id": "q05", "answer": "close-up of his ear against a tree full of apples", "sure": true},
+{"id": "q06", "answer": "left", "sure": true},
+{"id": "q07", "answer": "4", "sure": false},
+{"id": "q08", "answer": "a nut / acorn", "sure": true}
+]}

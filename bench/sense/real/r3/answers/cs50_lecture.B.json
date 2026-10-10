@@ -1,0 +1,10 @@
+{"arm": "B", "images_read": 10, "answers": [
+{"id": "q01", "answer": "Light bulb (off/dim), then 0, then light bulb (lit/on), then 1", "sure": true},
+{"id": "q02", "answer": "He walks left (toward the left side of the stage, away from the duck and screen) to the desk/lectern at the far left", "sure": true},
+{"id": "q03", "answer": "Left to right, toward the duck and screen", "sure": true},
+{"id": "q04", "answer": "4 (crowd, people at booth, man with child, stacks of I took CS50 shirts)", "sure": false},
+{"id": "q05", "answer": "About 3 seconds", "sure": true},
+{"id": "q06", "answer": "The words 'binary digit' on screen change to 'bit' (letters drop out: 'bi t' then 'bit')", "sure": true},
+{"id": "q07", "answer": "A diagram: input -> empty box -> output", "sure": true},
+{"id": "q08", "answer": "Raised in a closed fist", "sure": true}
+]}

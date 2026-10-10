@@ -1,0 +1,8 @@
+{"arm": "A", "images_read": 1, "answers": [
+{"id": "q01", "answer": "Music (intro/theme)", "sure": false},
+{"id": "q02", "answer": "A pause/silence", "sure": false},
+{"id": "q03", "answer": "2", "sure": true},
+{"id": "q04", "answer": "A phone ringing", "sure": false},
+{"id": "q05", "answer": "2", "sure": false},
+{"id": "q06", "answer": "The interruption (phone ringing)", "sure": false}
+]}

@@ -1,0 +1,60 @@
+[0.2-3.4] Staff across campus, whereby you'll invite be invited to a space like this.
+[3.4-16.0] Bring your laptop, bring your phone, whatever it is you have built and created, and we'll just show it off for a bit of the afternoon, complete with music and friends from industry and candy and all what makes uh gathering together a terms end fund.
+[16.0-25.8] And you'll wear ultimately very proudly, we hope, your very own I took CS50, stating very matter-of-factly what I did some years ago, that indeed this was a course I myself took.
+[25.8-28.3] So today, let's focus then on computer science.
+[28.3-29.0] Like what is it?
+[29.0-38.5] Well, it's really like the study of information, but really it's more specifically about solving problems using certain ideas and techniques, all of which you'll exit the course with.
+[38.5-45.9] So, as such, problem solving is a tech is a goal that we'll approach by way of something called computational thinking.
+[45.9-64.7] So, computational thinking, you can kind of oversimplistically think about it as like thinking like a computer, but it's really the application of ideas that we'll dive into today and we'll finish some weeks from now, that you can apply to problems from this field or most any other, but in a computational, that is a very methodical, very careful way.
+[64.7-67.5] And that's what CS really did for me and does for a lot of people.
+[67.5-69.8] It helps kind of clean up your thought processes.
+[69.8-82.9] Even if you go off into the real world and do nothing in tech, you have an ability after classes like this to express yourself a little more correctly, more precisely, and generally having better command of your own ideas and your language.
+[82.9-84.3] So, what's problem solving?
+[84.3-85.6] Let me propose that this is it.
+[85.6-89.0] Like, this is as simple as we can make today's goals and the semester's goals.
+[89.3-90.9] Problems to be solved look like this.
+[90.9-102.4] You've got some input, the problem to be solved, you've got a goal being the output, like the solution there too, and then somewhere in the middle is the secret sauce where we'll spend the next several weeks figuring out how we can convert these inputs to outputs.
+[102.4-111.3] But before we can do that, we all just kind of have to agree on how to represent these inputs and outputs, whether it's with English or really any type of language.
+[111.3-120.9] But as I spoiled earlier, you probably came in here already with a general sense that yeah, computers somehow only speak or know zeros and ones, the so-called binary system.
+[120.9-123.0] But that's just one way of representing information.
+[123.0-125.0] Even simpler than binary is unary.
+[125.3-139.8] So if you've ever, at this age or any prior age, sort of counted on your fingers, this is unary notation, whereby each of your digits, your fingers, literally represent some piece of information, taking attendance, like one, two, three, four, five.
+[139.8-145.3] But on your one human hand, how high can you count in this unary notation?
+[146.4-149.9] Five, I'm hearing five.
+[150.0-152.0] Six, I heard one six.
+[152.0-164.0] But I'm gonna go further and say the answer, if you're clever about it, is actually not quite forty, you overbid, but thirty-one is as high as I can actually count.
+[164.0-171.7] And that's because if I actually, and if you're thinking this is weirdly painful now, like it will be, but this is my hand representing the number zero.
+[171.7-176.1] Normally in unary, this is one, two, three, four, five, of course, obviously.
+[176.1-179.6] But what if I take into account the order in which I'm putting my fingers up and down?
+[179.6-189.1] So maybe this is still zero, maybe this is still one, but maybe this is now two, where it's just the single second finger up, not two of them total.
+[189.1-204.0] Maybe this is now three, maybe this is now often offensive, with just the middle finger up, this is now five, this is now six, this is now seven, and my hand just hurts too much if I try to count higher than seven.
+[204.0-213.0] But theoretically, because each of my fingers can be down or up, and I've got five of them, that's actually thirty-two possible permutations up and down.
+[213.0-218.7] But wait a minute, we said thirty-one, but if you start at zero, you kinda have to subtract one from the biggest possible value.
+[218.7-223.2] So this is to say, you and I have been using unary because it's just simple and it gets the job done.
+[223.2-234.5] But if we just think about representation a little more cleverly, we can do exactly what computers do, using not what mathematicians call base one, where the finger's either there or it's not, but base two.
+[234.5-238.3] And in base two, we just need two digits at our disposal.
+[238.3-246.3] And we could call these digits one and two, a and b, black or white, like we just need two words to describe two pieces of information.
+[246.3-254.2] Computers keep it simple, and just like we humans start counting zero, one, two, three, on up, computers use zero and one, and that's it.
+[254.2-255.7] But that's by convention.
+[255.7-256.8] But why do they do that?
+[256.8-268.6] Well, it turns out when you use base two, otherwise known as binary, well, it just maps really readily to the real world, because at the end of the day, what do we all do if you've got a laptop or phone or any device?
+[268.6-272.6] Like you plug it into the wall because it needs electricity at some point.
+[272.6-275.8] And what if you have electricity or not?
+[275.8-279.9] Well, there's your sort of two possible values, either it's there or it's not.
+[279.9-283.8] And because computers are electrical devices, this is why binary is just useful.
+[283.8-284.6] It's nice and simple.
+[284.6-287.0] Either electricity's there or it's not.
+[287.0-295.4] So when you plug this device in and you've got all these electrons or whatever flowing, maybe if we just kinda hang on to some of that electricity, we can represent what we'll call a one.
+[295.4-298.6] And maybe if we let it dissipate or go away, that's a zero.
+[298.6-303.0] So on and off maps very readily to this idea of just zeros and ones.
+[303.0-312.8] And if you've ever thought of this now as binary digits, uh by implying two, zero and one, well, if you've ever heard this term now, bit, it just means binary digit.
+[312.8-315.0] A single bit is just a zero or one.
+[315.0-317.3] But we could have called these things anything we want.
+[317.3-320.2] Now, how does this map to be clear to the real world?
+[320.2-330.0] Well, we can't see the tiny little switches inside of our Macs, PCs, and our phones that are actually turning the electricity on or off, storing electricity or not, but they're called transistors.
+[330.0-335.3] They've got like millions of them in today's hardware, and they're just on or off like a switch or a light bulb.
+[335.5-340.8] So for instance, if there's no electricity, the switch is off, we would call this by convention a zero.
+[340.8-347.7] If though you throw the switch and it actually turns on, we would call this an on exactly a one.
+[347.7-351.3] We could have reversed it, but this is just the way the world decided to standardize.
+[351.3-352.0] And that's it.
+[352.0-359.8] So you've either got something on or off, a one or zero, and this then is this thing we know now as a binary digit or bit.

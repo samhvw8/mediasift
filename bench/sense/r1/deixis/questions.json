@@ -1,0 +1,17 @@
+{
+ "video": "deixis",
+ "questions": [
+  {
+   "id": "q01",
+   "question": "When the speaker says 'this one is the problem', which quarter's bar is being pointed at?"
+  },
+  {
+   "id": "q02",
+   "question": "Which quarter does the speaker call the best quarter?"
+  },
+  {
+   "id": "q03",
+   "question": "List the bars the red pointer visited, in order."
+  }
+ ]
+}

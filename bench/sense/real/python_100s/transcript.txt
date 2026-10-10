@@ -1,0 +1,25 @@
+[0.2-5.3] Python, a high-level interpreted programming language famous for its Zen like code.
+[5.3-11.4] It's arguably the most popular language in the world because it's easy to learn yet practical for serious projects.
+[11.4-15.6] In fact, you're watching this YouTube video in a Python web application right now.
+[15.6-26.3] It was created by Guido Van Rossom and released in 1991, who named it after Monty Python's flying circus, which is why you'll sometimes find spam and eggs instead of foo and bar in code samples.
+[26.3-34.6] It's commonly used to build server-side applications, like web apps with the Django framework, and is the language of choice for big data analysis and machine learning.
+[34.6-41.3] Many students choose Python to start learning to code because of its emphasis on readability as outlined by the Zen of Python.
+[41.3-45.0] Beautiful is better than ugly, while explicit is better than implicit.
+[45.0-50.0] Python is very simple but avoids the temptation to sprinkle in magic that causes ambiguity.
+[50.0-56.3] Its code is often organized into notebooks where individual cells can be executed, then documented in the same place.
+[56.3-64.7] We're currently at version 3 of the language, and you can get started by creating a file that ends in.py or .ipynb to create an interactive notebook.
+[64.7-67.8] Create a variable by setting a name equal to a value.
+[67.8-73.8] It's strongly typed, which means values won't change in unexpected ways, but dynamic, so type annotations are not required.
+[73.8-82.0] The syntax is highly efficient, allowing you to declare multiple variables on a single line and define tuples, lists, and dictionaries with a literal syntax.
+[82.0-87.9] Semicolons are not required, and if you use them, an experienced Pythonista will say that your code is not Pythonic.
+[87.9-93.6] Instead of semicolons, Python uses indentation to terminate or determine the scope of a line of code.
+[93.6-99.6] Define a function with the def keyword, then indent the next line, usually by four spaces, to define the function body.
+[99.6-103.4] We might then add a for loop to it and indent that by another four spaces.
+[103.4-107.8] This eliminates the need for curly braces and semicolons found in many other languages.
+[107.8-109.7] Python is a multi paradigm language.
+[109.7-114.0] We can apply functional programming patterns with things like anonymous functions using Lambda.
+[114.0-121.3] It also uses objects as an abstraction for data, allowing you to implement object oriented patterns with things like classes and inheritance.
+[121.3-134.3] It also has a huge ecosystem of third party libraries, such as deep learning frameworks like TensorFlow and wrappers for many high performance low level packages like Open Computer Vision, which are most often installed with the PIP package manager.
+[134.3-137.2] This has been the Python programming language in 100 seconds.
+[137.2-139.7] Hit the like button if you want to see more short videos like this.
+[139.7-142.8] Thanks for watching, and I will see you in the next one.

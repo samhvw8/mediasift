@@ -1,0 +1,8 @@
+{"arm": "A", "images_read": 3, "answers": [
+{"id": "q01", "answer": "right", "sure": false},
+{"id": "q02", "answer": "left", "sure": false},
+{"id": "q03", "answer": "unknown (possibly bounced or reacted to the other ball)", "sure": false},
+{"id": "q04", "answer": "lower left of the frame", "sure": false},
+{"id": "q05", "answer": "a clack/click", "sure": false},
+{"id": "q06", "answer": "blue ball and yellow square", "sure": true}
+]}

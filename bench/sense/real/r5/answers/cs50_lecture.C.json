@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 12, "answers": [
+{"id":"q01","answer":"unlit (off) light bulb, then 0, then lit (on) light bulb, then 1","sure":true},
+{"id":"q02","answer":"He walks to the left (audience's left, away from the duck/screen) and ends up at the laptop table/desk at the far left of the stage","sure":true},
+{"id":"q03","answer":"Left to right (toward the duck and screen, audience's right)","sure":true},
+{"id":"q04","answer":"4","sure":true},
+{"id":"q05","answer":"about 3 seconds","sure":true},
+{"id":"q06","answer":"The phrase 'binary digit' collapses: letters drop out leaving 'bi   t', then it becomes the single word 'bit'","sure":false},
+{"id":"q07","answer":"A diagram: 'input → [empty square box] → output'","sure":true},
+{"id":"q08","answer":"Closed fist (all fingers down), raised up","sure":false}
+]}

@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 15, "answers": [
+{"id": "q01", "answer": "A wide shot of a hazy industrial skyline of towers and smokestacks (city/factory)", "sure": true},
+{"id": "q02", "answer": "A glowing brain on a plate (pink halo, pins in it), then a dark title card", "sure": false},
+{"id": "q03", "answer": "about 3.5 seconds", "sure": true},
+{"id": "q04", "answer": "3", "sure": true},
+{"id": "q05", "answer": "Down the rope from the organ pipes to the stone floor", "sure": true},
+{"id": "q06", "answer": "Looks over at him wide-eyed, then drinks from a juice carton", "sure": false},
+{"id": "q07", "answer": "Left", "sure": false},
+{"id": "q08", "answer": "A giant robot/mech machine standing on the canal bridge", "sure": true}
+]}

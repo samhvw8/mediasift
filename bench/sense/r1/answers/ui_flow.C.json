@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 2, "answers": [
+{"id": "q01", "answer": "Error 503: upstream timeout", "sure": true},
+{"id": "q02", "answer": "A loading/spinner state (button pressed, likely 'Signing in...' spinner) for about 2 seconds", "sure": false},
+{"id": "q03", "answer": "2", "sure": true},
+{"id": "q04", "answer": "Both fields were cleared (emptied)", "sure": true},
+{"id": "q05", "answer": "Retry", "sure": true},
+{"id": "q06", "answer": "Error: two quick tones in a row (11.8s and 11.9s); success: a single tone (at 23.1s)", "sure": true},
+{"id": "q07", "answer": "Invoices, then Customers, then Reports (top to bottom)", "sure": true},
+{"id": "q08", "answer": "Reports", "sure": true}
+]}

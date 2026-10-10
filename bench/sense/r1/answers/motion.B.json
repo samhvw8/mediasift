@@ -1,0 +1,8 @@
+{"arm": "B", "images_read": 2, "answers": [
+{"id":"q01","answer":"Right","sure":true},
+{"id":"q02","answer":"Up","sure":true},
+{"id":"q03","answer":"The blue ball collided with it and pushed it left","sure":false},
+{"id":"q04","answer":"Off-screen at the left edge","sure":false},
+{"id":"q05","answer":"A click/thud (impact sound)","sure":false},
+{"id":"q06","answer":"A blue ball and a yellow square","sure":true}
+]}

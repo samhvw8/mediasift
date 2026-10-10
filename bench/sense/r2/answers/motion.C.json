@@ -1,0 +1,8 @@
+{"arm": "C", "images_read": 2, "answers": [
+{"id": "q01", "answer": "right", "sure": true},
+{"id": "q02", "answer": "up", "sure": true},
+{"id": "q03", "answer": "It was hit/pushed by the blue ball that came in from the right", "sure": true},
+{"id": "q04", "answer": "It went off-screen to the left (out of view at top-left)", "sure": true},
+{"id": "q05", "answer": "a low-pitched, dull thud", "sure": true},
+{"id": "q06", "answer": "a blue ball and a yellow square", "sure": true}
+]}

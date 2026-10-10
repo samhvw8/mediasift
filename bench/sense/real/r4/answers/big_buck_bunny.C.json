@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 12, "answers": [
+{"id": "q01", "answer": "about 4 seconds (roughly 1 to 4.4 s)", "sure": true},
+{"id": "q02", "answer": "tilts/pans down (revealing the meadow below)", "sure": true},
+{"id": "q03", "answer": "it gets knocked off / falls off the branch (tumbles out of frame)", "sure": true},
+{"id": "q04", "answer": "his hand reaching out onto the ground first", "sure": false},
+{"id": "q05", "answer": "a shot of the apple tree (rabbit seen from behind looking up at it)", "sure": true},
+{"id": "q06", "answer": "left", "sure": true},
+{"id": "q07", "answer": "4", "sure": false},
+{"id": "q08", "answer": "an acorn / nut", "sure": true}
+]}
