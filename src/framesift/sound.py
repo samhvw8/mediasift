@@ -350,20 +350,26 @@ def voices(pcm: np.ndarray, spans: list[tuple[float, float]], thr: float = 0.6) 
     Real-speech bench (LibriSpeech dialogues, bench/sense/voices.py): 1.00 pairwise agreement and
     the right number of voices in 8/8 dialogues; a mean-spectrum heuristic scored 0.73, and the
     CAM++ exports could not tell speakers apart under this sherpa-onnx. Lines under 0.8 s get None."""
+    import os
+    from concurrent.futures import ThreadPoolExecutor
     import sherpa_onnx
+    # Lines in parallel, one thread each: the same embeddings 3x faster than one 4-thread call at
+    # a time (300 lines, GPU box: 11.0 s -> 3.2 s; a 1h45m podcast has ~1,900 lines). Capped when polite.
     ex = sherpa_onnx.SpeakerEmbeddingExtractor(sherpa_onnx.SpeakerEmbeddingExtractorConfig(
-        model=str(speaker_model()), num_threads=polite.threads(4)))
-    embs: list[np.ndarray | None] = []
-    for s, e in spans:
-        seg = pcm[int(s * SR):int(e * SR)]
+        model=str(speaker_model()), num_threads=1))
+
+    def embed(span) -> np.ndarray | None:
+        seg = pcm[int(span[0] * SR):int(span[1] * SR)]
         if len(seg) < 0.8 * SR:
-            embs.append(None)
-            continue
+            return None
         st = ex.create_stream()
         st.accept_waveform(SR, seg.astype(np.float32) / 32768.0 if seg.dtype.kind == "i" else seg.astype(np.float32))
         st.input_finished()
         v = np.array(ex.compute(st), np.float32)
-        embs.append(v / (np.linalg.norm(v) + 1e-9))
+        return v / (np.linalg.norm(v) + 1e-9)
+
+    with ThreadPoolExecutor(polite.threads(min(16, os.cpu_count() or 4))) as pool:
+        embs: list[np.ndarray | None] = list(pool.map(embed, spans))
     if sum(v is not None for v in embs) < 2:
         return [None] * len(spans)
     sums: list[np.ndarray] = []

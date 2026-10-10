@@ -183,6 +183,11 @@ OCR is then the slowest local pass (about 9 s of 18 s on that reel: 164 accurate
 ("import matplotlib"), 11 of 21 on ui_flow ("Password"); 2-4 Vision threads gave 8.7 -> 7.9 s
 (Vision serializes internally). Left as is: the card is cached after its first run.
 
+Long files: on the 1h45m podcast the box took 182 s, of which transcription was 99 s (64x) and the
+transfer 2 s; speaker embeddings for ~1,900 lines took ~76 s on 4 threads of a 64-core box. Lines
+now embed in parallel (one thread each, up to 16 workers, 4 on a polite Mac): same embeddings,
+300 lines 11.0 s -> 3.2 s, voice bench still 1.00. Podcast card: 318 s -> 213 s.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read
