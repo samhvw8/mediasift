@@ -1,0 +1,8 @@
+{"arm": "C", "images_read": 2, "answers": [
+{"id": "q01", "answer": "right", "sure": true},
+{"id": "q02", "answer": "up (then it settled back down to the middle row)", "sure": true},
+{"id": "q03", "answer": "a blue ball came in from the right edge moving left and the red ball moved left ahead of it, as if chased or pushed", "sure": false},
+{"id": "q04", "answer": "off the left edge of the frame (exited at top-left)", "sure": true},
+{"id": "q05", "answer": "none; only background music was heard, no collision sound", "sure": false},
+{"id": "q06", "answer": "a blue ball and a yellow square", "sure": true}
+]}

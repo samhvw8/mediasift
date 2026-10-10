@@ -150,7 +150,11 @@ def _audio(path: str, info: decode.MediaInfo, subs: Path | None, asr_mode: str):
     tags = sound.tag(pcm, hop=0.5 if info.duration <= 1800 else 1.0)
     sp = sound.speech_spans(tags)
     hits = sound.hits(pcm, tags, sp)
-    beds = sound.beds(tags, sp)
+    beds = sound.trim(sound.beds(tags, sp), at)
+    # A short "music" run around a counted hit is that hit seen through a 3 s window, not music.
+    hit_t = [t for h in hits for t in h.times]
+    beds = [b for b in beds if not (b.label in ("music", "singing") and b.end - b.start <= sound.MUSIC_MIN_S
+                                    and any(b.start - 0.5 <= t <= b.end + 0.5 for t in hit_t))]
     for bd in beds:                       # a phone that rings twice is one tag but two bursts
         if bd.label not in ("music", "singing"):
             bd.times = sound.bursts(at.rms_db, at.times, bd.start, bd.end)

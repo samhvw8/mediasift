@@ -83,3 +83,11 @@ def test_voice_letters_follow_real_speakers():
     pcm, spans, truth = V.dialogue(("251", "1272", "1462"), random.Random(5))
     got = sound.voices(pcm, spans)
     assert V.pairwise(truth, got) == 1.0
+
+
+def test_short_low_sounds_are_not_swallowed_as_music(clips):
+    """With 3 s tagging windows a lone low tone reads as 'music'; it must still be a counted hit."""
+    pcm = decode.audio_pcm(clips["ui_flow"], sound.SR)
+    tags = sound.tag(pcm)
+    hits = sound.hits(pcm, tags, [])
+    assert any(abs(h.times[0] - 11.8) < 0.1 and "low" in h.quality for h in hits), [(h.label, h.times[:3]) for h in hits]

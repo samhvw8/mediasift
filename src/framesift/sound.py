@@ -27,7 +27,10 @@ import numpy as np
 from . import polite
 
 SR = 16000
-WIN_S = 1.0
+# 3 s windows: the tagger was trained on 10 s clips, and on 40 real ESC-50 recordings 1 s windows
+# named 25, 2 s 31, 3 s 36 (5 s 36 with blurrier times). Spans are trimmed to audible audio after.
+WIN_S = 3.0
+MUSIC_MIN_S = 4.5   # shorter 'music' with few onsets is a short sound seen through a 3 s window
 MODEL = "sherpa-onnx-ced-small-audio-tagging-2024-04-19"   # ced-base tied it on real sounds (25/40) at 4x size
 MODEL_URL = f"https://github.com/k2-fsa/sherpa-onnx/releases/download/audio-tagging-models/{MODEL}.tar.bz2"
 MODEL_SHA256 = "a3c9ef3e7f8dcf2720b148bb3c32a882a896a4abb00450a6c091772c54d11ef5"
@@ -270,9 +273,12 @@ def hits(pcm: np.ndarray, tags: Tags, speech_spans: list[tuple[float, float]]) -
     in_speech = np.array([any(s - 0.1 <= x <= e + 0.1 for s, e in speech_spans) for x in t])
     t, timbre = t[~in_speech], timbre[~in_speech]
     music = np.maximum(tags.family(MUSIC), tags.family(SINGING))
-    runs = _runs(music > 0.35, tags.times, tags.hop, 1.0, 1.5)
+    # Beats inside real music are not events. With 3 s tagging windows a lone thud also reads as a
+    # short "music" run, so only a long run (> 4.5 s) or a rhythmic one (4+ onsets) counts as music.
+    runs = [(s, e) for s, e in _runs(music > 0.35, tags.times, tags.hop, 1.0, 1.5)
+            if e - s > MUSIC_MIN_S or int(((t >= s) & (t <= e)).sum()) >= 4]
     beat = np.array([any(s <= x <= e for s, e in runs) for x in t], bool)
-    t, timbre = t[~beat], timbre[~beat]                    # beats inside music are not events
+    t, timbre = t[~beat], timbre[~beat]
     if not len(t):
         return []
     z = timbre - timbre.mean(axis=1, keepdims=True)
@@ -407,3 +413,19 @@ def quality(pcm: np.ndarray, t: float, dur: float = 0.3) -> str:
     decay = 20 * np.log10(env[-1] / env.max())
     tail = "short, dull" if decay < -30 and cen < 800 else "short, sharp" if decay < -30 else "ringing"
     return f"{pitch}-pitched (~{cen:.0f} Hz), {tail}"
+
+
+def trim(ev: list[SoundEvent], track) -> list[SoundEvent]:
+    """Shrink lasting sounds to the audible part of their span: long tagging windows smear a
+    sound's edges into the silence around it."""
+    for e in ev:
+        if e.kind != "bed":
+            continue
+        m = (track.times >= e.start) & (track.times <= e.end) & ~track.silent
+        if m.any():
+            t = track.times[m]
+            e.start, e.end = float(t[0] - HOP_TRACK / 2), float(t[-1] + HOP_TRACK / 2)
+    return ev
+
+
+HOP_TRACK = 0.05   # audio.HOP_S

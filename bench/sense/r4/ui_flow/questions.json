@@ -1,0 +1,37 @@
+{
+ "video": "ui_flow",
+ "questions": [
+  {
+   "id": "q01",
+   "question": "An error message appeared briefly on screen. What exactly did it say?"
+  },
+  {
+   "id": "q02",
+   "question": "What did the app show between the first click on the button and the error?"
+  },
+  {
+   "id": "q03",
+   "question": "How many times did the user click the blue button under the form?"
+  },
+  {
+   "id": "q04",
+   "question": "Right after the error, what happened to the text in the Email and Password fields?"
+  },
+  {
+   "id": "q05",
+   "question": "What did the blue button's label say when it was clicked the second time?"
+  },
+  {
+   "id": "q06",
+   "question": "Describe the sound that played when the error appeared, compared with the sound when sign-in succeeded."
+  },
+  {
+   "id": "q07",
+   "question": "In what order did the items appear in the left sidebar?"
+  },
+  {
+   "id": "q08",
+   "question": "Which sidebar item did the user click at the end?"
+  }
+ ]
+}
