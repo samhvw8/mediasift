@@ -248,7 +248,8 @@ the camera turned right; a subject crossing a still background does not count. S
 still and editing-jump clips are tests. On real files: Big Buck Bunny's first scenery shot reads
 "camera tilts down" (the q02 key); a CS50 line checked by eye is a real pan; a talking-head reel went
 from 4 false "pans" at a 1 s minimum to 0 at 1.5 s (one editing punch-in looks like ~1.1 s of motion).
-Cost: one small FFT pair per analysed frame. Card see-7.
+Cost: one small FFT pair per analysed frame: 2.2 s over the 1h45m podcast's 12,672 frames (about 1% of
+its 213 s card). Card see-7.
 Real bench r13 (C re-answered on all four videos): B 31/32, C 31/32, 54 vs 58 images; C answered
 q02 "tilts down" (sure) from the camera line, first time in any round; its one miss was q07
 (cut-back count, missed in r7 too).
