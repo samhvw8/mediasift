@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — 3 s tagging windows plus span trimming: real-sound naming 25/40 -> 36/40.
 * **Updated**: [framesift see](decisions/see-sensor.md) — real-recording checks: ESC-50 sound naming 25/40, LibriSpeech voice grouping 1.00 with TitaNet (replaces the spectrum heuristic, 0.73); `--on gpu-box` measured over ssh (58x realtime, Mac CPU halved).
 * **Updated**: [framesift see](decisions/see-sensor.md) — review fixes: VFR and rotated frames, ASR cue merging, audio-only `look`, cache keyed by `--asr`, atomic card, remote ASR timeouts, whole-file copies in sound.
 * **Added**: [framesift see](decisions/see-sensor.md) — v0.3 sensor card (picture events, CED-named and counted sounds, OCR, ~1 fps flow sheets, `look` with a sound strip); synthetic bench 26/26 vs 22/26 for uniform sheets; real footage at parity (31/32 vs 32/32); Mac resource fixes (MLX cache cap: swap churn 3.9 GB -> 125 MB; background QoS rejected, 5x slower).

@@ -23,7 +23,7 @@ framesift see bug-repro.mov          # or a YouTube URL; no flags; cached by fil
 | sense | how | cost |
 |---|---|---|
 | **picture events** | every frame (15 fps on short files) as a 32x18 grid of colour blocks; space-time regions of change become *changed*, *flashed and changed back*, *moved (path)*, *kept changing*, *cut*; a change that is undone later says how long it lasted | ~50x realtime |
-| **sound** | [CED](https://github.com/RicherMans/CED) (AudioSet tagger, 22 MB, CPU) names lasting sounds (music, siren, telephone); short sounds are found by a jump-and-fall-back level test, counted, timed and described (pitch, sharp or ringing); silences; bursts inside a sound | ~150x realtime |
+| **sound** | [CED](https://github.com/RicherMans/CED) (AudioSet tagger, 22 MB, CPU, 3 s windows: 36/40 real recordings named right) names lasting sounds (music, siren, telephone); short sounds are found by a jump-and-fall-back level test, counted, timed and described (pitch, sharp or ringing); silences; bursts inside a sound | ~150x realtime |
 | **sound with picture** | a sound within 150 ms of a picture change is written on it ("together with a beep: #3, #6 of the 8") | free |
 | **speech** | parakeet-mlx / whisper, only when the tagger hears speech; site subtitles for URLs; `--on HOST` runs it (and the voice grouping) on a GPU box over ssh | 20-30x realtime on an M1 Pro; 58x via an RTX 3060 |
 | **voices** | TitaNet-small speaker embeddings group lines into voice A, B, ... | 1.00 on real two- and three-speaker dialogues |
@@ -84,9 +84,8 @@ Point your agent at [`skills/framesift/SKILL.md`](skills/framesift/SKILL.md).
 - Region words ("small red area at bottom") come from pixel statistics; the card says to check an
   image before relying on them. On camera footage the card lists only cuts and text; motion is in
   the flow sheets.
-- Sound names are AudioSet classes: on 40 real ESC-50 recordings 25 were named right (dogs, knocks,
-  claps, sirens, horns, engines, footsteps, typing, laughter, bells); roosters, coughs, sneezes,
-  clicks and thunder mostly were not. Doubtful names are hedged.
+- Sound names are AudioSet classes: on 40 real ESC-50 recordings 36 were named right (90%); coughs,
+  one mouse click and one alarm clock were not. Doubtful names are hedged.
 - Voice letters (A, B) come from a speaker-embedding model (TitaNet-small, 40 MB): right on every
   real LibriSpeech dialogue in the bench; they are groupings, not names.
 - OCR needs macOS (Apple Vision). `--on HOST` needs framesift installed on the host.

@@ -89,7 +89,7 @@ realtime; offload is the answer there).
 
 | check | method | result |
 |---|---|---|
-| sound names on real recordings | 40 ESC-50 clips (20 classes) spliced at known times, scored by a synonym table, no LLM (`bench/sense/real_sound.py`) | 25/40 named (62%), 2-5 stray lines. Strong: dog, knock, clapping, siren, horn, engine, footsteps, typing, laughter, church bells. Weak in the model itself (CED's top classes are wrong): rooster, cough, sneeze, mouse click, thunder (reads as "low rumble"). CED-base tied (25/40) at 4x the size: not adopted. |
+| sound names on real recordings | 40 ESC-50 clips (20 classes) spliced at known times, scored by a synonym table, no LLM (`bench/sense/real_sound.py`) | **36/40 (90%) with 3 s tagging windows**, 3 stray lines; 1 s windows: 25/40, 2 s: 31/40, 5 s: 36/40 with blurrier times. CED was trained on 10 s clips, so 1 s windows starved it. Still missed: both coughs, one mouse click, one alarm clock. CED-base tied CED-small at 1 s (25/40) at 4x the size: not adopted. Lasting sounds are trimmed to the audible part of their span afterwards, which keeps edges exact (siren 14.0-18.0 s, ring 23.0-27.2 s on the synthetic scene). Through a 3 s window a lone thud reads as "music" and its hit was dropped as a beat (synthetic fell to 23/26); now only music longer than 4.5 s or with 4+ onsets suppresses hits, and short music runs around a hit are dropped: back to 26/26. |
 | voice letters on real speech | 8 LibriSpeech dialogues, 2-3 real speakers, 12 turns (`bench/sense/voices.py`) | TitaNet-small speaker embeddings: 1.00 pairwise agreement, right voice count 8/8. The mean-spectrum heuristic shipped first: 0.73. CAM++ exports could not separate speakers under sherpa-onnx 1.13.8 (same-speaker and different-speaker similarities overlapped). On the 1h45m podcast: two voices (host 373 lines, guest 1,271). |
 | `--on gpu-box` | real ssh, RTX 3060 | whisper large-v3-turbo on CUDA, 58x realtime incl. transfer; the host also returns voice letters. 1h45m podcast: 309 s wall, Mac CPU time 390 s (785 s all-local), Mac GPU unused for speech. |
 
@@ -115,7 +115,7 @@ pitch words copied the whole recording (~1 GB per hour).
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read
   speech; the podcast result (two voices) is plausible but has no answer key.
-- Sound names: 38% of real clips are misnamed or missed by CED itself; names stay hedged where
+- Sound names: 4 of 40 real clips still missed (coughs, a click, an alarm); names stay hedged where
   doubtful ("thump (heartbeat-like)").
 - Screen vs camera classification is a heuristic (identical-frame share); a static podcast can read
   as a screen, so files over 20 minutes always get the lean picture policy.
