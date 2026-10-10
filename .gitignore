@@ -1,0 +1,29 @@
+.venv/
+__pycache__/
+*.egg-info/
+out/
+samples/*
+!samples/fetch.sh
+# sense bench: media is regenerated (make_synth.py, real.py, prep.py); keys, answers and grades are kept
+bench/sense/clips/*.mp4
+bench/sense/runs/
+bench/sense/real/*/oracle/
+bench/sense/real/r*/*/B/
+bench/sense/real/r*/*/C/
+bench/sense/r*/*/A/
+bench/sense/r*/*/B/
+bench/sense/r*/*/C/
+bench/sense/real_sound/*.mp4
+# bench media from every round is regenerable; keys, questions, answers, grades, prompts and READMEs are kept
+bench/**/*.jpg
+bench/**/*.jpeg
+bench/**/*.png
+bench/**/*.npz
+bench/**/*.mp4
+bench/**/*.wav
+bench/**/*.f32
+bench/results/runs*/
+bench/**/single/runs/
+bench/qa/*/[A-F]/
+bench/qa/*/oracle/
+bench/qa_long/*/oracle/
