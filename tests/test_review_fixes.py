@@ -71,9 +71,15 @@ def test_portrait_flow_tiles_are_tall_and_filled(portrait):
 def test_event_sheets_match_the_card(portrait):
     card = (portrait / "card.md").read_text()
     files = sorted(p.name for p in portrait.glob("ev_*.jpg"))
-    for f in files:
-        assert f in card, f"{f} was made but the card never points to it"
     assert ("ev_NN.jpg" in card) == bool(files)
+
+
+def test_camera_crops_are_all_referenced(portrait, tmp_path):
+    s = _sensed(portrait)
+    s.content = "camera"
+    refs = see.event_sheets(s.source, s, tmp_path)
+    listed_ids = {e.id for grp in see.listed(s)[0] for e in grp}
+    assert set(refs) <= listed_ids, "camera footage got crops of events the card does not list"
 
 
 def _sensed(d):

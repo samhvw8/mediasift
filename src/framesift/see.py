@@ -511,7 +511,8 @@ def flow_sheets(path: str, s: Sensed, g: events.Grid | None, out: Path) -> list[
     tw = int(round(math.sqrt(TILE_W * TILE_H * aspect)))
     th = int(round(TILE_W * TILE_H / tw))
     cols = 4 if aspect >= 1 else 6
-    shown = [e for grp in listed(s)[0] for e in grp]   # a tile's #id must point at a card line
+    # Camera footage lists almost no pixel events, so a tile's #id would point at nothing.
+    shown = [e for grp in listed(s)[0] for e in grp] if s.content == "camera" else s.events
     names = []
     for k in range(0, len(files), 12):
         chunk = list(zip(times[k:k + 12], files[k:k + 12]))
@@ -530,13 +531,15 @@ def flow_sheets(path: str, s: Sensed, g: events.Grid | None, out: Path) -> list[
 
 def event_sheets(path: str, s: Sensed, out: Path, limit: int = 24) -> dict[int, str]:
     """Before | after crops for localized events, 3 per image: the detail a flow tile is too small to show.
-    Only for groups the card lists, one crop per group: the card points at each sheet it makes."""
+    Screen recordings: the most telling events, listed or not (unlisted crops let answerers count and time
+    brief overlays: real bench r7 lost 2 questions without them). Camera footage: only events the card
+    lists, one per group (its pixel events are faces and texture; a phone reel got 7 useless crops)."""
     rank = lambda e: (-(e.shown_until is not None or bool(e.text_added) or bool(e.sounds)), -e.region.area)
-    pick = []
-    for grp in listed(s)[0]:
-        ok = [e for e in grp if e.kind in ("change", "blink") and 0.0005 < e.region.area < 0.5]
-        if ok:
-            pick.append(min(ok, key=rank))
+    ok = lambda e: e.kind in ("change", "blink") and 0.0005 < e.region.area < 0.5
+    if s.content == "camera":
+        pick = [min(g, key=rank) for g in ([e for e in grp if ok(e)] for grp in listed(s)[0]) if g]
+    else:
+        pick = [e for e in s.events if ok(e)]
     pick = sorted(sorted(pick, key=rank)[:limit], key=lambda e: e.start)
     if not pick:
         return {}
@@ -624,7 +627,8 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
                "changes and one per still stretch, each tile labelled with its time and the event (#id) on screen. "
                "Open the sheet that covers the time you need:") if flows else "- No picture.",
               *([f"  {', '.join(flows[i:i + 4])}" for i in range(0, len(flows), 4)] if flows else []),
-              *(["- ev_NN.jpg rows show single events as [where | before | after] crops, for small detail."]
+              *([f"- ev_NN.jpg rows show single events as [where | before | after] crops, for small detail"
+                 f"{'' if s.content == 'camera' else '; each is labelled with its #id and time, and some brief ones have no line below'}."]
                 if refs else []),
               f"- To zoom on any span: `framesift look \"{s.source}\" START-END` (frames + a strip of the sound).",
               "- Words like 'small red area at bottom' come from pixel statistics; open an image before relying on them.", ""]

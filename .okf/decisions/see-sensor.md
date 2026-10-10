@@ -119,16 +119,21 @@ of file daily use brings. Benches are all landscape, so these found what they co
 - **Portrait tiles.** A 9:16 video in a 16:9 tile filled a third of it: same tokens, a small face.
   Tiles now take the video's shape at the same pixel area (portrait 6 x 2 sheets); the burned-in
   captions became readable.
-- **Dangling references.** Event crops were made for events the card then left out (camera footage
-  lists no pixel events; screen recordings drop over-budget ones), and flow tiles named those ids.
-  The card's event selection is now one function (`listed`) that the crops and tile labels share:
-  every `ev_NN.jpg` and every tile `#id` points at a card line. ui_flow: 8 crop sheets -> 4, same
-  timeline; the reel: 7 unreferenced crop sheets -> 0.
+- **Dangling references (camera footage only).** Camera footage lists no plain pixel events, yet
+  crops were made for them (the reel: 7 face-zoom crops, none referenced) and flow tiles named their
+  ids. On camera footage, crops and tile `#id`s now come only from the events the card lists (shared
+  `listed()`). The same rule on screen recordings was a regression: the real bench (r7) lost the
+  python_100s emoji-count and red-X-duration questions in 2 of 2 runs, because the unlisted crops
+  were how answerers counted brief overlays. Screen recordings keep the old selection, and the card
+  says some crops have no line. q04 + q08 right: r2-r6 10/10; r7 rule everywhere 0/4; restored 2/4
+  (whisper ASR) and 3/4 (parakeet ASR) — the ASR difference is within noise.
 - **One voice.** A single speaker got `[voice male]` on all 34 lines; it is now said once below
   the timeline.
 
-The real-footage QA bench was not rerun: landscape 16:9 tiles are unchanged and old/new cards for
-the synthetic clips have the same timeline lines (only crop references renumbered).
+Real-footage bench r7 (all four videos, Sonnet answerers, blind graders): B 31/32, C 28/32. Besides
+python_100s (above), C missed Big Buck Bunny q02 (pan vs tilt, missed in r6 too) and q07 (cut-back
+count; the CUTS line and landscape sheets are unchanged, so noise). Lesson: a cleanup that removes
+images an agent can see is a behaviour change; measure it like one.
 
 # Not measured or open
 
