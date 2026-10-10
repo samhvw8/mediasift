@@ -154,6 +154,8 @@ Platform watermarks ("TikTok", the creator's "@handle") jump between corners, an
 jump as new text: 2-4 timeline lines per real reel. They are now named once in the card header and
 dropped from events. "TikTok"/"CapCut" are stripped everywhere; an "@handle" only on camera footage
 (in a chat recording "@sam" is content). OCR variants of one handle fold into one. Card see-5.
+Real bench r12 with both changes (C re-answered on the three speech videos): B 31/32, C 31/32,
+54 images vs 58 — no regression.
 
 # Not measured or open
 
