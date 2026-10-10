@@ -120,7 +120,9 @@ pitch words copied the whole recording (~1 GB per hour).
   0.15 vs 0.33 in the track), one as Plop, a mouse click as Computer keyboard, a bell alarm as
   Jackhammer. Tried and reverted: naming a close runner-up class ("A / B" when the second class is
   at least 0.6 of the first). It missed that cough (ratio 0.45) and added synonym noise to 12 other
-  lines ("computer keyboard / typing"). Closing these needs a better tagger, not card rules.
+  lines ("computer keyboard / typing"). Closing these needs a better tagger, not card rules. The other sherpa-onnx tagger family does not
+  help: Zipformer-small (27 MB int8) alone named 35/40 with 6 stray lines; averaged with CED it named
+  34/40 (both coughs fixed, a sneeze, a cat, a fire and a click lost). CED-small alone stays.
 - Screen vs camera classification is a heuristic (identical-frame share); a static podcast can read
   as a screen, so files over 20 minutes always get the lean picture policy.
 
