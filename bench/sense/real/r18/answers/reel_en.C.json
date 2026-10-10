@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 6, "answers": [
+{"id": "q01", "answer": "capacity", "sure": true},
+{"id": "q02", "answer": "saving", "sure": true},
+{"id": "q03", "answer": "3", "sure": true},
+{"id": "q04", "answer": "toward the left of the frame (out to the left edge)", "sure": true},
+{"id": "q05", "answer": "it sweeps down and across his body, ending folded in front of his torso", "sure": true},
+{"id": "q06", "answer": "raised in front of his chest in a loosely curled fist, pointing/gesturing", "sure": false},
+{"id": "q07", "answer": "about 1 second", "sure": true},
+{"id": "q08", "answer": "italic", "sure": true}
+]}

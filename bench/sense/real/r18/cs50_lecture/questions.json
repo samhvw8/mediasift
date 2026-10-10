@@ -1,0 +1,37 @@
+{
+ "video": "cs50_lecture",
+ "questions": [
+  {
+   "id": "q01",
+   "question": "Near the end, while the speaker talks about switches and electricity being off or on, the screen beside him cycles through four displays involving a light bulb and digits. In what order do they appear?"
+  },
+  {
+   "id": "q02",
+   "question": "In the final seconds, after the screen shows the digit 1, the view cuts to a wide shot of the stage. Which way does the speaker walk and where does he end up?"
+  },
+  {
+   "id": "q03",
+   "question": "In the wide shot where the screen changes from 'computer science' to 'problem solving', which direction does the speaker walk across the stage?"
+  },
+  {
+   "id": "q04",
+   "question": "At the start, while the speaker describes the end-of-term fair and the shirt, the video cuts away from him to full-screen photos. How many different photos are shown before it returns to the speaker?"
+  },
+  {
+   "id": "q05",
+   "question": "While audience members call out answers ('five', 'six') to how high you can count on one hand, the video briefly switches to an unusually distant view of the whole hall (statues and a large projection screen visible). For about how long does that view last?"
+  },
+  {
+   "id": "q06",
+   "question": "When the speaker says the term 'bit' just means binary digit, what happens to the words on the screen?"
+  },
+  {
+   "id": "q07",
+   "question": "What is on the screen when the speaker says 'Problems to be solved look like this'?"
+  },
+  {
+   "id": "q08",
+   "question": "When the speaker says 'this is my hand representing the number zero', what is his raised hand doing?"
+  }
+ ]
+}

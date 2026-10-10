@@ -145,3 +145,14 @@ def test_an_overlay_replaced_together_with_what_was_under_it_still_gets_a_lifeti
     x = [e for e in evs if e.region.colour == "red" and 2.3 <= e.start <= 2.8]
     assert x and x[0].shown_until is not None, [(e.kind, round(e.start, 2), e.region.colour, e.shown_until) for e in evs]
     assert abs((x[0].shown_until - x[0].start) - 3.1) < 0.4
+
+
+def test_a_single_cut_back_to_the_opening_place_reads_plainly():
+    """The phone reel's one cut is a punch-in on the same scene: 'CUT: new shot A' read as a contradiction."""
+    from framesift import see
+    s = see.Sensed("x.mp4", 20.0, 1080, 1920, 30, 15, "camera")
+    s.events = [events.Event(1, "cut", 4.3, 4.3, 4.2, 4.4, 4.4, events.Region(0, 0, 1, 1, 1.0))]
+    s.shots = [(0.0, "A"), (4.3, "A")]
+    assert "CUT: same place again (shot A, as at the start)" in see.card(s, [], {}, "x.mp4")
+    s.shots = [(0.0, "A"), (4.3, "B")]
+    assert "CUT: new shot B" in see.card(s, [], {}, "x.mp4")

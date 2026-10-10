@@ -1,0 +1,37 @@
+{
+ "video": "tiktok_vi",
+ "questions": [
+  {
+   "id": "q01",
+   "question": "The speaker holds a large object up to the camera partway through the video. Right after that object leaves the frame, what does the on-screen caption say first?"
+  },
+  {
+   "id": "q02",
+   "question": "In the closing dark TikTok screen at the very end, how does the search bar change over its first couple of seconds?"
+  },
+  {
+   "id": "q03",
+   "question": "Early in the video, the small TikTok logo with the account handle sits on one side of the frame. On which side is it at the very start, and where does it move to after about 5 seconds?"
+  },
+  {
+   "id": "q04",
+   "question": "How many times during the video does the speaker say the sentence about 'when you have become big, you will surely have to cooperate, right?' (the 'khi m\u1ed9t khi m\u00e0 c\u00e1c b\u1ea1n \u0111\u00e3 l\u00e0m to ... h\u1ee3p t\u00e1c, \u0111\u00fang kh\u00f4ng' line)?"
+  },
+  {
+   "id": "q05",
+   "question": "For about how long is the large silver-blue sword visible in front of the speaker?"
+  },
+  {
+   "id": "q06",
+   "question": "For about how long does the closing dark TikTok logo screen stay on screen at the end of the video?"
+  },
+  {
+   "id": "q07",
+   "question": "What is on screen in front of the speaker when he asks the audience 'anh em c\u00f3 th\u1ea5y \u0111\u1eb9p kh\u00f4ng?' (do you think it looks nice)?"
+  },
+  {
+   "id": "q08",
+   "question": "When the speaker says 'h\u00f4m nay m\u00ecnh ti\u1ebfp t\u1ee5c c\u00e1i series' (today I continue the series), what new object shows up in the lower left of the frame?"
+  }
+ ]
+}

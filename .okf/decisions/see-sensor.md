@@ -276,6 +276,18 @@ images: C's first full score in any round. One run; run-to-run noise is 1-3 ques
 claim is "no systematic miss left on this bench", not "ahead of the baseline here". Synthetic r16 on the
 same code: 26/26 on 7 images (unchanged).
 
+# Phone videos join the real bench (2026-10-10)
+
+All four bench videos were landscape English, so `bench/sense/real.py` gains two phone videos
+from daily use: `reel_en` (26 s English talking-head reel, portrait) and `tiktok_vi` (2:44
+Vietnamese TikTok, portrait); questions written the same way (writer sees only 2 fps oracle
+sheets + transcript). Round r17: TikTok B 8/8, C 8/8; reel B 7/8, C 6/8. Both C misses were one-moment
+gestures answered by guessing from ~1 fps tiles (3 images read). The card's zoom line now says when
+to zoom ("a gesture, a face or small text at one moment") and the single-cut wording reads "CUT:
+same place again (shot A, as at the start)" instead of "new shot A" for a punch-in. Round r18, reel
+C twice: 7/8 both (5-6 images read; q05 now right both times); q06 (the hand at "don't stay up
+late") is missed by B too in every run. Card see-10.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read

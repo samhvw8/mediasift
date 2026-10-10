@@ -1,0 +1,10 @@
+{"arm": "B", "images_read": 3, "answers": [
+{"id": "q01", "answer": "capacity", "sure": true},
+{"id": "q02", "answer": "saving", "sure": true},
+{"id": "q03", "answer": "3", "sure": true},
+{"id": "q04", "answer": "toward the left side of the frame (his right hand sweeps out to the left edge)", "sure": false},
+{"id": "q05", "answer": "it lowers / drops down", "sure": false},
+{"id": "q06", "answer": "pointing his index finger at the camera", "sure": true},
+{"id": "q07", "answer": "about 1 second", "sure": false},
+{"id": "q08", "answer": "italic", "sure": true}
+]}

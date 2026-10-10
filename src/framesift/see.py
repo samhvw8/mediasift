@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw, ImageFont
 from . import __version__, audio, decode, events, polite, sound
 from .transcript import Cue
 
-CARD_VERSION = "see-9"   # bump when the card format changes: the cache key includes it
+CARD_VERSION = "see-10"   # bump when the card format changes: the cache key includes it
 TILE_W, TILE_H = 320, 180          # the size uniform 1 fps sheets used in the bench: enough, ~920 tokens a sheet
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 URL = re.compile(r"^https?://")
@@ -703,7 +703,8 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
               *([f"- ev_NN.jpg rows show single events as [where | before | after] crops, for small detail"
                  f"{'' if s.content == 'camera' else '; each is labelled with its #id and time, and some brief ones have no line below'}."]
                 if refs else []),
-              f"- To zoom on any span: `framesift look \"{s.source}\" START-END` (frames + a strip of the sound).",
+              f"- To zoom on any span: `framesift look \"{s.source}\" START-END` (frames + a strip of the sound). "
+              "Use it for a gesture, a face or small text at one moment: flow tiles are ~1 small frame a second.",
               "- Words like 'small red area at bottom' come from pixel statistics; open an image before relying on them.", ""]
     rows: list[tuple[float, str]] = []
     cut_times = [e.start for e in s.events if e.kind == "cut"]
@@ -711,7 +712,10 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
     letter = {round(t, 2): lab for t, lab in s.shots}
     lab = lambda t: f" {letter[round(t, 2)]}" if round(t, 2) in letter else ""
     if len(cut_times) == 1:
-        rows.append((cut_times[0], f"{ts(cut_times[0]):<15} pic CUT: new shot{lab(cut_times[0])}"))
+        t0 = cut_times[0]
+        again = s.shots and lab(t0).strip() == s.shots[0][1]
+        what = f"same place again (shot {s.shots[0][1]}, as at the start)" if again else f"new shot{lab(t0)}"
+        rows.append((t0, f"{ts(t0):<15} pic CUT: {what}"))
     elif cut_times:
         opens = f"; the video opens on shot {s.shots[0][1]}, the same letter again = the same place" if s.shots else ""
         rows.append((cut_times[0], f"{ts(cut_times[0])}-{ts(cut_times[-1]):<7} pic CUTS ({len(cut_times)} new shots{opens}) at "

@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — phone videos in the real bench; zoom hint for one-moment gestures (reel C 6/8 -> 7/8 twice); card see-10.
 * **Updated**: [framesift see](decisions/see-sensor.md) — synthetic r16 on see-9: 26/26.
 * **Updated**: [framesift see](decisions/see-sensor.md) — real bench r15: C 32/32 (first full score), B 31/32.
 * **Updated**: [framesift see](decisions/see-sensor.md) — drawn-in overlays are changes with lifetimes; colour from the most-changed block; card see-9.

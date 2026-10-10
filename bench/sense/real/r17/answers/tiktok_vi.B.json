@@ -1,0 +1,10 @@
+{"arm": "B", "images_read": 6, "answers": [
+{"id": "q01", "answer": "\"thì cái lưu ý đấy là\"", "sure": true},
+{"id": "q02", "answer": "It starts blank (logo only), then a search bar with magnifier and '@ tu.phu.ngo.trie...' appears under the TikTok logo", "sure": true},
+{"id": "q03", "answer": "Left side at the start; moves to the right (bottom right) by about 5 s", "sure": true},
+{"id": "q04", "answer": "2", "sure": true},
+{"id": "q05", "answer": "about 4 seconds (roughly 126-130 s)", "sure": true},
+{"id": "q06", "answer": "about 4 seconds", "sure": false},
+{"id": "q07", "answer": "The large silver-blue sword (with a red/purple hilt)", "sure": true},
+{"id": "q08", "answer": "A Naruto-style figurine with yellow/orange spiky hair", "sure": true}
+]}

@@ -1,6 +1,6 @@
 """Real-footage round of the sense bench: temporal questions written from dense frames.
 
-    uv run python bench/sense/real.py oracle            # 2 fps oracle sheets + transcript, writer briefs
+    uv run python bench/sense/real.py oracle [NAMES]    # 2 fps oracle sheets + transcript, writer briefs
     uv run python bench/sense/real.py arms ROUND        # arm folders (B uniform 1 fps, C framesift see) + briefs
 
 Synthetic clips have exact answers but were designed by the same hand as the
@@ -21,7 +21,9 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parent.parent
-VIDEOS = ["big_buck_bunny", "tears_of_steel", "python_100s", "cs50_lecture"]
+VIDEOS = ["big_buck_bunny", "tears_of_steel", "python_100s", "cs50_lecture",
+          # phone video (portrait), as daily use brings: an English talking-head reel, a Vietnamese TikTok
+          "reel_en", "tiktok_vi"]
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 
 WRITER = """You write a test of how well someone understands a video they could not watch. You are the only
@@ -88,10 +90,10 @@ def transcript(video: Path) -> str:
     return "\n".join(lines) + "\n" if lines else "(no speech)\n"
 
 
-def oracle() -> None:
+def oracle(names: list[str] | None = None) -> None:
     base = ROOT / "real"
     (base / "prompts").mkdir(parents=True, exist_ok=True)
-    for v in VIDEOS:
+    for v in names or VIDEOS:
         video = REPO / "samples" / f"{v}.mp4"
         od = base / v / "oracle"
         if od.exists():
@@ -142,4 +144,4 @@ def arms(rnd: str) -> None:
 
 
 if __name__ == "__main__":
-    {"oracle": lambda: oracle(), "arms": lambda: arms(sys.argv[2])}[sys.argv[1]]()
+    {"oracle": lambda: oracle(sys.argv[2:] or None), "arms": lambda: arms(sys.argv[2])}[sys.argv[1]]()

@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 4, "answers": [
+{"id": "q01", "answer": "\"thì cái lưu ý đấy là\" (the sword leaves at ~129.7 s)", "sure": true},
+{"id": "q02", "answer": "It starts as an empty white bar (~160.7 s), then becomes a rounded search box with a magnifier icon and the text 'tu.phu.ngo.trie...' plus a TikTok icon", "sure": true},
+{"id": "q03", "answer": "Left side at the start; moves to the right side around 5 s", "sure": true},
+{"id": "q04", "answer": "2", "sure": true},
+{"id": "q05", "answer": "about 3.5 seconds (~126.1 to ~129.7 s)", "sure": false},
+{"id": "q06", "answer": "about 4 seconds (~160.4 s to the end at ~164.4 s)", "sure": true},
+{"id": "q07", "answer": "The large silver-blue sword", "sure": true},
+{"id": "q08", "answer": "A yellow-and-black toy/figure (yellow robot-like collectible)", "sure": true}
+]}

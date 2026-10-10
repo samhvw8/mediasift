@@ -1,0 +1,37 @@
+{
+ "video": "reel_en",
+ "questions": [
+  {
+   "id": "q01",
+   "question": "Right after the small caption 'you build' appears, what single large bold caption word is shown next?"
+  },
+  {
+   "id": "q02",
+   "question": "When the speaker says 'start with saving money', which word in the on-screen caption is shown in bold?"
+  },
+  {
+   "id": "q03",
+   "question": "How many different everyday situations does the speaker give advice for when you are unsure what to do (the examples, not the final conclusion)?"
+  },
+  {
+   "id": "q04",
+   "question": "While he says 'when that thing comes', in which direction does his arm and pointing hand move across the frame?"
+  },
+  {
+   "id": "q05",
+   "question": "After the large caption 'potential' at the very end, what does his raised arm do?"
+  },
+  {
+   "id": "q06",
+   "question": "When the speaker says 'don't stay up late', what is his hand doing?"
+  },
+  {
+   "id": "q07",
+   "question": "For about how long is the large bold caption 'what to do' (the big version, near the start) on screen?"
+  },
+  {
+   "id": "q08",
+   "question": "When he says the only thing that is 'constant', how is that word styled in the caption compared with the words around it?"
+  }
+ ]
+}

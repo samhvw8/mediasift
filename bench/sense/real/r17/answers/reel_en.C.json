@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 3, "answers": [
+{"id": "q01", "answer": "capacity", "sure": true},
+{"id": "q02", "answer": "saving", "sure": true},
+{"id": "q03", "answer": "3", "sure": true},
+{"id": "q04", "answer": "right to left across the frame (extending toward frame left)", "sure": false},
+{"id": "q05", "answer": "sweeps/swings outward across the frame (hand moves right, arm extends)", "sure": false},
+{"id": "q06", "answer": "closed fist / pinched fingers held in front of chest, small gesture", "sure": false},
+{"id": "q07", "answer": "about 1 second", "sure": false},
+{"id": "q08", "answer": "italic", "sure": true}
+]}

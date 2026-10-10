@@ -41,7 +41,8 @@ Region words (colour, position, size) come from pixel statistics: open an image 
   the sheet for the time you need, not all of them.
 - **Event sheets** (`ev_NN.jpg`, referenced in `pic` lines): `[where | before | after]` crops of one
   event, for small text and UI detail.
-- **Zoom**: `framesift look VIDEO 11.5-13` gives 8 frames over that span plus a strip of the sound
+- **Zoom**: for a gesture, a face or small text at one moment, do not guess from a flow tile (about one
+  small frame a second): `framesift look VIDEO 11.5-13` gives 8 frames over that span plus a strip of the sound
   under them (loudness, short sounds in orange, tags, speech). `-n 2` for a before/after pair,
   `-n 1` for one moment at full width.
 
