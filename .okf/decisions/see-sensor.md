@@ -188,6 +188,10 @@ transfer 2 s; speaker embeddings for ~1,900 lines took ~76 s on 4 threads of a 6
 now embed in parallel (one thread each, up to 16 workers, 4 on a polite Mac): same embeddings,
 300 lines 11.0 s -> 3.2 s, voice bench still 1.00. Podcast card: 318 s -> 213 s.
 
+A busy box failed the whole card: ComfyUI held 10.6 of 12 GB on the 3060, whisper hit CUDA out of
+memory, and `see` exited. Now any box failure (error, timeout) is logged in one line and the Mac
+transcribes instead, as it already did when the box did not answer.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read

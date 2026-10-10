@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — a failing box (GPU busy) falls back to local speech instead of failing the card.
 * **Updated**: [framesift see](decisions/see-sensor.md) — speaker embeddings in parallel: 1h45m podcast 318 s -> 213 s.
 * **Updated**: [framesift see](decisions/see-sensor.md) — OCR speed-ups measured and rejected (text pre-check loses text; threads ~10%).
 * **Updated**: [framesift see](decisions/see-sensor.md) — box speech overlaps the picture and OCR passes: 29 s -> 18-20 s on a 2:44 reel, no added lag.

@@ -175,7 +175,12 @@ def _speech(pcm, tags, talk: float, subs: Path | None, asr_mode: str, early) -> 
         import os
         from . import asr
         host = os.environ.get("FRAMESIFT_ON")
-        r = early[2].result() if early and early[2] else asr.remote(pcm, host) if host else None
+        try:
+            r = early[2].result() if early and early[2] else asr.remote(pcm, host) if host else None
+        except (RuntimeError, OSError, subprocess.TimeoutExpired) as e:
+            # A busy box (another job holding the GPU) costs speed, not the card: transcribe here.
+            log(f"speech on {host} failed, transcribing here instead: {str(e).splitlines()[-1][:200]}")
+            r = None
         try:
             if r is None:
                 r = asr.transcribe(pcm, "auto", None, None)

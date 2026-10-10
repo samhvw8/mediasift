@@ -155,3 +155,20 @@ def test_remote_asr_overlaps_the_picture_pass(tmp_path, monkeypatch):
     s, _ = see.sense(tmp_path / "a.mp4", tmp_path, asr_mode="on")
     assert [c["text"] for c in s.speech] == ["hello"]
     assert marks["asr_start"] < marks["visual_end"], "speech waited for the picture pass"
+
+
+def test_a_failing_box_falls_back_to_local_speech(tmp_path, monkeypatch):
+    """Real case: ComfyUI held 10.6 of 12 GB on the GPU box, whisper hit CUDA out of memory,
+    and the whole card crashed. A busy box must cost speed, not the card."""
+    from framesift import asr
+    ff("-f", "lavfi", "-i", "testsrc2=s=320x180:d=4:r=15", "-f", "lavfi", "-i", "sine=f=300:d=4",
+       "-shortest", "-pix_fmt", "yuv420p", str(tmp_path / "a.mp4"))
+
+    def busy_box(pcm, host, language=None, connect_s=3):
+        raise RuntimeError("ASR on box failed (1): CUDA failed with error out of memory")
+
+    monkeypatch.setattr(asr, "remote", busy_box)
+    monkeypatch.setattr(asr, "transcribe", lambda pcm, *a, **k: asr.AsrResult([Cue(0.5, 2.0, "local")], "local", "m", "en", 0.1))
+    monkeypatch.setenv("FRAMESIFT_ON", "fakehost")
+    s, _ = see.sense(tmp_path / "a.mp4", tmp_path, asr_mode="on")
+    assert [c["text"] for c in s.speech] == ["local"]
