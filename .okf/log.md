@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Restructured**: [framesift see](decisions/see-sensor.md) split into [picture sensing](decisions/picture-sensing.md), [sound sensing](decisions/sound-sensing.md), [speech and speed](decisions/speech-and-speed.md) and [the sense bench](benchmarks/sense-bench.md) (new `benchmarks/` folder); root index and [pipeline](architecture/pipeline.md) updated to the current card.
 * **Updated**: [framesift see](decisions/see-sensor.md) — phone videos in the real bench; zoom hint for one-moment gestures (reel C 6/8 -> 7/8 twice); card see-10.
 * **Updated**: [framesift see](decisions/see-sensor.md) — synthetic r16 on see-9: 26/26.
 * **Updated**: [framesift see](decisions/see-sensor.md) — real bench r15: C 32/32 (first full score), B 31/32.
