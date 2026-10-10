@@ -6,7 +6,7 @@ tags: [see, sensor, bench, audio, ocr, resources]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-10T11:30:00Z"
+  at: "2026-10-10T13:00:00Z"
 resource: src/framesift/see.py
 sources:
   - id: council
@@ -115,8 +115,12 @@ pitch words copied the whole recording (~1 GB per hour).
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read
   speech; the podcast result (two voices) is plausible but has no answer key.
-- Sound names: 4 of 40 real clips still missed (coughs, a click, an alarm); names stay hedged where
-  doubtful ("thump (heartbeat-like)").
+- Sound names: 4 of 40 real clips still missed; names stay hedged where doubtful ("thump
+  (heartbeat-like)"). Each miss is CED's, not the card's: one cough reads as Throat clearing (Cough
+  0.15 vs 0.33 in the track), one as Plop, a mouse click as Computer keyboard, a bell alarm as
+  Jackhammer. Tried and reverted: naming a close runner-up class ("A / B" when the second class is
+  at least 0.6 of the first). It missed that cough (ratio 0.45) and added synonym noise to 12 other
+  lines ("computer keyboard / typing"). Closing these needs a better tagger, not card rules.
 - Screen vs camera classification is a heuristic (identical-frame share); a static podcast can read
   as a screen, so files over 20 minutes always get the lean picture policy.
 

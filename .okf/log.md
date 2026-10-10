@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — the 4 remaining sound misses traced to CED itself; a runner-up-class naming rule was tried and reverted (missed the cough, added noise to 12 lines).
 * **Updated**: [framesift see](decisions/see-sensor.md) — 3 s tagging windows plus span trimming: real-sound naming 25/40 -> 36/40.
 * **Updated**: [framesift see](decisions/see-sensor.md) — real-recording checks: ESC-50 sound naming 25/40, LibriSpeech voice grouping 1.00 with TitaNet (replaces the spectrum heuristic, 0.73); `--on gpu-box` measured over ssh (58x realtime, Mac CPU halved).
 * **Updated**: [framesift see](decisions/see-sensor.md) — review fixes: VFR and rotated frames, ASR cue merging, audio-only `look`, cache keyed by `--asr`, atomic card, remote ASR timeouts, whole-file copies in sound.
