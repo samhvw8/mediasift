@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 3, "answers": [
+{"id":"q01","answer":"Error 503: upstream timeout","sure":true},
+{"id":"q02","answer":"A spinner with \"Signing in...\" next to the button","sure":true},
+{"id":"q03","answer":"2","sure":true},
+{"id":"q04","answer":"Both fields were cleared (emptied)","sure":true},
+{"id":"q05","answer":"Retry","sure":true},
+{"id":"q06","answer":"Error: a low-pitched (~113 Hz) ringing thud/sharp sound; success: a higher-pitched (~1736 Hz) ding","sure":true},
+{"id":"q07","answer":"Invoices, then Customers, then Reports","sure":true},
+{"id":"q08","answer":"Reports","sure":true}
+]}

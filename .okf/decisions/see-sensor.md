@@ -273,7 +273,8 @@ budget (rank 111 of 318, budget 36; a colour bonus reached rank 43 while lifting
 ranking was left alone.
 Real bench r15 with all of the above (C re-answered on all four videos): C 32/32, B 31/32, 55 vs 58
 images: C's first full score in any round. One run; run-to-run noise is 1-3 questions in 32, so the
-claim is "no systematic miss left on this bench", not "ahead of the baseline here".
+claim is "no systematic miss left on this bench", not "ahead of the baseline here". Synthetic r16 on the
+same code: 26/26 on 7 images (unchanged).
 
 # Not measured or open
 

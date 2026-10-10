@@ -1,0 +1,8 @@
+{"arm": "C", "images_read": 2, "answers": [
+{"id": "q01", "answer": "right", "sure": true},
+{"id": "q02", "answer": "up", "sure": true},
+{"id": "q03", "answer": "the blue ball came in from the right and hit it at about 12.5s, knocking it left", "sure": true},
+{"id": "q04", "answer": "off-screen to the left (exited the left edge)", "sure": true},
+{"id": "q05", "answer": "a short, dull, low-pitched thud/bump (about 90 Hz)", "sure": true},
+{"id": "q06", "answer": "a blue ball and a yellow square (bottom-right)", "sure": true}
+]}
