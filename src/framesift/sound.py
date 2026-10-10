@@ -19,6 +19,7 @@ import os
 import sys
 import tarfile
 import urllib.request
+from functools import lru_cache
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -108,13 +109,27 @@ class Tags:
         return self.probs[:, sorted(ids)].max(axis=1).astype(np.float32)
 
 
-def tag(pcm: np.ndarray, hop: float = 0.5, top_k: int = 12) -> Tags:
+@lru_cache(maxsize=2)
+def _tagger(top_k: int):
     import sherpa_onnx
     d = model_dir()
     cfg = sherpa_onnx.AudioTaggingConfig(
         model=sherpa_onnx.AudioTaggingModelConfig(ced=str(d / "model.int8.onnx"), num_threads=polite.threads(4)),
         labels=str(d / "class_labels_indices.csv"), top_k=top_k)
-    tagger = sherpa_onnx.AudioTagging(cfg)
+    return sherpa_onnx.AudioTagging(cfg)
+
+
+def speech_score(pcm: np.ndarray, t: float, win: float = 1.0) -> float:
+    """How much CED hears speech in a short window at t (from 0.1 s before)."""
+    a = max(0, int((t - 0.1) * SR))
+    seg = pcm[a:a + int(win * SR)]
+    st = _tagger(20).create_stream()
+    st.accept_waveform(SR, seg.astype(np.float32) / 32768.0 if seg.dtype.kind == "i" else seg.astype(np.float32))
+    return max((e.prob for e in _tagger(20).compute(st) if e.index in SPEECH), default=0.0)
+
+
+def tag(pcm: np.ndarray, hop: float = 0.5, top_k: int = 12) -> Tags:
+    tagger = _tagger(top_k)
     y = pcm.astype(np.float32) / 32768.0 if pcm.dtype.kind == "i" else pcm.astype(np.float32)
     win, step = int(WIN_S * SR), int(hop * SR)
     n = max(1, 1 + (len(y) - win) // step)
@@ -279,6 +294,14 @@ def hits(pcm: np.ndarray, tags: Tags, speech_spans: list[tuple[float, float]]) -
             if e - s > MUSIC_MIN_S or int(((t >= s) & (t <= e)).sum()) >= 4]
     beat = np.array([any(s <= x <= e for s, e in runs) for x in t], bool)
     t, timbre = t[~beat], timbre[~beat]
+    # A syllable the 3 s windows did not mark as speech is not a hit: where the tagger hears some
+    # speech nearby, ask it about 1 s at the onset itself (speech-bed bench: 40 of 49 stray hit
+    # times gone, 3 of 37 right ones lost). Quiet recordings skip the check.
+    near = tags.family(SPEECH)
+    idx = np.clip(np.searchsorted(tags.times, t), 0, max(len(tags.times) - 1, 0))
+    said = np.array([near[i] > 0.05 and speech_score(pcm, x) >= 0.3 for i, x in zip(idx, t)], bool) \
+        if len(t) and len(near) else np.zeros(len(t), bool)
+    t, timbre = t[~said], timbre[~said]
     if not len(t):
         return []
     z = timbre - timbre.mean(axis=1, keepdims=True)

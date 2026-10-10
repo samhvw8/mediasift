@@ -43,6 +43,28 @@ PY
   while read -r c fn; do curl -sL -o "esc50/$fn" "https://raw.githubusercontent.com/karolpiczak/ESC-50/master/audio/$fn"; done < esc50/pick.txt
   echo "got esc50"
 fi
+# Full sound bench: 4 clips x all 50 ESC-50 classes from folds 3-5, held out from the 40-clip set
+# above (which earlier changes were checked on). About 90 MB.
+if [[ ! -f esc50/full.txt ]]; then
+  mkdir -p esc50
+  [[ -f esc50/esc50.csv ]] || curl -sL -o esc50/esc50.csv https://raw.githubusercontent.com/karolpiczak/ESC-50/master/meta/esc50.csv
+  python3 - <<'PY'
+import csv, collections
+pick = collections.defaultdict(list)
+for r in csv.DictReader(open("esc50/esc50.csv")):
+    if r["fold"] in ("3", "4", "5") and len(pick[r["category"]]) < 4:
+        pick[r["category"]].append(r["filename"])
+open("esc50/full.txt", "w").write("".join(f"{c} {f}\n" for c in sorted(pick) for f in pick[c]))
+PY
+  while read -r c fn; do [[ -f "esc50/$fn" ]] || curl -sfL -o "esc50/$fn" "https://raw.githubusercontent.com/karolpiczak/ESC-50/master/audio/$fn"; done < esc50/full.txt
+  echo "got esc50 full ($(wc -l < esc50/full.txt) clips)"
+fi
+# Real music bed for the sound bench: Kevin MacLeod, "Monkeys Spinning Monkeys" (CC BY 4.0, incompetech)
+if [[ ! -f music/LrM_Y39Gmhk.wav ]]; then
+  mkdir -p music
+  yt-dlp -q -x --audio-format wav --postprocessor-args "-ac 1 -ar 16000" -o "music/%(id)s.%(ext)s" \
+    "https://www.youtube.com/watch?v=LrM_Y39Gmhk" && echo "got music bed"
+fi
 # Real voice bench: six LibriSpeech dev-clean speakers (CC BY 4.0); streams the 337 MB archive once
 if [[ ! -d librispeech/LibriSpeech/dev-clean/251 ]]; then
   mkdir -p librispeech

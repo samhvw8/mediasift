@@ -91,3 +91,18 @@ def test_short_low_sounds_are_not_swallowed_as_music(clips):
     tags = sound.tag(pcm)
     hits = sound.hits(pcm, tags, [])
     assert any(abs(h.times[0] - 11.8) < 0.1 and "low" in h.quality for h in hits), [(h.label, h.times[:3]) for h in hits]
+
+
+def test_speech_syllables_are_not_counted_as_hits():
+    """Under a voice, syllables the 3 s tagger did not mark as speech came back as 'hits'
+    (49 stray hit times on the 200-clip speech-bed bench). Real LibriSpeech speech alone
+    must yield no hits."""
+    import random
+    import voices as V
+    if not V.LS.exists():
+        pytest.skip("LibriSpeech sample not fetched")
+    pcm, spans, _ = V.dialogue(("251", "1272"), random.Random(2))
+    tags = sound.tag(pcm)
+    hits = sound.hits(pcm, tags, [])          # no speech spans given: the hit test itself must know speech
+    n = sum(len(h.times) for h in hits)
+    assert n <= 2, f"{n} syllables counted as hits: {[(h.label, h.times[:4]) for h in hits]}"

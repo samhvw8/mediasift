@@ -192,6 +192,26 @@ A busy box failed the whole card: ComfyUI held 10.6 of 12 GB on the 3060, whispe
 memory, and `see` exited. Now any box failure (error, timeout) is logged in one line and the Mac
 transcribes instead, as it already did when the box did not answer.
 
+# Bigger sound bench: 200 held-out clips, under speech and music (2026-10-10)
+
+`bench/sense/real_sound.py --set full` uses 4 clips of each of the 50 ESC-50 classes from folds 3-5
+(the 40-clip set and every earlier change used folds 1-2); `--bed speech|music|song --snr DB` plays
+them under LibriSpeech speech, synthetic chords, or a real CC BY song. Scored by script, no LLM.
+
+| condition | named | stray lines |
+|---|---|---|
+| silence | 161/200 (80%) | 11 |
+| under speech, 6 dB | 138/200 (69%) | 55 -> 20 after the fix below |
+| under synthetic music, 6 dB | 128/200 (64%) | 7 |
+
+Under speech, syllables the 3 s windows did not mark as speech came back as hits. Where the tagger
+hears some speech nearby, each onset is now checked on its own 1 s window and dropped when CED
+calls it speech (>= 0.3): stray lines 55 -> 20, names unchanged; silence unchanged (161, 11). A
+filter on the ASR's spoken lines was rejected: it removed 44 stray hits but also 36 right ones.
+Under music, hits inside long music are dropped as beats and lasting sounds score 0.2-0.3 beside
+"Music", below the naming threshold; the right class is still CED's top non-music guess for 44 of
+60 clips. Open: a looser rule there must be checked on the real song for invented sounds.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read
