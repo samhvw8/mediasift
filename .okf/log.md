@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — keeping hits inside speech stretches tried and reverted (+5 named, +7 stray).
 * **Updated**: [framesift see](decisions/see-sensor.md) — plain name for change ringing: silent set 161 -> 164.
 * **Updated**: [framesift see](decisions/see-sensor.md) — sounds under music named from 0.18 over 1.5 s; names below 0.3 hedged as 'maybe'; card see-6.
 * **Updated**: [framesift see](decisions/see-sensor.md) — real-song bed; weak lone hits in music dropped: stray lines 48 -> 32.

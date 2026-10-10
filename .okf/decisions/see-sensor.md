@@ -228,6 +228,10 @@ Silent misses on the 200 clips are mostly tagger confusions (wind as "ocean", a 
 "pump", a can opening as "slap"). One was wording: church bells read "change ringing (campanology)",
 right but obscure, so the card says "church bells ringing": silence 161 -> 164 (scoring unchanged).
 
+Tried and reverted: letting hits inside the tagger's speech stretches through to the per-onset
+speech check instead of dropping them: speech bed 138 -> 143 named but stray lines 20 -> 27, about
+one stray per gain, and real conversation would leak more syllables than this bed.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read
