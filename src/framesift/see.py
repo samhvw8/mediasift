@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw, ImageFont
 from . import __version__, audio, decode, events, polite, sound
 from .transcript import Cue
 
-CARD_VERSION = "see-4"   # bump when the card format changes: the cache key includes it
+CARD_VERSION = "see-5"   # bump when the card format changes: the cache key includes it
 TILE_W, TILE_H = 320, 180          # the size uniform 1 fps sheets used in the bench: enough, ~920 tokens a sheet
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 URL = re.compile(r"^https?://")
@@ -130,6 +130,7 @@ class Sensed:
     ocr: bool = False
     sound_sensed: bool = False
     holes: list[str] = field(default_factory=list)
+    watermarks: list[str] = field(default_factory=list)   # platform marks OCR read, named once
     timings: dict = field(default_factory=dict)
 
 
@@ -580,6 +581,27 @@ def event_sheets(path: str, s: Sensed, out: Path, limit: int = 24) -> dict[int, 
 
 # ------------------------------------------------------------------ card
 
+WATERMARK = re.compile(r"tik\s*tok|capcut", re.I)
+HANDLE = re.compile(r"^@\s*[\w.]{3,}")      # camera footage only: in a chat recording '@sam' is content
+
+
+def strip_watermarks(s: Sensed) -> None:
+    """Platform watermarks (TikTok, @handle) jump between corners, and OCR read each jump as new
+    text: 2-4 timeline lines per real reel. Name them once and drop them from events (idempotent)."""
+    for e in s.events:
+        for attr in ("text_added", "text_removed"):
+            keep = []
+            for t in getattr(e, attr):
+                core = t.strip(" •·:-\"'")
+                if WATERMARK.search(core) or (s.content == "camera" and HANDLE.search(core)):
+                    key = re.sub(r"\W", "", core.lower())[:5]      # OCR variants of one handle
+                    if attr == "text_added" and not any(re.sub(r"\W", "", w.lower())[:5] == key for w in s.watermarks):
+                        s.watermarks.append(core)
+                else:
+                    keep.append(t)
+            setattr(e, attr, keep)
+
+
 def listed(s: Sensed) -> tuple[list[list[events.Event]], int]:
     """The picture-event groups the card lists, in time order, and how many it leaves out."""
     pics = []
@@ -608,8 +630,9 @@ def listed(s: Sensed) -> tuple[list[list[events.Event]], int]:
 
 
 def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> str:
+    strip_watermarks(s)
     kind = {"screen": "screen recording", "camera": "camera/film footage", "audio-only": "audio only"}[s.content]
-    talk = "no speech" if not s.speech else f"{len(s.speech)} speech lines"
+    talk ="no speech" if not s.speech else f"{len(s.speech)} speech lines"
     lines = [f"# {src_label}  ({ts(s.duration)}, {kind}, {s.width}x{s.height}, {talk})", ""]
     sensed = [f"picture: every frame at {s.analysed_fps:g} fps" if s.width else None,
               "sound: tagged every 0.5-1 s (AudioSet classes) + short sounds counted" if s.sound_sensed else None,
@@ -618,6 +641,9 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
     lines.append("Sensed: " + "; ".join(x for x in sensed if x) + ".")
     if s.holes:
         lines.append("Not sensed: " + "; ".join(s.holes) + ".")
+    if s.watermarks:
+        marks = "; ".join(f'"{w}"' for w in s.watermarks[:4])
+        lines.append(f"Watermark (moves around the frame; not listed below): {marks}.")
     lines += ["", "How to use this card:",
               "- The timeline below is complete for what the sensors detect; times are seconds from the start.",
               ("- To SEE the sequence, read the flow sheets: 12 frames each, about one per second plus the first frame "
@@ -710,6 +736,7 @@ def see(src: str, force: bool = False, asr_mode: str = "auto") -> Path:
     polite.enter()
     log(f"sensing {label} -> {out}")
     s, g = sense(path, out, asr_mode, subs)
+    strip_watermarks(s)
     t = time.perf_counter()
     flows = flow_sheets(str(path), s, g, out)
     refs = event_sheets(str(path), s, out)

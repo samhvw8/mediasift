@@ -150,6 +150,11 @@ whisper's word gaps are nearly uniform. Result on the real files: python_100s sp
 sentences again; the 2:44 Vietnamese reel has 0 lines under 30 characters. Parakeet returns
 sentences itself and is unaffected. Card version see-4.
 
+Platform watermarks ("TikTok", the creator's "@handle") jump between corners, and OCR read every
+jump as new text: 2-4 timeline lines per real reel. They are now named once in the card header and
+dropped from events. "TikTok"/"CapCut" are stripped everywhere; an "@handle" only on camera footage
+(in a chat recording "@sam" is content). OCR variants of one handle fold into one. Card see-5.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read

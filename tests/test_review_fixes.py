@@ -113,3 +113,18 @@ def test_one_voice_is_said_once_not_on_every_line(portrait):
     s.speech[1]["voice"] = "B, female"
     s.speech[0]["voice"] = s.speech[2]["voice"] = "A, male"
     assert "[voice A, male]" in see.card(s, [], {}, "x.mp4")
+
+
+def test_platform_watermark_is_named_once_not_per_jump(portrait):
+    """A TikTok watermark jumps corners; each jump read as new on-screen text on the real reels."""
+    from framesift import events as ev
+    s = _sensed(portrait)
+    s.content = "camera"
+    r = ev.Region(0.6, 0.8, 0.9, 0.9, 0.02)
+    s.events = [ev.Event(1, "change", 4.6, 4.7, 4.5, 4.8, 4.6, r, text_added=["TikTok", "• @tu.phu.ngo triet:"]),
+                ev.Event(2, "change", 160.3, 160.4, 160.2, 160.5, 160.3, r, text_added=["@ tu.phu.ngo.trie..."]),
+                ev.Event(3, "change", 20.9, 21.0, 20.8, 21.1, 20.9, r, text_added=["vá huhu cứu"])]
+    card = see.card(s, [], {}, "x.mp4")
+    assert "TikTok" not in card.split("## Timeline")[1], "watermark repeated in the timeline"
+    assert "Watermark" in card and "@tu.phu.ngo" in card.split("## Timeline")[0]
+    assert "vá huhu cứu" in card, "real on-screen text must stay"
