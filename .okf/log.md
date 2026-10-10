@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — shot letters on the cut line (same letter = same place); card see-8.
 * **Updated**: [framesift see](decisions/see-sensor.md) — real bench r13: q02 (pan vs tilt) now right; 31/32.
 * **Updated**: [framesift see](decisions/see-sensor.md) — camera moves (pan / tilt / scroll) from phase correlation; card see-7.
 * **Updated**: [framesift see](decisions/see-sensor.md) — CED-base retested on the 200-clip bench: no gain; CED-small stays.

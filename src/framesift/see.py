@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw, ImageFont
 from . import __version__, audio, decode, events, polite, sound
 from .transcript import Cue
 
-CARD_VERSION = "see-7"   # bump when the card format changes: the cache key includes it
+CARD_VERSION = "see-8"   # bump when the card format changes: the cache key includes it
 TILE_W, TILE_H = 320, 180          # the size uniform 1 fps sheets used in the bench: enough, ~920 tokens a sheet
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 URL = re.compile(r"^https?://")
@@ -132,6 +132,7 @@ class Sensed:
     holes: list[str] = field(default_factory=list)
     watermarks: list[str] = field(default_factory=list)   # platform marks OCR read, named once
     camera: list[dict] = field(default_factory=list)       # pans / tilts (scrolls on a screen), events.camera_moves
+    shots: list = field(default_factory=list)              # (start, letter): the same letter = the same place again
     timings: dict = field(default_factory=dict)
 
 
@@ -297,6 +298,7 @@ def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = Non
             s.events = events.detect(g)
             s.content = "screen" if g.identical > 0.3 else "camera"
             s.camera = events.camera_moves(g, screen=s.content == "screen")
+            s.shots = events.shot_letters(g, [e.start for e in s.events if e.kind == "cut"])
             s.timings["visual"] = round(time.perf_counter() - t0, 1)
         if fa is not None:
             r = fa.result()
@@ -705,11 +707,16 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
               "- Words like 'small red area at bottom' come from pixel statistics; open an image before relying on them.", ""]
     rows: list[tuple[float, str]] = []
     cut_times = [e.start for e in s.events if e.kind == "cut"]
+    # Shot letters: a letter is a place, the same letter again is a cut back to it (real bench q07).
+    letter = {round(t, 2): lab for t, lab in s.shots}
+    lab = lambda t: f" {letter[round(t, 2)]}" if round(t, 2) in letter else ""
     if len(cut_times) == 1:
-        rows.append((cut_times[0], f"{ts(cut_times[0]):<15} pic CUT: new shot"))
+        rows.append((cut_times[0], f"{ts(cut_times[0]):<15} pic CUT: new shot{lab(cut_times[0])}"))
     elif cut_times:
-        rows.append((cut_times[0], f"{ts(cut_times[0])}-{ts(cut_times[-1]):<7} pic CUTS ({len(cut_times)} new shots) at "
-                                   f"{_times(cut_times, 60)} s"))
+        opens = f"; the video opens on shot {s.shots[0][1]}, the same letter again = the same place" if s.shots else ""
+        rows.append((cut_times[0], f"{ts(cut_times[0])}-{ts(cut_times[-1]):<7} pic CUTS ({len(cut_times)} new shots{opens}) at "
+                                   + ", ".join(f"{t:.1f}{lab(t)}" for t in cut_times[:60])
+                                   + (f", ... (+{len(cut_times) - 60})" if len(cut_times) > 60 else "") + " s"))
     keep, dropped = listed(s)
     for grp in keep:
         rows.append(_event_line(grp, refs))

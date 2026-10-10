@@ -562,3 +562,43 @@ def change_weighted_times(g: Grid, n: int, events: list[Event]) -> list[float]:
         out.append(t)
         last = i
     return out
+
+
+def shot_letters(g: Grid, cut_times: list[float], same: float = 0.06) -> list[tuple[float, str]]:
+    """A letter per shot (start time, 'A'...), the same letter when a shot returns to a place seen
+    before: questions like 'how many times does it cut back to X' need it in the text, not across
+    many sheets. A shot is its colour layout pooled to 9 x 16 and averaged over its frames, which
+    small camera moves barely change; shots closer than `same` (mean colour difference) match."""
+    if len(g.times) < 2:
+        return []
+    bounds = [float(g.times[0])] + sorted(cut_times) + [float(g.times[-1]) + 1e-3]
+    descs, starts = [], []
+    for a, b in zip(bounds[:-1], bounds[1:]):
+        m = (g.times >= a + 0.1) & (g.times < b - 0.05)          # skip the transition frames
+        if not m.any():
+            m = (g.times >= a) & (g.times < b)
+        if not m.any():
+            continue
+        bl = g.blocks[m].astype(np.float32).mean(axis=0)          # (GH, GW, 3)
+        descs.append(bl.reshape(GH // 2, 2, GW // 2, 2, 3).mean(axis=(1, 3)))
+        starts.append(a)
+    names: list[int] = []
+    reps: list[np.ndarray] = []
+    for d in descs:
+        dist = [float(np.abs(d - r).mean()) for r in reps]
+        j = int(np.argmin(dist)) if dist else -1
+        if j >= 0 and dist[j] < same:
+            names.append(j)
+        else:
+            reps.append(d)
+            names.append(len(reps) - 1)
+    return [(round(s, 2), _letters(n)) for s, n in zip(starts, names)]
+
+
+def _letters(n: int) -> str:
+    s = ""
+    n += 1
+    while n:
+        n, r = divmod(n - 1, 26)
+        s = chr(65 + r) + s
+    return s

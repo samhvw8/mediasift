@@ -253,6 +253,13 @@ Real bench r13 (C re-answered on all four videos): B 31/32, C 31/32, 54 vs 58 im
 q02 "tilts down" (sure) from the camera line, first time in any round; its one miss was q07
 (cut-back count, missed in r7 too).
 
+Shot letters: q07 asks how many times the film cuts back to one place; the card listed 34 cut times
+and the agent had to recognise places across sheets. `events.shot_letters` describes each shot by
+its colour layout (9 x 16, averaged over the shot) and gives shots closer than 0.06 the same
+letter; the cut line reads "153.5 Y, 160.4 Z, 165.3 Y, ...". Checked by eye on Big Buck Bunny: Y is
+the rodents by the log (4 shots), Z the rabbit alone, AA its close-up; after Z the film returns to Y
+3 times, the q07 key. A synthetic A-B-A-C-A clip is a test. Card see-8.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read

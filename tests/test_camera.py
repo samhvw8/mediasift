@@ -60,3 +60,32 @@ def test_one_editing_jump_is_not_a_pan(tmp_path):
     ff("-loop", "1", "-i", str(tmp_path / "big.png"), "-t", "4", "-r", "30",
        "-vf", "crop=640:360:'if(lt(t,2),300,360)':200", "-pix_fmt", "yuv420p", str(tmp_path / "jump.mp4"))
     assert moves(tmp_path / "jump.mp4") == []
+
+
+def test_shots_that_return_get_the_same_letter(tmp_path):
+    """Real bench q07: 'how many times does it cut back to the rodents?' The card listed 34 cut
+    times; which shots are the same place has to be in the text."""
+    for name, src in (("a", "mandelbrot=s=640x360"), ("b", "testsrc2=s=640x360"), ("c", "smptebars=s=640x360")):
+        ff("-f", "lavfi", "-i", src, "-frames:v", "1", str(tmp_path / f"{name}.png"))
+    order = "abaca"
+    lst = "".join(f"file '{tmp_path / (x + '.png')}'\nduration 2\n" for x in order) + f"file '{tmp_path / 'a.png'}'\n"
+    (tmp_path / "list.txt").write_text(lst)
+    ff("-f", "concat", "-safe", "0", "-i", str(tmp_path / "list.txt"), "-r", "30", "-pix_fmt", "yuv420p",
+       str(tmp_path / "shots.mp4"))
+    g = events.build_grid(decode.video_frames(str(tmp_path / "shots.mp4"), 15, events.DECODE_W, events.DECODE_H))
+    cuts = [e for e in events.detect(g) if e.kind == "cut"]
+    labels = events.shot_letters(g, [c.start for c in cuts])
+    assert "".join(lab for _, lab in labels) == "ABACA", labels
+
+
+def test_card_cut_line_carries_shot_letters(tmp_path):
+    from framesift import see
+    for name, src in (("a", "mandelbrot=s=640x360"), ("b", "testsrc2=s=640x360")):
+        ff("-f", "lavfi", "-i", src, "-frames:v", "1", str(tmp_path / f"{name}.png"))
+    lst = "".join(f"file '{tmp_path / (x + '.png')}'\nduration 2\n" for x in "aba") + f"file '{tmp_path / 'a.png'}'\n"
+    (tmp_path / "list.txt").write_text(lst)
+    ff("-f", "concat", "-safe", "0", "-i", str(tmp_path / "list.txt"), "-r", "30", "-pix_fmt", "yuv420p", str(tmp_path / "s.mp4"))
+    s, _ = see.sense(tmp_path / "s.mp4", tmp_path, asr_mode="off")
+    card = see.card(s, [], {}, "s.mp4")
+    line = next(l for l in card.splitlines() if " pic CUT" in l)
+    assert "2.0 B, 4.0 A s" in line, line
