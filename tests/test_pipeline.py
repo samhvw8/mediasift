@@ -77,3 +77,51 @@ def test_words_group_into_sentence_cues():
 def test_cue_spanning_a_short_segment_reaches_it():
     from framesift.transcript import Cue, assign
     assert assign([Cue(1.0, 9.0, "long cue")], [(0, 6), (6, 8), (8, 20)]) == ["long cue", "long cue", ""]
+
+
+def _timed(text: str, step: float = 0.35, pauses: dict | None = None):
+    out, t = [], 0.0
+    for i, w in enumerate(text.split()):
+        t += (pauses or {}).get(i, 0.0)
+        out.append((t, t + step - 0.05, " " + w))
+        t += step
+    return out
+
+
+def test_long_cue_splits_at_a_comma_not_mid_phrase():
+    """faster-whisper on the GPU box: an 8 s cap cut 'like web...' | 'apps with the Django framework'."""
+    from framesift.asr import words_to_cues
+    w = _timed("It's commonly used to build server-side applications, like web apps with the Django "
+               "framework, and is the language of choice for big data analysis and machine learning.")
+    texts = [c.text for c in words_to_cues(w)]
+    assert all(t.endswith((",", ".")) for t in texts), texts
+    assert all(c.end - c.start <= 8.0 + 1e-6 for c in words_to_cues(w))
+
+
+def test_long_unpunctuated_cue_splits_at_its_widest_pause():
+    """Vietnamese from whisper often has no commas: split where the speaker breathed."""
+    from framesift.asr import words_to_cues
+    text = "thì cái lưu ý đấy là một khi mà các bạn đã làm to ấy thì kiểu gì các bạn cũng sẽ phải hợp tác đúng không"
+    w = _timed(text, pauses={15: 0.4})           # a 0.4 s breath before 'thì kiểu gì'
+    texts = [c.text for c in words_to_cues(w)]
+    assert texts[0].endswith("ấy") and texts[1].startswith("thì kiểu"), texts
+
+
+def test_ellipsis_mid_sentence_is_not_a_sentence_end():
+    """whisper wrote 'like web...' then 'apps with the Django framework' with no pause between."""
+    from framesift.asr import words_to_cues
+    w = _timed("used to build apps, like web... apps with the Django framework.")
+    assert [c.text for c in words_to_cues(w)] == ["used to build apps, like web... apps with the Django framework."]
+    w = _timed("so I was thinking... anyway the next part.", pauses={4: 0.8})
+    assert len(words_to_cues(w)) == 2, "a trailing-off followed by a pause still splits"
+
+
+def test_no_fragments_when_pauses_are_uniform():
+    """Real whisper Vietnamese: uniform word gaps, no commas, a capital where a sentence starts.
+    The widest-gap rule cut 'Thì cái lời khuyên không' | 'nên hợp tác nó không đúng cho' | 'lắm Mình ...'."""
+    from framesift.asr import words_to_cues
+    text = ("Thì cái lời khuyên không nên hợp tác nó không đúng cho lắm Mình nghĩ rằng là cái mình nên "
+            "hướng tới đây là làm sao để hợp tác")
+    cues = words_to_cues(_timed(text, step=0.3))
+    assert all(c.end - c.start >= 3.0 for c in cues[:-1]), [c.text for c in cues]
+    assert cues[0].text.endswith("cho lắm") and cues[1].text.startswith("Mình nghĩ"), [c.text for c in cues]

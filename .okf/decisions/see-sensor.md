@@ -138,6 +138,18 @@ After the fix, full round r10 in the daily setup (ASR on the box): B 31/32, C 31
 51 images vs 58; C's one miss is the python_100s emoji count. Synthetic round r11 with the final code: 26/26 on
 7 images (unchanged from r5).
 
+# Speech cues from whisper (2026-10-10)
+
+faster-whisper (the CUDA box, and the CPU fallback) returns words; `words_to_cues` groups them. Its
+8 s cap cut mid-phrase ('like web...' | 'apps with the Django framework'; 'spam and' | 'eggs'), and
+it took whisper's hesitation '...' for a full stop. A cue that grows too long now splits at its last
+comma, else a pause of at least 0.15 s, else before a capital where whisper began a sentence without
+a period ('lắm Mình nghĩ'), else at the cap, always keeping the first part at least 3 s. A first try
+that split at the widest gap left fragments on Vietnamese ('Thì cái lời khuyên không'), because
+whisper's word gaps are nearly uniform. Result on the real files: python_100s speech lines are whole
+sentences again; the 2:44 Vietnamese reel has 0 lines under 30 characters. Parakeet returns
+sentences itself and is unaffected. Card version see-4.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read

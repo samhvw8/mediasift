@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw, ImageFont
 from . import __version__, audio, decode, events, polite, sound
 from .transcript import Cue
 
-CARD_VERSION = "see-3"   # bump when the card format changes: the cache key includes it
+CARD_VERSION = "see-4"   # bump when the card format changes: the cache key includes it
 TILE_W, TILE_H = 320, 180          # the size uniform 1 fps sheets used in the bench: enough, ~920 tokens a sheet
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 URL = re.compile(r"^https?://")

@@ -174,19 +174,40 @@ def _faster_whisper(pcm: np.ndarray, model: str | None, language: str | None) ->
 
 def words_to_cues(words: list[tuple[float, float, str]], max_len: float = 8.0, gap: float = 0.6) -> list[Cue]:
     """Group timed words into sentence-sized cues: break after . ? !, at a
-    pause longer than `gap`, or once a cue reaches `max_len` seconds."""
+    pause longer than `gap`, or before a cue passes `max_len` seconds. A cue that grows too
+    long splits at its last comma, else at its widest pause: a plain cut at the cap split
+    phrases mid-way ('like web...' | 'apps with the Django framework')."""
     cues: list[Cue] = []
     cur: list[tuple[float, float, str]] = []
+
+    def emit(ws):
+        cues.append(Cue(float(ws[0][0]), float(ws[-1][1]), "".join(x[2] for x in ws).strip()))
+
     for w in words:
-        if cur and (w[0] - cur[-1][1] > gap or w[1] - cur[0][0] > max_len):
-            cues.append(Cue(float(cur[0][0]), float(cur[-1][1]), "".join(x[2] for x in cur).strip()))
+        if cur and w[0] - cur[-1][1] > gap:
+            emit(cur)
             cur = []
+        elif cur and w[1] - cur[0][0] > max_len:
+            # Split points, best first, keeping the first part >= 3 s (no fragments): the last comma; a
+            # real pause; a capital where whisper started a sentence without a period ('lắm Mình nghĩ');
+            # else the cap. Uniform word gaps made 'widest pause' a random cut (Vietnamese reel).
+            ok = [i for i in range(len(cur) - 1) if cur[i][1] - cur[0][0] >= 3.0]
+            gap_after = lambda i: cur[i + 1][0] - cur[i][1]
+            commas = [i for i in ok if cur[i][2].strip().endswith((",", ";", ":", "，", "、"))]
+            pauses = [i for i in ok if gap_after(i) >= 0.15]
+            caps = [i for i in ok if cur[i + 1][2].strip()[:1].isupper()]
+            k = (commas[-1] if commas else max(pauses, key=gap_after) if pauses
+                 else caps[-1] if caps else len(cur) - 1)
+            emit(cur[:k + 1])
+            cur = cur[k + 1:]
         cur.append(w)
-        if w[2].strip().endswith((".", "?", "!", "。", "？", "！")):
-            cues.append(Cue(float(cur[0][0]), float(cur[-1][1]), "".join(x[2] for x in cur).strip()))
+        end = w[2].strip()
+        # '...' is a hesitation, not a full stop: a real trailing-off still splits on the pause after it.
+        if end.endswith((".", "?", "!", "。", "？", "！")) and not end.endswith(("...", "…")):
+            emit(cur)
             cur = []
     if cur:
-        cues.append(Cue(float(cur[0][0]), float(cur[-1][1]), "".join(x[2] for x in cur).strip()))
+        emit(cur)
     return [c for c in cues if c.text]
 
 
