@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 11, "answers": [
+{"id": "q01", "answer": "light bulb (off), digit 0, light bulb (lit), digit 1", "sure": true},
+{"id": "q02", "answer": "walks left (away from the screen) to the far-left side of the stage, ending at the desk/laptop", "sure": true},
+{"id": "q03", "answer": "left to right, toward the screen and duck (audience's right)", "sure": true},
+{"id": "q04", "answer": "4", "sure": true},
+{"id": "q05", "answer": "about 3 seconds", "sure": true},
+{"id": "q06", "answer": "'binary digit' is replaced by 'bit': letters drop out ('bi   t') and it collapses to the single word 'bit'", "sure": true},
+{"id": "q07", "answer": "diagram: input -> empty box -> output", "sure": true},
+{"id": "q08", "answer": "closed in a fist", "sure": false}
+]}

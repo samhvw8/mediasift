@@ -1,0 +1,37 @@
+{
+ "video": "python_100s",
+ "questions": [
+  {
+   "id": "q01",
+   "question": "Near the end, after the Snake class code, a group of library logos pops onto a dark screen one after another. Which logo is on screen first?"
+  },
+  {
+   "id": "q02",
+   "question": "In the dark terminal with a '>>>' Python prompt, what command is typed in just before the Zen of Python text appears?"
+  },
+  {
+   "id": "q03",
+   "question": "While the Zen of Python lines are on screen, a yellow dot marks lines one at a time. Which way does it move through the lines, and which line is the third one it marks?"
+  },
+  {
+   "id": "q04",
+   "question": "How many separate times does a pointing-finger hand emoji appear over the code editor during the video?"
+  },
+  {
+   "id": "q05",
+   "question": "A man wearing a green apron with a Python logo appears beside the code. For about how long is he on screen?"
+  },
+  {
+   "id": "q06",
+   "question": "What animal is on screen when the speaker says 'We're currently at version 3 of the language', and what is shown over it?"
+  },
+  {
+   "id": "q07",
+   "question": "What line of code is in the editor when the speaker says 'Semicolons are not required'?"
+  },
+  {
+   "id": "q08",
+   "question": "Large white curly braces and a semicolon appear next to the have_fun code and then get crossed out with a red X. For about how long does the red X stay on screen?"
+  }
+ ]
+}
