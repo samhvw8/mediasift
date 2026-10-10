@@ -359,6 +359,7 @@ ALIAS = {
     "Heart sounds, heartbeat": "thump (heartbeat-like)", "Heart murmur": "low rumble", "Sine wave": "tone",
     "Speech synthesizer": "speech", "Tick": "click", "Tick-tock": "ticking", "Beep, bleep": "beep",
     "Dial tone": "telephone tone", "Whack, thwack": "whack", "sharp sound": "sharp sound",
+    "Change ringing (campanology)": "church bells ringing",
 }
 
 

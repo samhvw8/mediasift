@@ -46,3 +46,8 @@ def test_split_fixes_teach_nothing(tmp_path):
     for says in ("cough", "cough", "laugh", "sneeze"):
         feedback.record(d, 21.0, says)
     assert "Throat clearing" not in feedback.learned()
+
+
+def test_obscure_audioset_names_read_plainly():
+    """Three church-bell clips read 'change ringing (campanology)': right, but obscure to a reader."""
+    assert see._snd_name("Change ringing (campanology)") == "church bells ringing"

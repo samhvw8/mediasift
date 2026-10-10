@@ -224,6 +224,10 @@ The bench counts a wrong name on a real clip as neither: on the song, names belo
 more often than right (23 right, 30 wrong). So every lasting sound below 0.3 now reads "maybe X"
 on the card, in silence too: low confidence means the same there. Card see-6.
 
+Silent misses on the 200 clips are mostly tagger confusions (wind as "ocean", a washing machine as
+"pump", a can opening as "slap"). One was wording: church bells read "change ringing (campanology)",
+right but obscure, so the card says "church bells ringing": silence 161 -> 164 (scoring unchanged).
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read
