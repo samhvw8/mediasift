@@ -232,6 +232,11 @@ Tried and reverted: letting hits inside the tagger's speech stretches through to
 speech check instead of dropping them: speech bed 138 -> 143 named but stray lines 20 -> 27, about
 one stray per gain, and real conversation would leak more syllables than this bed.
 
+CED-base retested fairly (3 s windows, the 200-clip bench; the earlier tie was at 1 s on 40 clips):
+silence 162 named / 20 stray vs small's 164 / 11; under speech 131 / 27 vs 138 / 20; under the
+song 131 / 31 vs 134 / 35. Twice the tagging time (6.4 vs 3.3 s on a 2:44 reel), 87 vs 22 MB, no
+gain anywhere (the rules were tuned on small, but none of the gaps favour base). CED-small stays.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read
