@@ -190,11 +190,17 @@ def beds(tags: Tags, speech_spans: list[tuple[float, float]]) -> list[SoundEvent
         ev.append(SoundEvent(s, e, label, "bed", score=float(music[m].mean())))
     skip = SPEECH | MUSIC | SINGING | {SILENCE}
     other = [i for i in range(527) if i not in skip and tags.names[i] and tags.names[i] not in VAGUE]
+    # Beside "Music" CED scores a real sound 0.2-0.3 (200-clip song bench), so while music plays
+    # the naming threshold drops; in quiet audio it stays where the quiet bench set it.
+    in_music = music > 0.35
     for i in other:
         p = tags.probs[:, i].astype(np.float32)
-        if p.max() < 0.3:
+        if p.max() < 0.3 and not (in_music.any() and p[in_music].max() >= 0.2):
             continue
-        runs = _runs(p > 0.25, tags.times, tags.hop, 0.6, 1.0)
+        runs = _runs(p > np.where(in_music, 0.18, 0.25), tags.times, tags.hop, 0.6, 1.0)
+        # A run only the lower music threshold let in must last 1.5 s: the song bench's strays were 1.0 s.
+        runs = [(a, b) for a, b in runs if b - a >= 1.5 or not in_music[(tags.times >= a) & (tags.times <= b)].any()
+                or p[(tags.times >= a) & (tags.times <= b)].mean() >= 0.25]
         # One strong window is enough for an intermittent sound (a baby's cries, a rooster's crow).
         runs += [r for r in _runs(p > 0.5, tags.times, tags.hop, 0.0, 0.0)
                  if not any(a <= r[0] and r[1] <= b for a, b in runs)]

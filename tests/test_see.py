@@ -124,3 +124,39 @@ def test_weak_lone_hit_inside_music_is_dropped_but_kept_in_silence():
     in_music = sound.Tags(np.array([1.5, 2.0, 2.5]), probs, names, 0.5)
     assert sum(len(h.times) for h in sound.hits(pcm, quiet, [])) == 1
     assert sum(len(h.times) for h in sound.hits(pcm, in_music, [])) == 0
+
+
+def test_a_sound_under_music_is_named_at_a_lower_score():
+    """Beside 'Music', CED scores a real sound 0.2-0.3 (thunder, ticks, a creak under the song
+    bed): below the threshold set for quiet audio. In silence the threshold stays."""
+    names = [""] * 527
+    music, thunder = sorted(sound.MUSIC)[0], 300
+    names[music], names[thunder] = "Music", "Thunder"
+    probs = np.zeros((8, 527), np.float16)
+    probs[:, thunder] = 0.22
+    quiet = sound.Tags(np.arange(8) * 0.5 + 1.5, probs.copy(), names, 0.5)
+    probs[:, music] = 0.6
+    loud = sound.Tags(np.arange(8) * 0.5 + 1.5, probs, names, 0.5)
+    assert not [b for b in sound.beds(quiet, []) if b.label == "Thunder"]
+    assert [b for b in sound.beds(loud, []) if "Thunder" in b.label]
+
+
+def test_low_score_names_are_hedged_on_the_card():
+    """Under a real song, names scored below 0.3 were wrong more often than right (23 right,
+    30 wrong): the card must say 'maybe', not state them."""
+    from framesift import see
+    weak = sound.SoundEvent(10.0, 12.0, "Thunder", "bed", score=0.24)
+    sure = sound.SoundEvent(20.0, 22.0, "Siren", "bed", score=0.7)
+    assert "[maybe thunder]" in see._sound_line(weak)[1]
+    assert "[siren]" in see._sound_line(sure)[1]
+
+
+def test_short_low_score_run_under_music_is_not_named():
+    names = [""] * 527
+    music, thunder = sorted(sound.MUSIC)[0], 300
+    names[music], names[thunder] = "Music", "Thunder"
+    probs = np.zeros((8, 527), np.float16)
+    probs[:, music] = 0.6
+    probs[3:5, thunder] = 0.22                # 1.0 s at a low score: the song bench's stray shape
+    tags = sound.Tags(np.arange(8) * 0.5 + 1.5, probs, names, 0.5)
+    assert not [b for b in sound.beds(tags, []) if "Thunder" in b.label]

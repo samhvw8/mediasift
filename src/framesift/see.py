@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw, ImageFont
 from . import __version__, audio, decode, events, polite, sound
 from .transcript import Cue
 
-CARD_VERSION = "see-5"   # bump when the card format changes: the cache key includes it
+CARD_VERSION = "see-6"   # bump when the card format changes: the cache key includes it
 TILE_W, TILE_H = 320, 180          # the size uniform 1 fps sheets used in the bench: enough, ~920 tokens a sheet
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 URL = re.compile(r"^https?://")
@@ -440,6 +440,8 @@ def _event_line(grp: list[events.Event], img: dict[int, str]) -> tuple[float, st
 
 def _sound_line(s_: sound.SoundEvent) -> tuple[float, str]:
     name = _snd_name(s_.label)
+    if s_.kind == "bed" and 0 < s_.score < 0.3 and s_.label not in ("music", "singing"):
+        name = f"maybe {name}"     # under a real song, names below 0.3 were wrong more often than right
     if s_.kind == "hits":
         n = len(s_.times)
         span = ts(s_.times[0]) + (f"-{ts(s_.times[-1])}" if n > 1 else "")

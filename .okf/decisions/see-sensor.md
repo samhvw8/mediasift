@@ -202,8 +202,8 @@ them under LibriSpeech speech, synthetic chords, or a real CC BY song. Scored by
 |---|---|---|
 | silence | 161/200 (80%) | 11 |
 | under speech, 6 dB | 138/200 (69%) | 55 -> 20 after the fix below |
-| under synthetic music, 6 dB | 128/200 (64%) | 7 |
-| under a real song (Kevin MacLeod, CC BY), 6 dB | 124/200 (62%) | 48 -> 32 after the music rule below |
+| under synthetic music, 6 dB | 128/200 (64%) -> 136 | 7 -> 6 |
+| under a real song (Kevin MacLeod, CC BY), 6 dB | 124/200 (62%) -> 134 | 48 -> 32 -> 35 (rules below) |
 
 Under speech, syllables the 3 s windows did not mark as speech came back as hits. Where the tagger
 hears some speech nearby, each onset is now checked on its own 1 s window and dropped when CED
@@ -216,6 +216,13 @@ On the real song, most stray lines were lone onsets the tagger could not name: t
 drums and plucks, leaking because the clips split it into music runs shorter than the 4.5 s beat
 rule. A lone hit with tagger score < 0.1 heard while music plays is now dropped: song stray lines
 48 -> 32, names unchanged (124); silence unchanged (161, 11), since the rule needs music.
+
+Naming under music: while music plays, a non-music class is named from 0.18 (not 0.25), over at
+least 1.5 s (the song's strays at the lower threshold were all 1.0 s runs). Song 124 -> 134 named,
+stray lines 32 -> 35; synthetic music 128 -> 136, 7 -> 6; silence and the 40-clip set unchanged.
+The bench counts a wrong name on a real clip as neither: on the song, names below 0.3 were wrong
+more often than right (23 right, 30 wrong). So every lasting sound below 0.3 now reads "maybe X"
+on the card, in silence too: low confidence means the same there. Card see-6.
 
 # Not measured or open
 
