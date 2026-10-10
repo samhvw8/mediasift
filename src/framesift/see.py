@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw, ImageFont
 from . import __version__, audio, decode, events, polite, sound
 from .transcript import Cue
 
-CARD_VERSION = "see-6"   # bump when the card format changes: the cache key includes it
+CARD_VERSION = "see-7"   # bump when the card format changes: the cache key includes it
 TILE_W, TILE_H = 320, 180          # the size uniform 1 fps sheets used in the bench: enough, ~920 tokens a sheet
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 URL = re.compile(r"^https?://")
@@ -131,6 +131,7 @@ class Sensed:
     sound_sensed: bool = False
     holes: list[str] = field(default_factory=list)
     watermarks: list[str] = field(default_factory=list)   # platform marks OCR read, named once
+    camera: list[dict] = field(default_factory=list)       # pans / tilts (scrolls on a screen), events.camera_moves
     timings: dict = field(default_factory=dict)
 
 
@@ -295,6 +296,7 @@ def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = Non
             g, s.analysed_fps = fv.result()
             s.events = events.detect(g)
             s.content = "screen" if g.identical > 0.3 else "camera"
+            s.camera = events.camera_moves(g, screen=s.content == "screen")
             s.timings["visual"] = round(time.perf_counter() - t0, 1)
         if fa is not None:
             r = fa.result()
@@ -711,6 +713,13 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
     keep, dropped = listed(s)
     for grp in keep:
         rows.append(_event_line(grp, refs))
+    # Which way the picture travelled: ~1 fps frames cannot show it (real bench: 'pan or tilt?').
+    for m in s.camera[:40]:
+        who = "page" if m["words"].startswith("scrolls") else "camera"
+        pace = " slowly" if m["speed"] < 0.08 else " fast" if m["speed"] > 0.5 else ""
+        rows.append((m["start"], f"{ts(m['start'])}-{ts(m['end']):<7} pic {who} {m['words']}{pace}"))
+    if len(s.camera) > 40:
+        lines.insert(-1, f"- {len(s.camera) - 40} more camera moves are not listed.")
     if dropped:
         lines.insert(-1, f"- {dropped} smaller picture changes are not listed; the flow sheets show them.")
     talk = [(c["start"], c["end"]) for c in s.speech]

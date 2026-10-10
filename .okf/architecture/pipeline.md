@@ -17,7 +17,7 @@ One cached command; why each part exists and what it measured: [framesift see](/
 | stage | module | output |
 |---|---|---|
 | cache key | `see.content_key` | size + first/last MiB + card version → `~/.cache/framesift/see/<key>/`; URLs via yt-dlp into `cache/url/` (site subtitles replace ASR) |
-| picture | `events.build_grid`, `events.detect`, `events.cuts` | 256x144 frames at 15/5/2 fps → 32x18 colour blocks + largest local change → cuts, then space-time regions of change classified change / blink / motion / animating / scene, with reverts linked |
+| picture | `events.build_grid`, `events.detect`, `events.cuts` | 256x144 frames at 15/5/2 fps → 32x18 colour blocks + largest local change → cuts, then space-time regions of change classified change / blink / motion / animating / scene, with reverts linked; global shift per frame → camera pans / tilts (screen: scrolls) |
 | sound | `sound.tag`, `sound.hits`, `sound.beds`, `sound.silences`, `sound.bursts`, `sound.quality`, `sound.voices` | CED (sherpa-onnx, 22 MB, CPU) on 3 s windows, spans trimmed to audible audio; counted short sounds with pitch words; lasting sounds; silences; voice letters |
 | speech | `asr.transcribe` / `asr.remote` | parakeet-mlx (cache capped) or whisper (words grouped into cues split at commas, pauses or sentence capitals); `--on HOST` sends FLAC over ssh to `framesift asr -` |
 | text | `ocr.read` | Apple Vision on changed regions only; captions that repeat speech dropped; platform watermarks named once (`see.strip_watermarks`) |

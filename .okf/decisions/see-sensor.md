@@ -237,6 +237,19 @@ silence 162 named / 20 stray vs small's 164 / 11; under speech 131 / 27 vs 138 /
 song 131 / 31 vs 134 / 35. Twice the tagging time (6.4 vs 3.3 s on a 2:44 reel), 87 vs 22 MB, no
 gain anywhere (the rules were tuned on small, but none of the gaps favour base). CED-small stays.
 
+# Camera moves (2026-10-10)
+
+~1 fps frames cannot show which way the camera went: Big Buck Bunny q02 ("pan or tilt?") was missed
+in every real round. `build_grid` now measures the global shift between each 128x72 luma frame and
+the one 0.5 s earlier (phase correlation, sub-pixel), and `events.camera_moves` turns sustained,
+one-way shifts (>= 4% of the frame per second, correlation peak >= 0.1, >= 1.5 s) into card lines:
+`pic camera tilts down`, or on a screen recording `pic page scrolls down`. Content moving left means
+the camera turned right; a subject crossing a still background does not count. Synthetic pan, tilt,
+still and editing-jump clips are tests. On real files: Big Buck Bunny's first scenery shot reads
+"camera tilts down" (the q02 key); a CS50 line checked by eye is a real pan; a talking-head reel went
+from 4 false "pans" at a 1 s minimum to 0 at 1.5 s (one editing punch-in looks like ~1.1 s of motion).
+Cost: one small FFT pair per analysed frame. Card see-7.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read

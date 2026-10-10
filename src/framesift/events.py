@@ -17,6 +17,7 @@ frames, and links: a change that is undone later is reported as shown for N s.
 """
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import dataclass, field
 from typing import Iterable
 
@@ -46,14 +47,43 @@ class Grid:
     thr: float                 # change thresholds for this video: block mean ...
     pthr: float                # ... and largest local change
     identical: float           # share of frames identical to the previous one (screens repeat, cameras never)
+    shift: np.ndarray | None = None   # (N, 3): content motion over the last ~0.5 s, in frame widths and
+                                      # heights per second (+x right, +y down), and the correlation peak
 
     def changed(self) -> np.ndarray:
         return (self.diff.astype(np.float32) > self.thr) | (self.pix.astype(np.float32) > self.pthr)
 
 
+LAG_S = 0.5                     # camera motion is measured between frames this far apart
+
+
+def _shift(a: np.ndarray, b: np.ndarray, win: np.ndarray) -> tuple[float, float, float]:
+    """How far the content of `a` moved to become `b` (dx, dy in pixels, sub-pixel), and the
+    phase-correlation peak: near 1 for a clean global shift, near 0 when nothing moved as one."""
+    A = np.fft.rfft2((a - a.mean()) * win)
+    B = np.fft.rfft2((b - b.mean()) * win)
+    R = B * np.conj(A)
+    r = np.fft.irfft2(R / (np.abs(R) + 1e-9), s=a.shape)
+    k = int(np.argmax(r))
+    py, px = divmod(k, r.shape[1])
+    h, w = r.shape
+
+    def sub(c: float, m: float, p: float) -> float:   # parabola through three samples
+        d = m - 2 * c + p
+        return 0.0 if abs(d) < 1e-12 else 0.5 * (m - p) / d
+
+    dy = py + sub(r[py, px], r[(py - 1) % h, px], r[(py + 1) % h, px])
+    dx = px + sub(r[py, px], r[py, (px - 1) % w], r[py, (px + 1) % w])
+    dy = dy - h if dy > h / 2 else dy
+    dx = dx - w if dx > w / 2 else dx
+    return float(dx), float(dy), float(r[py, px])
+
+
 def build_grid(frames: Iterable[tuple[float, np.ndarray]]) -> Grid:
-    times, blocks, pix = [], [], []
+    times, blocks, pix, shifts = [], [], [], []
     prev = None
+    back: deque = deque()          # (t, luma) of the last ~LAG_S seconds, for camera motion
+    win = None
     for t, rgb in frames:
         h, w, _ = rgb.shape
         f = rgb.astype(np.float32) / 255.0
@@ -65,6 +95,19 @@ def build_grid(frames: Iterable[tuple[float, np.ndarray]]) -> Grid:
         else:
             d = np.abs(y - prev)
             pix.append(d.reshape(GH, d.shape[0] // GH, GW, d.shape[1] // GW).max(axis=(1, 3)).astype(np.float16))
+        if win is None:
+            win = np.outer(np.hanning(y.shape[0]), np.hanning(y.shape[1])).astype(np.float32)
+        old = None
+        while back and back[0][0] <= t - 0.9 * LAG_S:
+            old = back.popleft()
+        if old is not None:
+            back.appendleft(old)          # keep the newest frame that is old enough for the next one
+            dx, dy, pk = _shift(old[1], y, win)
+            span = max(t - old[0], 1e-3)
+            shifts.append((dx / y.shape[1] / span, dy / y.shape[0] / span, pk))
+        else:
+            shifts.append((0.0, 0.0, 0.0))
+        back.append((t, y))
         prev = y
         times.append(t)
     if not blocks:
@@ -78,7 +121,57 @@ def build_grid(frames: Iterable[tuple[float, np.ndarray]]) -> Grid:
     floor = float(np.percentile(nz, 75)) if nz.size else 0.0
     pfloor = float(np.percentile(npx, 75)) if npx.size else 0.0
     ident = float((px[1:].reshape(len(px) - 1, -1).max(axis=1) < 0.02).mean()) if len(px) > 1 else 0.0
-    return Grid(np.array(times), bl, diff, px, max(0.05, 4 * floor), max(0.08, 4 * pfloor), ident)
+    return Grid(np.array(times), bl, diff, px, max(0.05, 4 * floor), max(0.08, 4 * pfloor), ident,
+                np.array(shifts, np.float32))
+
+
+def camera_moves(g: Grid, screen: bool = False, min_speed: float = 0.04, min_peak: float = 0.1,
+                 min_len: float = 1.5) -> list[dict]:
+    """Stretches where the whole picture travelled one way: a camera pan or tilt (or, on a screen
+    recording, a scroll). Content moving left means the camera turned right. A subject crossing a
+    still background does not count (the background wins the correlation); shake fails min_len.
+    min_len 1.5 s: one editing jump (a punch-in the cut test misses) looks like motion in every
+    0.5 s window that spans it, ~1.1 s in all; a phone reel got 4 such "pans", real pans last longer."""
+    if g.shift is None or len(g.times) < 3:
+        return []
+    out: list[dict] = []
+    cur: dict | None = None
+    for t, (dx, dy, pk) in zip(g.times, g.shift):
+        speed = float(np.hypot(dx, dy))
+        lab = None
+        if pk >= min_peak and speed >= min_speed:
+            h = "" if abs(dx) < 0.5 * abs(dy) else ("left" if dx > 0 else "right")     # camera turns against the content
+            v = "" if abs(dy) < 0.5 * abs(dx) else ("up" if dy > 0 else "down")
+            if screen:     # content moving up = the page scrolls down
+                h = "" if not h else ("left" if dx > 0 else "right")
+                v = "" if not v else ("up" if dy > 0 else "down")
+            lab = (h, v)
+        if lab and cur and cur["lab"] == lab and t - cur["last"] <= 0.35:
+            cur["last"], cur["speeds"] = float(t), cur["speeds"] + [speed]
+            continue
+        if cur and t - cur["last"] > 0.35:
+            out.append(cur)
+            cur = None
+        if lab and (cur is None or cur["lab"] != lab):
+            if cur:
+                out.append(cur)
+            cur = {"lab": lab, "first": float(t), "last": float(t), "speeds": [speed]}
+    if cur:
+        out.append(cur)
+    moves = []
+    for m in out:
+        start, end = max(float(g.times[0]), m["first"] - LAG_S), m["last"]
+        if end - start < min_len:
+            continue
+        h, v = m["lab"]
+        if screen:
+            words = "scrolls " + " and ".join(x for x in (
+                {"up": "down", "down": "up"}.get(v, ""), {"left": "right", "right": "left"}.get(h, "")) if x)
+        else:
+            words = " and ".join(x for x in (f"pans {h}" if h else "", f"tilts {v}" if v else "") if x)
+        moves.append({"start": round(start, 2), "end": round(end, 2), "words": words,
+                      "speed": round(float(np.mean(m["speeds"])), 3)})
+    return moves
 
 
 @dataclass
