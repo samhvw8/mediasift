@@ -6,7 +6,7 @@ tags: [see, sensor, bench, audio, ocr, resources]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-10T13:00:00Z"
+  at: "2026-10-10T15:00:00Z"
 resource: src/framesift/see.py
 sources:
   - id: council
@@ -47,7 +47,7 @@ below was then kept or cut by measurement.[^council]
 | sound | CED tagger[^ced] on 1 s windows (music, siren, telephone...), short sounds found by a jump-and-fall-back level test and counted, pitch/decay words, silences that clicks break, burst counts inside a lasting sound, rough voice letters | sound questions went from 4-5/6 to 6/6; the transcript alone cannot answer them |
 | sync | a sound within 150 ms of a picture change is written on the change ("together with a beep: #3, #6 of the 8") | the only arm that answered the audio-visual question |
 | OCR | Apple Vision on changed regions only (region of interest), text appeared/vanished; burned-in captions that repeat speech are dropped | "Error 503: upstream timeout" from a 0.7 s toast |
-| flow sheets | about one frame per second (12 per sheet, 320 px tiles), every shot's first frame; screen recordings change-weighted with still frames dropped, camera footage clock-uniform | uniform 1 fps was the strongest baseline on real footage |
+| flow sheets | about one frame per second (12 per sheet; 320x180 tiles in 4 x 3, portrait video 180x320 in 6 x 2, same pixels), every shot's first frame; screen recordings change-weighted with still frames dropped, camera footage clock-uniform | uniform 1 fps was the strongest baseline on real footage |
 | `look VIDEO A-B` | frames over a span plus a strip of the sound on the same axis | zoom without re-sensing |
 
 ## Measured (Sonnet answerers, blind Sonnet graders)
@@ -110,6 +110,25 @@ served as complete (card written last, atomically; `url.txt` marks a finished do
 claimed sound tagging when audio was too short; a picture failure waited for speech recognition;
 remote ASR could hang (ssh keepalive, timeout) or choke on a login banner; onset detection and
 pitch words copied the whole recording (~1 GB per hour).
+
+# First real-use run (2026-10-10)
+
+framesift on two downloaded phone videos (a 26 s English reel, a 2:44 Vietnamese TikTok), the kind
+of file daily use brings. Benches are all landscape, so these found what they could not:
+
+- **Portrait tiles.** A 9:16 video in a 16:9 tile filled a third of it: same tokens, a small face.
+  Tiles now take the video's shape at the same pixel area (portrait 6 x 2 sheets); the burned-in
+  captions became readable.
+- **Dangling references.** Event crops were made for events the card then left out (camera footage
+  lists no pixel events; screen recordings drop over-budget ones), and flow tiles named those ids.
+  The card's event selection is now one function (`listed`) that the crops and tile labels share:
+  every `ev_NN.jpg` and every tile `#id` points at a card line. ui_flow: 8 crop sheets -> 4, same
+  timeline; the reel: 7 unreferenced crop sheets -> 0.
+- **One voice.** A single speaker got `[voice male]` on all 34 lines; it is now said once below
+  the timeline.
+
+The real-footage QA bench was not rerun: landscape 16:9 tiles are unchanged and old/new cards for
+the synthetic clips have the same timeline lines (only crop references renumbered).
 
 # Not measured or open
 

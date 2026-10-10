@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — first real-use run: portrait tiles, event crops and tile ids only for listed events, one voice said once; card version see-3.
 * **Updated**: [framesift see](decisions/see-sensor.md) — tagger check: Zipformer-small 35/40, CED + Zipformer average 34/40, CED-small alone 36/40 stays.
 * **Updated**: [framesift see](decisions/see-sensor.md) — the 4 remaining sound misses traced to CED itself; a runner-up-class naming rule was tried and reverted (missed the cough, added noise to 12 lines).
 * **Updated**: [framesift see](decisions/see-sensor.md) — 3 s tagging windows plus span trimming: real-sound naming 25/40 -> 36/40.
