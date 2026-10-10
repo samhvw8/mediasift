@@ -331,6 +331,10 @@ def hits(pcm: np.ndarray, tags: Tags, speech_spans: list[tuple[float, float]]) -
             if nm in VAGUE:
                 score[k] *= 0.3
         best = int(np.argmax(score))
+        # A lone onset the tagger cannot name, heard while music plays, is the music's own drum or
+        # pluck (real-song bench: 16 stray lines, no right name among them). In silence it stays.
+        if len(times) == 1 and score[best] < 0.1 and music[idx[0]] > 0.35:
+            continue
         label = names[best] if score[best] > 0.05 and names[best] else "sharp sound"
         out.append(SoundEvent(times[0], times[-1], label, "hits", times, float(score[best]),
                               quality(pcm, times[0])))

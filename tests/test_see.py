@@ -106,3 +106,21 @@ def test_speech_syllables_are_not_counted_as_hits():
     hits = sound.hits(pcm, tags, [])          # no speech spans given: the hit test itself must know speech
     n = sum(len(h.times) for h in hits)
     assert n <= 2, f"{n} syllables counted as hits: {[(h.label, h.times[:4]) for h in hits]}"
+
+
+def test_weak_lone_hit_inside_music_is_dropped_but_kept_in_silence():
+    """Under a real song, drum and pluck transients the tagger could not name came back as lone
+    'sharp sound' hits (16 stray lines on the 200-clip song bench, no right name among them)."""
+    sr = sound.SR
+    pcm = np.zeros(4 * sr, np.int16)
+    k = int(2.0 * sr)
+    pcm[k:k + 80] = (np.hanning(80) * 20000).astype(np.int16)        # one click, nothing else
+    names = [""] * 527
+    music = sorted(sound.MUSIC)[0]
+    names[music] = "Music"
+    probs = np.zeros((3, 527), np.float16)
+    quiet = sound.Tags(np.array([1.5, 2.0, 2.5]), probs.copy(), names, 0.5)
+    probs[:, music] = 0.6
+    in_music = sound.Tags(np.array([1.5, 2.0, 2.5]), probs, names, 0.5)
+    assert sum(len(h.times) for h in sound.hits(pcm, quiet, [])) == 1
+    assert sum(len(h.times) for h in sound.hits(pcm, in_music, [])) == 0

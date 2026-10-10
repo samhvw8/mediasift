@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — real-song bed; weak lone hits in music dropped: stray lines 48 -> 32.
 * **Updated**: [framesift see](decisions/see-sensor.md) — 200-clip held-out sound bench with speech/music beds; per-onset speech check cuts stray lines under speech 55 -> 20.
 * **Updated**: [framesift see](decisions/see-sensor.md) — a failing box (GPU busy) falls back to local speech instead of failing the card.
 * **Updated**: [framesift see](decisions/see-sensor.md) — speaker embeddings in parallel: 1h45m podcast 318 s -> 213 s.
