@@ -6,7 +6,7 @@ tags: [pipeline, architecture]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-10T11:30:00Z"
+  at: "2026-10-10T18:00:00Z"
 resource: src/framesift/see.py
 ---
 
@@ -18,12 +18,13 @@ One cached command; why each part exists and what it measured: [framesift see](/
 |---|---|---|
 | cache key | `see.content_key` | size + first/last MiB + card version → `~/.cache/framesift/see/<key>/`; URLs via yt-dlp into `cache/url/` (site subtitles replace ASR) |
 | picture | `events.build_grid`, `events.detect`, `events.cuts` | 256x144 frames at 15/5/2 fps → 32x18 colour blocks + largest local change → cuts, then space-time regions of change classified change / blink / motion / animating / scene, with reverts linked |
-| sound | `sound.tag`, `sound.hits`, `sound.beds`, `sound.silences`, `sound.bursts`, `sound.quality`, `sound.voices` | CED (sherpa-onnx, 22 MB, CPU) on 1 s windows; counted short sounds with pitch words; lasting sounds; silences; voice letters |
-| speech | `asr.transcribe` / `asr.remote` | parakeet-mlx (cache capped) or whisper; `--on HOST` sends FLAC over ssh to `framesift asr -` |
-| text | `ocr.read` | Apple Vision on changed regions only; captions that repeat speech dropped |
+| sound | `sound.tag`, `sound.hits`, `sound.beds`, `sound.silences`, `sound.bursts`, `sound.quality`, `sound.voices` | CED (sherpa-onnx, 22 MB, CPU) on 3 s windows, spans trimmed to audible audio; counted short sounds with pitch words; lasting sounds; silences; voice letters |
+| speech | `asr.transcribe` / `asr.remote` | parakeet-mlx (cache capped) or whisper (words grouped into cues split at commas, pauses or sentence capitals); `--on HOST` sends FLAC over ssh to `framesift asr -` |
+| text | `ocr.read` | Apple Vision on changed regions only; captions that repeat speech dropped; platform watermarks named once (`see.strip_watermarks`) |
 | images | `see.flow_sheets`, `see.event_sheets`, `decode.frames_at` | ~1 fps flow sheets (uniform on camera, change-weighted on screens), before/after crops; one decode pass or parallel seeks on long files |
 | card | `see.card` | `card.md` timeline (`pic` / `snd` / `say`), budgets per section; `sensed.json`; `transcript.txt`; `usage.jsonl` log of calls |
 | zoom | `see.look` | frames over a span + a sound strip on the same axis |
+| corrections | `feedback.record`, `feedback.learned` | `framesift fix` logs a wrong sound name to `feedback.jsonl`; 3 agreeing fixes add "(usually: X)" on later cards |
 
 Runs politely: `nice 10`, capped pools, audio and picture passes in sequence (`polite.py`).
 

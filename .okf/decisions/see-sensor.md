@@ -157,6 +157,16 @@ dropped from events. "TikTok"/"CapCut" are stripped everywhere; an "@handle" onl
 Real bench r12 with both changes (C re-answered on the three speech videos): B 31/32, C 31/32,
 54 images vs 58 — no regression.
 
+# Corrections teach sound names (2026-10-10)
+
+The tagger's misses are fixed by use, not rules: `framesift fix VIDEO TIME "label"` logs what the card
+said there and what it was (`<cache>/feedback.jsonl`); the skill tells agents to run it only when a
+frame or the user shows the truth. A tagger label fixed the same way at least 3 times, by at least
+75% of its fixes, becomes a learned name, shown next to the tagger's (`throat clearing (usually:
+cough)`) on cards sensed afterwards; it never silently replaces what the tagger heard. A rule-based
+runner-up alias was tried first and reverted (it missed the cough and added noise to 12 lines);
+learning from fixes needs no threshold tuned on the bench. Runs: one local JSONL file, nothing else.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read

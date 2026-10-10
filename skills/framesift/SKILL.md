@@ -48,6 +48,16 @@ Region words (colour, position, size) come from pixel statistics: open an image 
 Budget: a question usually needs the card plus one to three images. If two `look` calls do not show
 it, answer from what you have and say what you could not confirm.
 
+## 4. Correct a wrong sound name
+
+Sound names come from a tagger and are sometimes wrong (a cough heard as "throat clearing"). When
+the user or a frame you looked at shows what a sound really was, record it:
+
+    framesift fix VIDEO 21.0 "cough"
+
+Only when you know, never as a guess. Repeated agreeing fixes teach later cards
+("throat clearing (usually: cough)"); `framesift feedback` lists them.
+
 ## Long videos
 
 For talks over a few minutes the card summarises speech one line per minute and points to

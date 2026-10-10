@@ -329,12 +329,18 @@ ALIAS = {
 
 
 def _snd_name(label: str) -> str:
+    if label in ("music", "singing", "silence"):
+        return label
+    from .feedback import learned       # names agents corrected the same way, again and again
+    taught = learned()
     parts = [ALIAS.get(p.strip(), p.strip()) for p in label.split("/")]
     out = []
     for p in parts:
         if p.lower() not in [o.lower() for o in out]:
             out.append(p)
-    return " / ".join(out[:2]).lower() if label not in ("music", "singing", "silence") else label
+    name = " / ".join(out[:2]).lower()
+    first = label.split("/")[0].strip()
+    return f"{name} (usually: {taught[first]})" if first in taught else name
 
 
 def _times(ts_: list[float], limit: int = 12) -> str:

@@ -73,6 +73,8 @@ had to zoom into shows where the card falls short, the data for the next round o
 uv tool install -e .                      # once; Apple Silicon gets the MLX speech backends
 framesift see VIDEO_OR_URL                # card on stdout; files in ~/.cache/framesift/see/<key>/
 framesift look VIDEO 11.5-13 [-n 8]       # frames over a span + a sound strip
+framesift fix VIDEO 21.0 "cough"          # a sound name was wrong; 3 agreeing fixes teach later cards
+framesift feedback                        # recorded fixes and the names they taught
 mise run test                             # unit + sense tests
 uv run python bench/sense/make_synth.py bench/sense/clips   # regenerate the synthetic clips
 ```

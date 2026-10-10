@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — `fix` / `feedback`: agent corrections teach sound names (3 agreeing fixes).
 * **Updated**: [framesift see](decisions/see-sensor.md) — real bench r12 after the cue and watermark changes: parity 31/32.
 * **Updated**: [framesift see](decisions/see-sensor.md) — platform watermarks named once in the header, not per jump; card see-5.
 * **Updated**: [framesift see](decisions/see-sensor.md) — whisper cue splitting: comma, pause, capital, then cap; no mid-phrase cuts or fragments; card see-4.

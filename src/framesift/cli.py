@@ -26,6 +26,21 @@ def _look_span(a: argparse.Namespace) -> None:
     print(look(a.video, a.span, a.n))
 
 
+def _fix(a: argparse.Namespace) -> None:
+    from .feedback import record
+    from .see import out_dir
+    d = out_dir(Path(a.video).expanduser().resolve())
+    if not (d / "sensed.json").exists():
+        sys.exit(f"no card for {a.video} yet: run `framesift see` first")
+    r = record(d, a.time, a.label)
+    print(f"recorded: at {r['at']} s the card said {r['was'] or 'nothing'!r}, it is {r['says']!r}")
+
+
+def _feedback(a: argparse.Namespace) -> None:
+    from .feedback import report
+    print(report())
+
+
 def _hook(a: argparse.Namespace) -> None:
     from .hook import main as hook_main
     hook_main()
@@ -136,6 +151,16 @@ def main(argv: list[str] | None = None) -> None:
     se.add_argument("--on", metavar="HOST", help="transcribe on this ssh host (a GPU box) when it answers within 3 s; "
                     "default: $FRAMESIFT_ON")
     se.set_defaults(fn=_see)
+
+    fx = sub.add_parser("fix", help="record that a sound line was wrong (after checking it with `look`); "
+                                    "repeated fixes teach the card")
+    fx.add_argument("video")
+    fx.add_argument("time", type=float, help="seconds: when the sound is")
+    fx.add_argument("label", help="what it really is, in a few words")
+    fx.set_defaults(fn=_fix)
+
+    fb = sub.add_parser("feedback", help="list recorded fixes and the names they taught")
+    fb.set_defaults(fn=_feedback)
 
     hk = sub.add_parser("hook", help="Claude Code UserPromptSubmit hook: points the agent at videos named in a prompt")
     hk.set_defaults(fn=_hook)
