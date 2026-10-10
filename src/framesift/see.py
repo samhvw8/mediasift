@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw, ImageFont
 from . import __version__, audio, decode, events, polite, sound
 from .transcript import Cue
 
-CARD_VERSION = "see-2"   # bump when the card format changes: the cache key includes it
+CARD_VERSION = "see-3"   # bump when the card format changes: the cache key includes it
 TILE_W, TILE_H = 320, 180          # the size uniform 1 fps sheets used in the bench: enough, ~920 tokens a sheet
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 URL = re.compile(r"^https?://")
@@ -505,17 +505,23 @@ def flow_sheets(path: str, s: Sensed, g: events.Grid | None, out: Path) -> list[
     else:
         times = events.change_weighted_times(g, n, s.events)
     files = _frames_at(path, times, out / "frames")
+    # Tiles take the video's shape at the same pixel area (same tokens a sheet): a 9:16 reel in a
+    # 16:9 box filled a third of it. Portrait sheets are 6 x 2, landscape 4 x 3.
+    aspect = s.width / s.height if s.width and s.height else TILE_W / TILE_H
+    tw = int(round(math.sqrt(TILE_W * TILE_H * aspect)))
+    th = int(round(TILE_W * TILE_H / tw))
+    cols = 4 if aspect >= 1 else 6
+    shown = [e for grp in listed(s)[0] for e in grp]   # a tile's #id must point at a card line
     names = []
     for k in range(0, len(files), 12):
         chunk = list(zip(times[k:k + 12], files[k:k + 12]))
-        cols = 4
         rows = (len(chunk) + cols - 1) // cols
-        sheet = Image.new("RGB", (cols * TILE_W, rows * TILE_H), "black")
+        sheet = Image.new("RGB", (min(cols, len(chunk)) * tw, rows * th), "black")
         for i, (t, f) in enumerate(chunk):
-            tile = _fit(Image.open(f), TILE_W, TILE_H)
-            live = [e.id for e in s.events if e.start - 0.05 <= t <= max(e.end, e.after) + 0.05 and e.kind != "scene"]
+            tile = _fit(Image.open(f), tw, th)
+            live = [e.id for e in shown if e.start - 0.05 <= t <= max(e.end, e.after) + 0.05 and e.kind != "scene"]
             _label(tile, f"{t:.1f}s" + (f"  #{live[0]}" if live else ""))
-            sheet.paste(tile, ((i % cols) * TILE_W, (i // cols) * TILE_H))
+            sheet.paste(tile, ((i % cols) * tw, (i // cols) * th))
         name = f"flow_{k // 12 + 1:02d}.jpg"
         sheet.save(out / name, quality=85)
         names.append(f"{name} ({ts(chunk[0][0])}-{ts(chunk[-1][0])})")
@@ -523,10 +529,15 @@ def flow_sheets(path: str, s: Sensed, g: events.Grid | None, out: Path) -> list[
 
 
 def event_sheets(path: str, s: Sensed, out: Path, limit: int = 24) -> dict[int, str]:
-    """Before | after crops for localized events, 3 per image: the detail a flow tile is too small to show."""
-    pick = [e for e in s.events if e.kind in ("change", "blink") and 0.0005 < e.region.area < 0.5]
-    pick.sort(key=lambda e: (-(e.shown_until is not None or bool(e.text_added) or bool(e.sounds)), -e.region.area))
-    pick = sorted(pick[:limit], key=lambda e: e.start)
+    """Before | after crops for localized events, 3 per image: the detail a flow tile is too small to show.
+    Only for groups the card lists, one crop per group: the card points at each sheet it makes."""
+    rank = lambda e: (-(e.shown_until is not None or bool(e.text_added) or bool(e.sounds)), -e.region.area)
+    pick = []
+    for grp in listed(s)[0]:
+        ok = [e for e in grp if e.kind in ("change", "blink") and 0.0005 < e.region.area < 0.5]
+        if ok:
+            pick.append(min(ok, key=rank))
+    pick = sorted(sorted(pick, key=rank)[:limit], key=lambda e: e.start)
     if not pick:
         return {}
     fps = s.analysed_fps
@@ -566,35 +577,9 @@ def event_sheets(path: str, s: Sensed, out: Path, limit: int = 24) -> dict[int, 
 
 # ------------------------------------------------------------------ card
 
-def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> str:
-    kind = {"screen": "screen recording", "camera": "camera/film footage", "audio-only": "audio only"}[s.content]
-    talk = "no speech" if not s.speech else f"{len(s.speech)} speech lines"
-    lines = [f"# {src_label}  ({ts(s.duration)}, {kind}, {s.width}x{s.height}, {talk})", ""]
-    sensed = [f"picture: every frame at {s.analysed_fps:g} fps" if s.width else None,
-              "sound: tagged every 0.5-1 s (AudioSet classes) + short sounds counted" if s.sound_sensed else None,
-              f"speech: {s.asr['backend']} ({s.asr.get('model', '')})" if s.asr else None,
-              "on-screen text: OCR on changed regions" if s.ocr else None]
-    lines.append("Sensed: " + "; ".join(x for x in sensed if x) + ".")
-    if s.holes:
-        lines.append("Not sensed: " + "; ".join(s.holes) + ".")
-    lines += ["", "How to use this card:",
-              "- The timeline below is complete for what the sensors detect; times are seconds from the start.",
-              ("- To SEE the sequence, read the flow sheets: 12 frames each, about one per second plus the first frame "
-               "of every shot, each tile labelled with its time. Open the sheet that covers the time you need:"
-               if s.content == "camera" else
-               "- To SEE the sequence, read the flow sheets: 12 frames each, about one per second where the picture "
-               "changes and one per still stretch, each tile labelled with its time and the event (#id) on screen. "
-               "Open the sheet that covers the time you need:") if flows else "- No picture.",
-              *([f"  {', '.join(flows[i:i + 4])}" for i in range(0, len(flows), 4)] if flows else []),
-              "- ev_NN.jpg rows show single events as [where | before | after] crops, for small detail.",
-              f"- To zoom on any span: `framesift look \"{s.source}\" START-END` (frames + a strip of the sound).",
-              "- Words like 'small red area at bottom' come from pixel statistics; open an image before relying on them.", ""]
-    rows: list[tuple[float, str]] = []
+def listed(s: Sensed) -> tuple[list[list[events.Event]], int]:
+    """The picture-event groups the card lists, in time order, and how many it leaves out."""
     pics = []
-    cut_times = [e.start for e in s.events if e.kind == "cut"]
-    if cut_times:
-        rows.append((cut_times[0], f"{ts(cut_times[0])}-{ts(cut_times[-1]):<7} pic CUTS ({len(cut_times)} new shots) at "
-                                   f"{_times(cut_times, 60)} s"))
     for grp in events.group(s.events):
         e0 = grp[0]
         if e0.kind == "cut":
@@ -615,13 +600,46 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
                 + 3 * any(x.text_added or x.text_removed for x in grp) + 2 * any(x.sounds for x in grp)
                 + 2 * (e0.kind == "cut") + 2 * (len(grp) > 1) + 3 * min(e0.region.area, 1.0)
                 + 1.5 * (e0.kind == "motion"))
-    keep = sorted(pics, key=weight, reverse=True)[:limit]
-    kept = {id(g) for g in keep}
-    for grp in pics:
-        if id(grp) in kept:
-            rows.append(_event_line(grp, refs))
-    if len(pics) > len(keep):
-        lines.insert(-1, f"- {len(pics) - len(keep)} smaller picture changes are not listed; the flow sheets show them.")
+    kept = {id(g) for g in sorted(pics, key=weight, reverse=True)[:limit]}
+    return [g for g in pics if id(g) in kept], len(pics) - len(kept)
+
+
+def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> str:
+    kind = {"screen": "screen recording", "camera": "camera/film footage", "audio-only": "audio only"}[s.content]
+    talk = "no speech" if not s.speech else f"{len(s.speech)} speech lines"
+    lines = [f"# {src_label}  ({ts(s.duration)}, {kind}, {s.width}x{s.height}, {talk})", ""]
+    sensed = [f"picture: every frame at {s.analysed_fps:g} fps" if s.width else None,
+              "sound: tagged every 0.5-1 s (AudioSet classes) + short sounds counted" if s.sound_sensed else None,
+              f"speech: {s.asr['backend']} ({s.asr.get('model', '')})" if s.asr else None,
+              "on-screen text: OCR on changed regions" if s.ocr else None]
+    lines.append("Sensed: " + "; ".join(x for x in sensed if x) + ".")
+    if s.holes:
+        lines.append("Not sensed: " + "; ".join(s.holes) + ".")
+    lines += ["", "How to use this card:",
+              "- The timeline below is complete for what the sensors detect; times are seconds from the start.",
+              ("- To SEE the sequence, read the flow sheets: 12 frames each, about one per second plus the first frame "
+               "of every shot, each tile labelled with its time. Open the sheet that covers the time you need:"
+               if s.content == "camera" else
+               "- To SEE the sequence, read the flow sheets: 12 frames each, about one per second where the picture "
+               "changes and one per still stretch, each tile labelled with its time and the event (#id) on screen. "
+               "Open the sheet that covers the time you need:") if flows else "- No picture.",
+              *([f"  {', '.join(flows[i:i + 4])}" for i in range(0, len(flows), 4)] if flows else []),
+              *(["- ev_NN.jpg rows show single events as [where | before | after] crops, for small detail."]
+                if refs else []),
+              f"- To zoom on any span: `framesift look \"{s.source}\" START-END` (frames + a strip of the sound).",
+              "- Words like 'small red area at bottom' come from pixel statistics; open an image before relying on them.", ""]
+    rows: list[tuple[float, str]] = []
+    cut_times = [e.start for e in s.events if e.kind == "cut"]
+    if len(cut_times) == 1:
+        rows.append((cut_times[0], f"{ts(cut_times[0]):<15} pic CUT: new shot"))
+    elif cut_times:
+        rows.append((cut_times[0], f"{ts(cut_times[0])}-{ts(cut_times[-1]):<7} pic CUTS ({len(cut_times)} new shots) at "
+                                   f"{_times(cut_times, 60)} s"))
+    keep, dropped = listed(s)
+    for grp in keep:
+        rows.append(_event_line(grp, refs))
+    if dropped:
+        lines.insert(-1, f"- {dropped} smaller picture changes are not listed; the flow sheets show them.")
     talk = [(c["start"], c["end"]) for c in s.speech]
     def under_speech(x):
         cover = sum(max(0.0, min(e, x.end) - max(b, x.start)) for b, e in talk)
@@ -637,9 +655,11 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
         snds = [x for x in snds if id(x) in keep_ids]
     for snd in snds:
         rows.append(_sound_line(snd))
+    voices = sorted({c["voice"] for c in s.speech if c.get("voice")})
+    tag = len(voices) > 1          # one voice throughout: say it once below, not on every line
     if len(s.speech) <= 150:
         for c in s.speech:
-            v = f"[voice {c['voice']}] " if c.get("voice") else ""
+            v = f"[voice {c['voice']}] " if tag and c.get("voice") else ""
             rows.append((c["start"], f"{ts(c['start'])}-{ts(c['end']):<7} say {v}\"{c['text']}\""))
     else:
         # A long talk: one line per minute here, every word in transcript.txt (grep it).
@@ -649,7 +669,7 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
         for m, cs in sorted(mins.items()):
             words = " ".join(c["text"] for c in cs).split()
             vs = sorted({c["voice"] for c in cs if c.get("voice")})
-            v = f"[voices {', '.join(vs)}] " if vs else ""
+            v = f"[voices {', '.join(vs)}] " if tag and vs else ""
             rows.append((m * 60.0, f"{ts(m * 60)}-{ts(m * 60 + 60):<7} say {v}\"{' '.join(words[:20])}{' ...' if len(words) > 20 else ''}\""))
     rows.sort(key=lambda r: r[0])
     if len(s.speech) > 150:
@@ -659,8 +679,9 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
     lines.append("```")
     lines += [r[1] for r in rows] or ["(nothing changed in picture or sound)"]
     lines.append("```")
-    voices = sorted({c["voice"] for c in s.speech if c.get("voice")})
-    if voices:
+    if len(voices) == 1:
+        lines += ["", f"One voice throughout ({voices[0]}); no change of speaker was found."]
+    elif voices:
         lines += ["", f"Voices: {'; '.join(voices)}. Letters group lines by speaker (a speaker-embedding model; "
                       "right on every real-speech bench dialogue); they are not names. Male/female comes from the "
                       "sound tagger. Lines under 0.8 s carry no letter."]
