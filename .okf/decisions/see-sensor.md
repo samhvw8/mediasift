@@ -177,6 +177,12 @@ run, and the speech lines are collected last. Same reel: 29 s -> 18-20 s, the 34
 identical, the wait left at the end 0.5-1.6 s. Lag probe during the run: wakeup lateness p50
 1.26 ms, p99 1.7 ms, none over 16 ms (idle: 1.26 / 5.8 ms). Audio without speech is never sent.
 
+OCR is then the slowest local pass (about 9 s of 18 s on that reel: 164 accurate Vision reads at
+~51 ms; frame extraction 1 s). Tried and rejected: a text-presence pre-check
+(`VNDetectTextRectanglesRequest`, 15x faster) missed real text — 63 of 70 regions on python_100s
+("import matplotlib"), 11 of 21 on ui_flow ("Password"); 2-4 Vision threads gave 8.7 -> 7.9 s
+(Vision serializes internally). Left as is: the card is cached after its first run.
+
 # Not measured or open
 
 - Voice letters on noisy multi-party audio (crosstalk, music under speech): the bench is clean read

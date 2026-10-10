@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-10
+* **Updated**: [framesift see](decisions/see-sensor.md) — OCR speed-ups measured and rejected (text pre-check loses text; threads ~10%).
 * **Updated**: [framesift see](decisions/see-sensor.md) — box speech overlaps the picture and OCR passes: 29 s -> 18-20 s on a 2:44 reel, no added lag.
 * **Updated**: [framesift see](decisions/see-sensor.md) — `fix` / `feedback`: agent corrections teach sound names (3 agreeing fixes).
 * **Updated**: [framesift see](decisions/see-sensor.md) — real bench r12 after the cue and watermark changes: parity 31/32.
