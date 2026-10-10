@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 11, "answers": [
+{"id": "q01", "answer": "about 4 seconds (fades out around 4 s)", "sure": true},
+{"id": "q02", "answer": "tilts down (slightly rightward) - camera moves down", "sure": true},
+{"id": "q03", "answer": "it is hit by a falling nut/acorn and knocked off the branch, tumbling out of frame", "sure": false},
+{"id": "q04", "answer": "his hand reaching out onto the ground", "sure": true},
+{"id": "q05", "answer": "a cut to a close-up of his ear and an apple tree (he looks up at the tree)", "sure": true},
+{"id": "q06", "answer": "left", "sure": true},
+{"id": "q07", "answer": "3", "sure": true},
+{"id": "q08", "answer": "a nut/acorn (small brown seed)", "sure": true}
+]}

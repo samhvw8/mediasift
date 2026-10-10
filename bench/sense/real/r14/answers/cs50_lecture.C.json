@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 11, "answers": [
+{"id": "q01", "answer": "unlit (off) light bulb, then 0, then lit (on) light bulb, then 1", "sure": true},
+{"id": "q02", "answer": "walks left across the stage to the desk/laptop at the far left", "sure": true},
+{"id": "q03", "answer": "left to right (toward the duck and the screen)", "sure": true},
+{"id": "q04", "answer": "4", "sure": true},
+{"id": "q05", "answer": "about 3 seconds", "sure": true},
+{"id": "q06", "answer": "'binary digit' shrinks/collapses into the word 'bit'", "sure": true},
+{"id": "q07", "answer": "a diagram: input -> empty box -> output", "sure": true},
+{"id": "q08", "answer": "a closed fist", "sure": false}
+]}

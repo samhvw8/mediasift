@@ -259,6 +259,9 @@ its colour layout (9 x 16, averaged over the shot) and gives shots closer than 0
 letter; the cut line reads "153.5 Y, 160.4 Z, 165.3 Y, ...". Checked by eye on Big Buck Bunny: Y is
 the rodents by the log (4 shots), Z the rabbit alone, AA its close-up; after Z the film returns to Y
 3 times, the q07 key. A synthetic A-B-A-C-A clip is a test. Card see-8.
+Real bench r14 (C re-answered on all four videos): B 31/32, C 31/32, 56 vs 58 images. Big Buck
+Bunny 8/8 for the first time in any round: q07 "3" (sure) from the shot letters, q02 "tilts down"
+(sure) from the camera line. C's one miss: python_100s q08 (red X duration, variable since r7).
 
 # Not measured or open
 

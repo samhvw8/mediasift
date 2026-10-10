@@ -1,0 +1,10 @@
+{"arm": "C", "images_read": 21, "answers": [
+{"id":"q01","answer":"A wide shot of a misty industrial rocket-launch complex/city skyline (with 'This film is supported by the Netherlands Film Fund' caption)","sure":true},
+{"id":"q02","answer":"A close-up of a human brain on a plate with a man's face (with a red cybernetic eye) behind it","sure":true},
+{"id":"q03","answer":"About 3.5 to 4 seconds (roughly 42.1 s to 45.6 s)","sure":false},
+{"id":"q04","answer":"3","sure":true},
+{"id":"q05","answer":"Downward, from up by the organ pipes down to the stone floor of the cathedral","sure":true},
+{"id":"q06","answer":"He pulls out a juice carton (mango) and drinks from it, then looks alarmed","sure":true},
+{"id":"q07","answer":"Left","sure":false},
+{"id":"q08","answer":"A giant robot/machine standing in the square","sure":true}
+]}
