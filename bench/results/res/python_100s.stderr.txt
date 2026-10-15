@@ -1,0 +1,5 @@
+    0.2  framesift: sensing python_100s.mp4 -> ~/.cache/framesift/see/9a18e4febaa8daaf
+    6.3  framesift: gpu-box did not answer in 3s: transcribing here
+   17.9  framesift: detected language: en
+   25.3  framesift: ASR parakeet-mlx (mlx-community/parakeet-tdt-0.6b-v3): 19.6x realtime
+   27.0  framesift: done in 26.8s (visual 5.4s, audio 5.6s, ocr 11.1s, speech_wait 9.2s, total 25.8s, images 1.0s)

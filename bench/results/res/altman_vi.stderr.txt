@@ -1,0 +1,8 @@
+    0.2  framesift: sensing altman_vi.mp4 -> ~/.cache/framesift/see/6363068a2f8808bd
+   32.0  framesift: gpu-box did not answer in 3s: transcribing here
+   95.4  framesift: detected language: vi
+  103.5  
+  103.6  Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]
+  103.6  Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 1651.46it/s]
+  227.9  framesift: ASR mlx-whisper (mlx-community/whisper-large-v3-turbo): 22.7x realtime
+  258.8  framesift: done in 258.7s (visual 52.1s, audio 54.3s, ocr 39.9s, speech_wait 141.6s, total 235.8s, images 22.9s)

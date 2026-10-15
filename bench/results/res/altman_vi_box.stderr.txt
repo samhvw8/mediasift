@@ -1,0 +1,3 @@
+    0.4  framesift: sensing altman_vi.mp4 -> ~/.cache/framesift/see/3e7b83e68e1e0990
+  100.0  framesift: ASR on gpu-box: faster-whisper (large-v3-turbo), 43.1x realtime incl. transfer
+  181.7  framesift: done in 181.2s (visual 68.4s, audio 70.8s, ocr 61.6s, speech_wait 0.0s, total 132.5s, images 48.7s)

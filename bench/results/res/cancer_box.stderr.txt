@@ -1,0 +1,3 @@
+    0.2  framesift: sensing cancer.mp4 -> ~/.cache/framesift/see/aac62ac149707a54
+  246.4  framesift: ASR on gpu-box: faster-whisper (large-v3-turbo), 46.6x realtime incl. transfer
+  285.7  framesift: done in 285.3s (visual 173.7s, audio 178.3s, ocr 41.5s, speech_wait 26.3s, total 246.3s, images 39.0s)

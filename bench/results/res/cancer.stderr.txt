@@ -1,0 +1,5 @@
+    0.2  framesift: sensing cancer.mp4 -> ~/.cache/framesift/see/c6803ca464604569
+   68.2  framesift: gpu-box did not answer in 3s: transcribing here
+  178.9  framesift: detected language: en
+  428.9  framesift: ASR parakeet-mlx (mlx-community/parakeet-tdt-0.6b-v3): 25.4x realtime
+  484.6  framesift: done in 484.2s (visual 114.7s, audio 119.4s, ocr 58.1s, speech_wait 272.5s, total 450.1s, images 34.1s)

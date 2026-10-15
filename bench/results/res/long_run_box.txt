@@ -1,0 +1,16 @@
+== altman_vi
+idle       wall    5.0s  wakeup late p50  1.27 ms  p99   3.91 ms  p99.9  16.58 ms  >16ms 0.12%
+command    wall  181.8s  wakeup late p50  1.28 ms  p99   5.36 ms  p99.9  13.46 ms  >16ms 0.07%
+process    CPU mean 180% max 672% (100 = one core), CPU time ~281 s; memory max 1604 MB
+system     swap 14733 -> 15266 MB (max 15604); free-memory level min 24%; GPU busy mean 49% max 97%
+    0.4  framesift: sensing altman_vi.mp4 -> ~/.cache/framesift/see/3e7b83e68e1e0990
+  100.0  framesift: ASR on gpu-box: faster-whisper (large-v3-turbo), 43.1x realtime incl. transfer
+  181.7  framesift: done in 181.2s (visual 68.4s, audio 70.8s, ocr 61.6s, speech_wait 0.0s, total 132.5s, images 48.7s)
+== cancer
+idle       wall    5.0s  wakeup late p50  1.27 ms  p99   3.32 ms  p99.9   6.03 ms  >16ms 0.00%
+command    wall  285.7s  wakeup late p50  1.27 ms  p99   4.66 ms  p99.9  13.45 ms  >16ms 0.07%
+process    CPU mean 243% max 644% (100 = one core), CPU time ~617 s; memory max 2709 MB
+system     swap 15266 -> 16039 MB (max 16319); free-memory level min 22%; GPU busy mean 32% max 97%
+    0.2  framesift: sensing cancer.mp4 -> ~/.cache/framesift/see/aac62ac149707a54
+  246.4  framesift: ASR on gpu-box: faster-whisper (large-v3-turbo), 46.6x realtime incl. transfer
+  285.7  framesift: done in 285.3s (visual 173.7s, audio 178.3s, ocr 41.5s, speech_wait 26.3s, total 246.3s, images 39.0s)

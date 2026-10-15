@@ -1,0 +1,16 @@
+== altman_vi
+idle       wall    5.0s  wakeup late p50  1.26 ms  p99   5.21 ms  p99.9   9.38 ms  >16ms 0.00%
+command    wall  259.2s  wakeup late p50  1.26 ms  p99   2.40 ms  p99.9   3.78 ms  >16ms 0.00%
+process    CPU mean 132% max 510% (100 = one core), CPU time ~319 s; memory max 3337 MB
+system     swap 12378 -> 12795 MB (max 12915); free-memory level min 21%; GPU busy mean 44% max 94%
+  103.6  Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 1651.46it/s]
+  227.9  framesift: ASR mlx-whisper (mlx-community/whisper-large-v3-turbo): 22.7x realtime
+  258.8  framesift: done in 258.7s (visual 52.1s, audio 54.3s, ocr 39.9s, speech_wait 141.6s, total 235.8s, images 22.9s)
+== cancer
+idle       wall    5.0s  wakeup late p50  1.26 ms  p99   3.82 ms  p99.9   6.14 ms  >16ms 0.00%
+command    wall  484.9s  wakeup late p50  2.51 ms  p99   3.44 ms  p99.9   5.89 ms  >16ms 0.02%
+process    CPU mean 160% max 573% (100 = one core), CPU time ~722 s; memory max 3263 MB
+system     swap 12771 -> 13338 MB (max 13757); free-memory level min 21%; GPU busy mean 40% max 99%
+  178.9  framesift: detected language: en
+  428.9  framesift: ASR parakeet-mlx (mlx-community/parakeet-tdt-0.6b-v3): 25.4x realtime
+  484.6  framesift: done in 484.2s (visual 114.7s, audio 119.4s, ocr 58.1s, speech_wait 272.5s, total 450.1s, images 34.1s)
