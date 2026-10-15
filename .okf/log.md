@@ -1,6 +1,10 @@
 # Update Log
 
+## 2026-10-12
+* **Updated**: [speech and speed](decisions/speech-and-speed.md) — long files rechecked with the box: talk 259 -> 182 s, podcast 485 -> 286 s; the Mac's picture pass under swap is now the bottleneck.
+
 ## 2026-10-10
+* **Updated**: [speech and speed](decisions/speech-and-speed.md) — long files on the Mac alone with resource tracking (podcast 485 s, 3.3 GB peak, no stutter); speaker letters fixed on long-talk cards and added to transcript.txt; card see-11.
 * **Restructured**: [framesift see](decisions/see-sensor.md) split into [picture sensing](decisions/picture-sensing.md), [sound sensing](decisions/sound-sensing.md), [speech and speed](decisions/speech-and-speed.md) and [the sense bench](benchmarks/sense-bench.md) (new `benchmarks/` folder); root index and [pipeline](architecture/pipeline.md) updated to the current card.
 * **Updated**: [framesift see](decisions/see-sensor.md) — phone videos in the real bench; zoom hint for one-moment gestures (reel C 6/8 -> 7/8 twice); card see-10.
 * **Updated**: [framesift see](decisions/see-sensor.md) — synthetic r16 on see-9: 26/26.

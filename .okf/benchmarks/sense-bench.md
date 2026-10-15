@@ -36,7 +36,7 @@ No agent can hear, so real-footage questions test sight and speech only: there t
 with arm B, and framesift's gains are the senses B lacks. Run-to-run noise on real footage is 1-3
 questions in 32: compare repeat runs before calling a change.
 
-# Current scores (card see-10)
+# Current scores (measured on card see-10; see-11 changed only speaker letters on long talks)
 
 | bench | arm B: images + transcript | framesift |
 |---|---|---|
