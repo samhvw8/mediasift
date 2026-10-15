@@ -172,3 +172,24 @@ def test_a_failing_box_falls_back_to_local_speech(tmp_path, monkeypatch):
     monkeypatch.setenv("FRAMESIFT_ON", "fakehost")
     s, _ = see.sense(tmp_path / "a.mp4", tmp_path, asr_mode="on")
     assert [c["text"] for c in s.speech] == ["local"]
+
+
+def test_long_talk_lists_speaker_letters_not_voice_strings(portrait):
+    # A 1h45m podcast read "[voices A, male, B, male, male]": the letters and genders ran together.
+    s = _sensed(portrait)
+    vs = ["A, male", "B, male", "male", None, "B, male"]
+    s.speech = [{"start": i * 2.0, "end": i * 2.0 + 1.5, "text": f"line {i}", "voice": vs[i % 5]} for i in range(200)]
+    card = see.card(s, [], {}, "x.mp4")
+    assert "[voices A, B]" in card and "male, male" not in card
+    assert "Voices: A, male; B, male." in card
+
+
+def test_transcript_lines_carry_the_speaker_letter(portrait):
+    s = _sensed(portrait)
+    s.speech = [{"start": 0.0, "end": 2.0, "text": "hello", "voice": "A, male"},
+                {"start": 2.0, "end": 4.0, "text": "hi", "voice": "B, female"},
+                {"start": 4.0, "end": 4.5, "text": "ok", "voice": "male"}]
+    assert see.transcript_text(s).splitlines() == ["[00:00.0-00:02.0] A: hello", "[00:02.0-00:04.0] B: hi",
+                                                   "[00:04.0-00:04.5] ok"]
+    s.speech = [dict(c, voice="A, male") for c in s.speech]
+    assert see.transcript_text(s).splitlines()[0] == "[00:00.0-00:02.0] hello"   # one speaker: no letters

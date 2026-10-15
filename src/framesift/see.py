@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw, ImageFont
 from . import __version__, audio, decode, events, polite, sound
 from .transcript import Cue
 
-CARD_VERSION = "see-10"   # bump when the card format changes: the cache key includes it
+CARD_VERSION = "see-11"   # bump when the card format changes: the cache key includes it
 TILE_W, TILE_H = 320, 180          # the size uniform 1 fps sheets used in the bench: enough, ~920 tokens a sheet
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 URL = re.compile(r"^https?://")
@@ -748,8 +748,9 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
         snds = [x for x in snds if id(x) in keep_ids]
     for snd in snds:
         rows.append(_sound_line(snd))
-    voices = sorted({c["voice"] for c in s.speech if c.get("voice")})
-    tag = len(voices) > 1          # one voice throughout: say it once below, not on every line
+    voices = sorted({c["voice"] for c in s.speech if _letter(c.get("voice"))}) \
+        or sorted({c["voice"] for c in s.speech if c.get("voice")})
+    tag = len(_letters(s.speech)) > 1          # one voice throughout: say it once below, not on every line
     if len(s.speech) <= 150:
         for c in s.speech:
             v = f"[voice {c['voice']}] " if tag and c.get("voice") else ""
@@ -761,7 +762,7 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
             mins.setdefault(int(c["start"] // 60), []).append(c)
         for m, cs in sorted(mins.items()):
             words = " ".join(c["text"] for c in cs).split()
-            vs = sorted({c["voice"] for c in cs if c.get("voice")})
+            vs = _letters(cs)
             v = f"[voices {', '.join(vs)}] " if tag and vs else ""
             rows.append((m * 60.0, f"{ts(m * 60)}-{ts(m * 60 + 60):<7} say {v}\"{' '.join(words[:20])}{' ...' if len(words) > 20 else ''}\""))
     rows.sort(key=lambda r: r[0])
@@ -772,13 +773,34 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
     lines.append("```")
     lines += [r[1] for r in rows] or ["(nothing changed in picture or sound)"]
     lines.append("```")
-    if len(voices) == 1:
+    if not tag and voices:
         lines += ["", f"One voice throughout ({voices[0]}); no change of speaker was found."]
-    elif voices:
+    elif tag:
         lines += ["", f"Voices: {'; '.join(voices)}. Letters group lines by speaker (a speaker-embedding model; "
                       "right on every real-speech bench dialogue); they are not names. Male/female comes from the "
                       "sound tagger. Lines under 0.8 s carry no letter."]
     return "\n".join(lines) + "\n"
+
+
+def _letter(voice: str | None) -> str | None:
+    """The speaker letter of a voice tag ("B, male" -> "B"); None for a gender-only tag ("male")."""
+    head = (voice or "").split(",")[0].strip()
+    return head if len(head) == 1 and head.isupper() else None
+
+
+def _letters(speech: list[dict]) -> list[str]:
+    return sorted({lt for c in speech if (lt := _letter(c.get("voice")))})
+
+
+def transcript_text(s: Sensed) -> str:
+    """Every speech line with times, and the speaker letter when there is more than one speaker,
+    so `grep` answers who said it."""
+    many = len(_letters(s.speech)) > 1
+    out = []
+    for c in s.speech:
+        lt = _letter(c.get("voice")) if many else None
+        out.append(f"[{ts(c['start'])}-{ts(c['end'])}] {lt + ': ' if lt else ''}{c['text']}\n")
+    return "".join(out)
 
 
 def see(src: str, force: bool = False, asr_mode: str = "auto") -> Path:
@@ -808,7 +830,7 @@ def see(src: str, force: bool = False, asr_mode: str = "auto") -> Path:
                                                 indent=1, ensure_ascii=False, default=str))
     (out / "source.txt").write_text(str(path) + "\n")
     if s.speech:
-        (out / "transcript.txt").write_text("".join(f"[{ts(c['start'])}-{ts(c['end'])}] {c['text']}\n" for c in s.speech))
+        (out / "transcript.txt").write_text(transcript_text(s))
     # The card marks the cache entry complete, so it is written last and atomically.
     tmp = out / "card.md.tmp"
     tmp.write_text(card(s, flows, refs, label))

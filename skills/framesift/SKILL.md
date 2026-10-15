@@ -62,7 +62,8 @@ Only when you know, never as a guess. Repeated agreeing fixes teach later cards
 ## Long videos
 
 For talks over a few minutes the card summarises speech one line per minute and points to
-`transcript.txt` (every line with times): grep it for words, then `look` at the times you find.
+`transcript.txt` (every line with times, and `A:`/`B:` speaker letters when more than one person
+speaks): grep it for words or for one speaker, then `look` at the times you find.
 Picture lines are capped; quieter stretches appear as `+N smaller changes` with a time range to zoom.
 
 ## Other commands (unchanged from earlier versions)
