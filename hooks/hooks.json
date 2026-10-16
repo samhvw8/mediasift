@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v framesift >/dev/null 2>&1 && framesift hook || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

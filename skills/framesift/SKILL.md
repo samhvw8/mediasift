@@ -8,6 +8,20 @@ description: Sense a video or audio file (or a web video URL) you cannot watch o
 You cannot watch video or hear audio. framesift does both for you, cheaply, and writes down what it
 sensed so you can reason over time instead of guessing from a few stills.
 
+## 0. If `framesift` is not installed
+
+Check with `command -v framesift`. If it is missing, tell the user and suggest one of these. Do not
+install it yourself without asking: it pulls about 1 GB of Python packages.
+
+```bash
+uv tool install git+https://github.com/samhvw8/framesift      # with uv
+mise use -g pypi:samhvw8/framesift                            # with mise (pipx: works too)
+```
+
+It also needs `ffmpeg` on PATH (`brew install ffmpeg`, `apt install ffmpeg` or `mise use -g ffmpeg`),
+and `yt-dlp` for web URLs. The first run downloads its models: about 60 MB for sound and voices,
+more for the speech model of the language it hears.
+
 ## 1. Sense it (one command)
 
 ```bash
