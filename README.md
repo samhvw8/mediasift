@@ -23,9 +23,9 @@ framesift see bug-repro.mov          # or a YouTube URL; no flags; cached by fil
 | sense | how | cost |
 |---|---|---|
 | **picture events** | every frame (15 fps on short files) as a 32x18 grid of colour blocks; space-time regions of change become *changed*, *flashed and changed back*, *moved (path)*, *kept changing*, *cut*; a change that is undone later says how long it lasted | ~50x realtime |
-| **sound** | [CED](https://github.com/RicherMans/CED) (AudioSet tagger, 22 MB, CPU, 3 s windows: 36/40 real recordings named right) names lasting sounds (music, siren, telephone); short sounds are found by a jump-and-fall-back level test, counted, timed and described (pitch, sharp or ringing); silences; bursts inside a sound | ~150x realtime |
+| **sound** | [CED-small](https://github.com/RicherMans/CED) (AudioSet tagger, 3 s windows: 36/40 real recordings named right) names lasting sounds (music, siren, telephone); short sounds are found by a jump-and-fall-back level test, counted, timed and described (pitch, sharp or ringing); silences; bursts inside a sound. On Apple Silicon a one-time Core ML build runs the tagger on the GPU; otherwise it runs on the CPU (sherpa-onnx) | ~450x realtime on the GPU, ~100x on the CPU (47-minute file) |
 | **sound with picture** | a sound within 150 ms of a picture change is written on it ("together with a beep: #3, #6 of the 8") | free |
-| **speech** | parakeet-mlx / whisper, only when the tagger hears speech; site subtitles for URLs; `--on HOST` runs it (and the voice grouping) on a GPU box over ssh | 20-30x realtime on an M1 Pro; 58x via an RTX 3060 |
+| **speech** | only when the tagger hears speech. Apple Silicon: parakeet-mlx / mlx-whisper, and [QUAN-Transcribe](https://huggingface.co/qnguyen3/QUAN-Transcribe-1.0-CoreML) (Core ML) for Vietnamese. Elsewhere: faster-whisper. Site subtitles for URLs. `--on HOST` runs it (and the voice grouping) on a GPU box over ssh | 20-30x realtime on an M1 Pro (Vietnamese: 156x); 58x via an RTX 3060 |
 | **voices** | TitaNet-small speaker embeddings group lines into voice A, B, ... | 1.00 on real two- and three-speaker dialogues |
 | **on-screen text** | Apple Vision OCR on the changed regions only; captions that repeat the speech are dropped | ~0.1 s a region |
 | **frames to look at** | flow sheets at about one frame per second (12 per image, every shot's first frame; screen recordings skip still frames), before/after crops of events, and `framesift look VIDEO 11-14` for any span with a sound strip under it | images only when opened |
@@ -53,33 +53,112 @@ Details and every rejected variant: [.okf/decisions/see-sensor.md](.okf/decision
 | Big Buck Bunny | 3:00 | 22 s |
 | Python in 100 s (screen montage) | 2:23 | 19 s |
 | CS50 lecture | 6:00 | 56 s |
+| Vietnamese talk (dubbed) | 47:18 | 70 s |
 
 ## Kind to the machine
 
 Measured on a 16 GB M1 Pro (`bench/lagprobe.py`): the lag people feel came from memory, not CPU.
 MLX kept a 5.5 GB buffer cache after transcribing, on a Mac already in swap; capping it costs no
 speed and cut swap churn per run from 3.9 GB to 125 MB. framesift runs at `nice 10` with capped
-worker pools and does picture and sound one after the other. macOS's background QoS band was
-tried and rejected: 5x slower for no measured gain. Speech is the heaviest part on long files;
-`see --on gpu-box` (or `FRAMESIFT_ON=...`) sends the audio as FLAC to `framesift asr -` on a
-GPU box and falls back to local when the box does not answer in 3 s.
+worker pools. The sound pass and Core ML speech run beside the picture pass (peak 2.2 GB on a
+47-minute file); the MLX speech models (3.3 GB peak) still wait for the picture pass. macOS's
+background QoS band was tried and rejected: 5x slower for no measured gain. Speech is the heaviest
+part on long files; `see --on gpu-box` (or `FRAMESIFT_ON=...`) sends the audio as FLAC to
+`framesift asr -` on a GPU box and falls back to local when the box does not answer in 3 s.
 
 Every `see` and `look` call is logged locally to `~/.cache/framesift/usage.jsonl`: which spans agents
 had to zoom into shows where the card falls short, the data for the next round of tuning.
 
+## Install
+
+You need:
+
+- Python 3.11 or later, and [uv](https://docs.astral.sh/uv/).
+- `ffmpeg` and `ffprobe` on your `PATH`.
+- Optional: `yt-dlp` to read web URLs, and [mise](https://mise.jdx.dev/) for the dev tasks and the
+  Core ML tagger build.
+
+```bash
+brew install ffmpeg yt-dlp            # macOS; on Debian/Ubuntu: apt install ffmpeg, pipx install yt-dlp
+git clone https://github.com/samhvw8/framesift
+cd framesift
+uv tool install -e .                  # puts `framesift` on your PATH
+framesift see https://www.youtube.com/watch?v=aqz-KE-bpKQ   # first run downloads the models
+```
+
+What you get depends on the machine:
+
+| | macOS on Apple Silicon | Linux, Intel Mac |
+|---|---|---|
+| speech | parakeet-mlx, mlx-whisper; QUAN (Core ML, macOS 15+) for Vietnamese | faster-whisper |
+| sound tagger | Core ML on the GPU after `mise run ced-coreml`, else the CPU | CPU |
+| on-screen text | Apple Vision OCR | none |
+
+Models download on first use into `~/.cache/framesift/models/` and the Hugging Face cache. The
+Vietnamese model (665 MB) downloads only when a file has Vietnamese speech.
+
+### Optional: the Core ML sound tagger (Apple Silicon)
+
+```bash
+mise run ced-coreml
+```
+
+This builds the tagger once (41 MB) in a throwaway Python 3.13 environment with PyTorch and
+coremltools. It makes tagging about 4.5x faster. Without it, framesift says so on stderr and uses
+the CPU tagger.
+
+### Optional: speech on a GPU box
+
+1. Install framesift on the box the same way.
+2. Make sure `ssh HOST true` works without a password prompt.
+3. Run `framesift see VIDEO --on HOST`, or set `FRAMESIFT_ON=HOST`.
+
+If the box does not answer in 3 s, framesift transcribes locally.
+
 ## Use
 
 ```bash
-uv tool install -e .                      # once; Apple Silicon gets the MLX speech backends
 framesift see VIDEO_OR_URL                # card on stdout; files in ~/.cache/framesift/see/<key>/
 framesift look VIDEO 11.5-13 [-n 8]       # frames over a span + a sound strip
 framesift fix VIDEO 21.0 "cough"          # a sound name was wrong; 3 agreeing fixes teach later cards
 framesift feedback                        # recorded fixes and the names they taught
+framesift asr - < audio.flac              # speech only: timed cues as JSON
+```
+
+Useful `see` flags: `--asr on|off` forces speech on or off, `--force` ignores the cache, and `--now`
+skips the polite settings (`nice 10`, capped worker pools).
+
+### With an agent
+
+Copy or link the skill into your agent's skills folder, for example for Claude Code:
+
+```bash
+ln -s "$PWD/skills/framesift" ~/.claude/skills/framesift
+```
+
+The agent then runs `framesift see` when a task involves a video or audio file.
+`framesift hook` is a Claude Code `UserPromptSubmit` hook that points the agent at videos named in
+a prompt.
+
+### Environment variables
+
+| variable | effect |
+|---|---|
+| `FRAMESIFT_ON` | default GPU host for speech (same as `--on`) |
+| `FRAMESIFT_CACHE` | cache folder (default `~/.cache/framesift`) |
+| `FRAMESIFT_FULL_SPEED=1` | same as `--now` |
+| `FRAMESIFT_LLAMA_SERVER` | `llama-server` binary for `index` / `find` |
+
+### Development
+
+```bash
 mise run test                             # unit + sense tests
+mise run samples                          # fetch the test videos into samples/ (needs yt-dlp)
 uv run python bench/sense/make_synth.py bench/sense/clips   # regenerate the synthetic clips
 ```
 
-Point your agent at [`skills/framesift/SKILL.md`](skills/framesift/SKILL.md).
+Design notes, measurements and every rejected idea live in the [`.okf/`](.okf/index.md) knowledge
+bundle.
 
 ## Known limits
 
@@ -92,7 +171,10 @@ Point your agent at [`skills/framesift/SKILL.md`](skills/framesift/SKILL.md).
   real LibriSpeech dialogue in the bench; they are groupings, not names.
 - OCR needs macOS (Apple Vision). `--on HOST` needs framesift installed on the host.
 - Long files (over 20 minutes): speech is summarised per minute in the card, full text in
-  `transcript.txt`; on-device speech recognition dominates the time (~4.5 min per hour of audio).
+  `transcript.txt`; on-device speech recognition dominates the time (~4.5 min per hour of audio
+  with whisper; Vietnamese with QUAN takes about 30 s per hour).
+- QUAN writes Vietnamese in lowercase without punctuation, and drops some English names and
+  fillers (5.45% word errors vs 2.75% for whisper on a clean dub).
 
 ## v0.2: segments, keyframes, search (still available)
 
