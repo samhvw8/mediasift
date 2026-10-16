@@ -1,6 +1,6 @@
 ---
 name: framesift
-description: Sense a video or audio file (or a web video URL) you cannot watch or hear. One command turns it into a card - a timeline of what changed on screen, which sounds happened and how many times, speech with times, and text that appeared - plus frame sheets to look at and a zoom command for any span. Use when the task involves a video, screen recording or audio file: a bug-repro recording, a UI walkthrough, a tutorial, a lecture, a meeting or podcast, a YouTube link, "what happens in this video", "when does X happen", "what did the error say", "how many times", "what was on screen when they said ...".
+description: 'Sense a video or audio file (or a web video URL) you cannot watch or hear. One command turns it into a card - a timeline of what changed on screen, which sounds happened and how many times, speech with times, and text that appeared - plus frame sheets to look at and a zoom command for any span. Use when the task involves a video, screen recording or audio file: a bug-repro recording, a UI walkthrough, a tutorial, a lecture, a meeting or podcast, a YouTube link, "what happens in this video", "when does X happen", "what did the error say", "how many times", "what was on screen when they said ...".'
 ---
 
 # framesift

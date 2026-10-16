@@ -1,9 +1,18 @@
 {
   "name": "framesift",
   "description": "Lets the agent sense video and audio it cannot watch or hear: the framesift skill (see, look, fix) and a prompt hook that points it at videos named in a prompt. Needs the framesift CLI on PATH.",
-  "version": "0.3.0",
-  "author": { "name": "samhvw8", "url": "https://github.com/samhvw8" },
+  "author": {
+    "name": "samhvw8",
+    "url": "https://github.com/samhvw8"
+  },
   "homepage": "https://github.com/samhvw8/framesift",
   "repository": "https://github.com/samhvw8/framesift",
-  "keywords": ["video", "audio", "transcription", "ocr", "sound", "agents"]
+  "keywords": [
+    "video",
+    "audio",
+    "transcription",
+    "ocr",
+    "sound",
+    "agents"
+  ]
 }

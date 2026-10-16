@@ -39,7 +39,7 @@ The repository root is both a Claude Code plugin and its marketplace[^cc-marketp
 carries `skills/framesift/` and `hooks/hooks.json`. The hook runs
 `command -v framesift && framesift hook || true`, so it is silent when the CLI is missing. It takes
 about 80 ms on a prompt without a video. `npx skills add samhvw8/framesift`[^skills-cli] installs the
-same skill for other agents. The skill's first section tells the agent how to suggest an install
+same skill for other agents; it needs strict YAML, so the skill's `description` is quoted (a bare `: ` inside it failed to parse). `plugin.json` has no `version`, so installed plugins follow the latest commit instead of waiting for a version bump; `claude plugin validate` warns about that, by choice. The skill's first section tells the agent how to suggest an install
 when `framesift` is missing; it does not install anything itself.
 
 [^mise-pypi]: mise pypi backend docs.
