@@ -89,7 +89,8 @@ sudo apt install ffmpeg && pipx install yt-dlp       # or on Debian / Ubuntu
 ```
 
 mise's `github:` backend installs prebuilt release binaries, and framesift has none, so use
-`pypi:`. To update later, run `uv tool upgrade framesift` or `mise up pypi:samhvw8/framesift`.
+`pypi:`. To update later, run `uv tool upgrade framesift`, or `mise install -f pypi:samhvw8/framesift`
+(`mise up` does not see new commits, because framesift has no GitHub releases).
 
 Check the install:
 

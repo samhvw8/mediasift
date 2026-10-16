@@ -26,7 +26,7 @@ framesift is a Python package with no prebuilt binaries, so it installs from the
 | tool | command | tested 2026-10-16 |
 |---|---|---|
 | uv | `uv tool install git+https://github.com/samhvw8/framesift` | installed in a clean tool dir; `see` sensed the fixture in 11.7 s and downloaded the 22 MB tagger and the 40 MB speaker model |
-| mise | `mise use -g pypi:samhvw8/framesift`[^mise-pypi] | installed in 18 s; `pipx:` gives the same tool |
+| mise | `mise use -g pypi:samhvw8/framesift`[^mise-pypi] | installed in 18 s; `pipx:` gives the same tool. `mise up` keeps the old commit ("no latest version found": no GitHub releases); `mise install -f` moves to the newest commit. `uv tool upgrade` follows new commits |
 | mise | `mise use -g ffmpeg yt-dlp` | ffmpeg 9.0.2 (conda backend), yt-dlp (github backend) |
 
 mise's `github:` backend needs release binaries, so it does not apply to framesift. There is no PyPI
