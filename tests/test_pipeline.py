@@ -167,3 +167,57 @@ def test_vietnamese_on_apple_silicon_picks_quan(monkeypatch):
     assert asr.pick("mlx-whisper", "vi") == "mlx-whisper"
     monkeypatch.setattr(asr, "quan_available", lambda: False)
     assert asr.pick("auto", "vi") == "mlx-whisper"
+
+
+def test_ced_log_mel_matches_torchaudio():
+    """The Core ML tagger gets its features from numpy: they must be CED's own torchaudio features
+    (MelSpectrogram center/reflect, AmplitudeToDB top_db=120), fixture made with torchaudio 2.7."""
+    import numpy as np
+    from pathlib import Path
+    from framesift import sound
+    f = np.load(Path(__file__).parent / "fixtures" / "ced_logmel.npz")
+    got = sound.log_mel(f["wave"][None])[0]
+    assert got.shape == f["logmel"].shape == (64, 301)
+    assert np.abs(got - f["logmel"]).max() < 0.05
+
+
+def test_core_ml_tags_keep_window_order_and_top_k(monkeypatch):
+    """Batches of 64 windows: each row must land on its own window, the last batch padded, and only
+    each window's top-k classes kept (what the sherpa tagger returns, and what the rules were tuned on)."""
+    import numpy as np
+    from framesift import coreml, sound
+
+    def fake_predict(model, inputs, outputs):
+        mel = inputs["mel"]
+        p = np.zeros((mel.shape[0], 527), np.float32)
+        p[:, :20] = np.linspace(0.05, 0.6, 20)               # 20 classes heard, only the top 12 survive
+        p[:, 100] = 0.7 + mel[:, 0, 0] / 1000                 # the window's marker
+        return [p]
+    monkeypatch.setattr(coreml, "predict", fake_predict)
+    monkeypatch.setattr(sound, "window_log_mels", lambda y, st: np.broadcast_to(y[st][:, None, None], (len(st), 64, 301)).copy())
+    step = int(0.5 * sound.SR)
+    y = np.zeros(sound.SR * 80, np.float32)
+    n = 1 + (len(y) - int(sound.WIN_S * sound.SR)) // step
+    for i in range(n):
+        y[i * step] = i + 1                                   # window i starts with the value i + 1
+    tags = sound._tag_coreml(object(), y, hop=0.5, top_k=12, names=["x"] * 527)
+    assert tags.probs.shape == (n, 527) and n > 64 * 2
+    assert np.allclose(tags.probs[:, 100], 0.7 + (np.arange(n) + 1) / 1000, atol=4e-4)
+    assert ((tags.probs > 0).sum(axis=1) == 12).all()
+    assert tags.probs[:, :9].max() == 0, "classes below the top 12 must be dropped"
+
+
+def test_shared_stft_gives_the_per_window_features():
+    """Overlapping 3 s windows share frames: one STFT over the file plus each window's 4 reflect-padded
+    edge frames must give exactly what log_mel computes window by window."""
+    import numpy as np
+    from framesift import sound
+    y = np.random.default_rng(3).normal(0, 0.1, sound.SR * 20).astype(np.float32)
+    y[sound.SR * 5:sound.SR * 6] = 0.0                    # silence: the per-window top_db floor
+    for hop in (0.5, 1.0):
+        step = int(hop * sound.SR)
+        starts = np.arange(1 + (len(y) - 48000) // step) * step
+        ref = sound.log_mel(np.stack([y[s:s + 48000] for s in starts]))
+        got = sound.window_log_mels(y, starts)
+        assert got.shape == ref.shape
+        assert np.abs(got - ref).max() < 1e-3, np.abs(got - ref).max()

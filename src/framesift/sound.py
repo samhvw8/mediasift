@@ -128,9 +128,127 @@ def speech_score(pcm: np.ndarray, t: float, win: float = 1.0) -> float:
     return max((e.prob for e in _tagger(20).compute(st) if e.index in SPEECH), default=0.0)
 
 
+# The same CED-small as a batched Core ML model (GPU), built once by `mise run ced-coreml`
+# (scripts/ced_coreml.py: coremltools has no Python 3.14 build). 47 min of audio at a 1 s hop:
+# 27.9 s on the CPU through sherpa-onnx, 6.2 s here.
+CED_REV = "06bb40c5"            # mispeech/ced-small revision the package was converted from
+CED_BATCH, CED_FRAMES, NFFT, HOP_SAMPLES, N_MELS = 64, 301, 512, 160, 64
+
+
+def ced_coreml_package() -> Path:
+    return cache_root() / "models" / f"ced-small-coreml-{CED_REV}" / "ced_small_b64.mlpackage"
+
+
+@lru_cache(maxsize=1)
+def _ced_coreml():
+    from . import coreml
+    if not coreml.available():
+        return None
+    pkg = ced_coreml_package()
+    if not pkg.exists():
+        _log("sound tagger on the CPU: `mise run ced-coreml` builds the 4.5x faster Core ML one")
+        return None
+    return coreml.load(pkg)
+
+
+@lru_cache(maxsize=1)
+def _mel_bank() -> tuple[np.ndarray, np.ndarray]:
+    """Hann window (periodic) and torchaudio's HTK mel filters (no norm), 257 bins -> 64 mels, 0-8 kHz."""
+    window = (0.5 - 0.5 * np.cos(2 * np.pi * np.arange(NFFT) / NFFT)).astype(np.float32)
+    freqs = np.linspace(0, SR // 2, NFFT // 2 + 1)
+    mel = np.linspace(2595.0 * np.log10(1.0), 2595.0 * np.log10(1.0 + (SR / 2) / 700.0), N_MELS + 2)
+    f_pts = 700.0 * (10 ** (mel / 2595.0) - 1.0)
+    slopes = f_pts[None, :] - freqs[:, None]
+    down = -slopes[:, :-2] / np.diff(f_pts)[:-1]
+    up = slopes[:, 2:] / np.diff(f_pts)[1:]
+    return window, np.maximum(0.0, np.minimum(down, up)).astype(np.float32)
+
+
+def _frame_mels(frames: np.ndarray) -> np.ndarray:
+    """(..., 512) raw frames -> (..., 64) mel power (Hann window, |rfft|^2, HTK mel bank)."""
+    window, bank = _mel_bank()
+    spec = np.fft.rfft(frames * window, n=NFFT, axis=-1)
+    return (spec.real ** 2 + spec.imag ** 2).astype(np.float32) @ bank
+
+
+def _db(mel: np.ndarray) -> np.ndarray:
+    """(N, 64, T) mel power -> dB, floored 120 dB under each window's own peak (AmplitudeToDB top_db=120)."""
+    db = 10.0 * np.log10(np.maximum(mel, 1e-10))
+    return np.maximum(db, db.max(axis=(1, 2), keepdims=True) - 120.0).astype(np.float32)
+
+
+def log_mel(windows: np.ndarray) -> np.ndarray:
+    """(N, 48000) waveforms -> (N, 64, 301) dB: CED's torchaudio features (MelSpectrogram with center and
+    reflect padding, AmplitudeToDB top_db=120 per window). Kept in numpy: frame power overflows fp16."""
+    x = np.pad(windows, ((0, 0), (NFFT // 2, NFFT // 2)), mode="reflect")
+    idx = np.arange(0, x.shape[1] - NFFT + 1, HOP_SAMPLES)[:, None] + np.arange(NFFT)[None, :]
+    return _db(_frame_mels(x[:, idx]).transpose(0, 2, 1))
+
+
+def window_log_mels(y: np.ndarray, starts: np.ndarray) -> np.ndarray:
+    """log_mel of the 3 s windows starting at `starts`, sharing frames: overlapping windows repeat
+    frames 2-298 (3x at a 1 s hop, 6x at 0.5 s), which one STFT over their span gives exactly; only
+    frames 0, 1, 299 and 300 touch each window's reflect padding and are computed per window."""
+    win, half = int(WIN_S * SR), NFFT // 2
+    starts = np.asarray(starts, dtype=np.int64)
+    if len(starts) == 0 or starts[-1] + win > len(y) or (starts % HOP_SAMPLES).any():
+        segs = np.zeros((len(starts), win), np.float32)
+        for j, s0 in enumerate(starts):
+            seg = y[s0:s0 + win]
+            segs[j, :len(seg)] = seg
+        return log_mel(segs)
+    first = starts // HOP_SAMPLES                          # global frame index of each window's frame 0
+    g0, g1 = int(first[0]) + 2, int(first[-1]) + CED_FRAMES - 3
+    mels = np.empty((g1 - g0 + 1, N_MELS), np.float32)
+    for a in range(g0, g1 + 1, 4096):                      # chunks keep the frame array under ~10 MB
+        g = np.arange(a, min(a + 4096, g1 + 1))
+        mels[a - g0:a - g0 + len(g)] = _frame_mels(y[(g * HOP_SAMPLES - half)[:, None] + np.arange(NFFT)])
+    out = np.empty((len(starts), CED_FRAMES, N_MELS), np.float32)
+    out[:, 2:CED_FRAMES - 2] = mels[(first - g0)[:, None] + np.arange(2, CED_FRAMES - 2)]
+    # The padded window's first and last 672 samples hold its edge frames (reflection of the window).
+    head = starts[:, None] + np.concatenate([np.arange(half, 0, -1), np.arange(672 - half)])
+    tail = starts[:, None] + np.concatenate([np.arange(win - 672 + half, win), np.arange(win - 2, win - 2 - half, -1)])
+    ends = []
+    for ix in (head, tail):
+        seg = y[ix]
+        ends.append(_frame_mels(np.stack([seg[:, :NFFT], seg[:, HOP_SAMPLES:HOP_SAMPLES + NFFT]], axis=1)))
+    out[:, :2], out[:, CED_FRAMES - 2:] = ends
+    return _db(out.transpose(0, 2, 1))
+
+
+@lru_cache(maxsize=1)
+def _labels() -> list[str]:
+    import csv
+    with open(model_dir() / "class_labels_indices.csv", newline="") as f:
+        return [r["display_name"] for r in csv.DictReader(f)]
+
+
+def _tag_coreml(model, y: np.ndarray, hop: float, top_k: int, names: list[str]) -> Tags:
+    """Every window through the GPU in batches of 64; each window keeps only its top_k classes,
+    like the sherpa tagger, so the naming rules see the same kind of evidence."""
+    from . import coreml
+    win, step = int(WIN_S * SR), int(hop * SR)
+    n = max(1, 1 + (len(y) - win) // step)
+    probs = np.zeros((n, 527), np.float16)
+    for b0 in range(0, n, CED_BATCH):
+        k = min(CED_BATCH, n - b0)
+        mel = np.zeros((CED_BATCH, N_MELS, CED_FRAMES), np.float32)
+        mel[:k] = window_log_mels(y, (b0 + np.arange(k)) * step)
+        p = coreml.predict(model, {"mel": mel}, ["prob"])[0][:k]
+        top = np.argpartition(-p, top_k - 1, axis=1)[:, :top_k]
+        rows = np.arange(k)[:, None]
+        probs[b0 + rows, top] = p[rows, top]
+    # A name only for classes some window kept, as sherpa fills them: the rules read "" as never heard.
+    heard = (probs > 0).any(axis=0)
+    return Tags(np.arange(n) * hop + WIN_S / 2, probs, [nm if h else "" for nm, h in zip(names, heard)], hop)
+
+
 def tag(pcm: np.ndarray, hop: float = 0.5, top_k: int = 12) -> Tags:
-    tagger = _tagger(top_k)
     y = pcm.astype(np.float32) / 32768.0 if pcm.dtype.kind == "i" else pcm.astype(np.float32)
+    m = _ced_coreml()
+    if m is not None:
+        return _tag_coreml(m, y, hop, top_k, _labels())
+    tagger = _tagger(top_k)
     win, step = int(WIN_S * SR), int(hop * SR)
     n = max(1, 1 + (len(y) - win) // step)
     names = [""] * 527
