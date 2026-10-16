@@ -6,7 +6,7 @@ tags: [see, sound, audio, tagger, voices, feedback]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-10T21:00:00Z"
+  at: "2026-10-16T12:00:00Z"
 resource: src/framesift/sound.py
 sources:
   - id: ced
@@ -35,6 +35,18 @@ Every tagger sherpa-onnx ships was compared; CED-small wins or ties at the lowes
 | CED-base | tied at 1 s | 162 / 131 / 131, 20 / 27 / 31 stray | 6.4 s, 87 MB |
 | Zipformer-small | 35/40, 6 stray | - | 27 MB |
 | CED + Zipformer averaged | 34/40, 5 stray | - | both |
+| **CED-small on Core ML** (GPU, fp16, batches of 64) | 36/40, 5 stray | **163 / 144 / 143 / 138** named, 17 / 21 / 7 / 32 stray (silence / speech / synthetic music / real song) | 6.2 s for 47 min at a 1 s hop (sherpa 27.9 s), 41 MB |
+
+**Core ML tagger (2026-10-16).** The same CED-small weights (mispeech/ced-small, pinned), converted once by
+`mise run ced-coreml` (`scripts/ced_coreml.py`, Python 3.13: coremltools has no 3.14 build) and run through
+pyobjc; without the package framesift says so and uses sherpa-onnx on the CPU. The mel front-end stays in numpy
+(frame power overflows fp16) and is computed once per batch span: overlapping windows share frames 2-298, only
+the 4 reflect-padded edge frames are per window (`sound.window_log_mels`, exact to 0.001 dB; 3.5-4x less FFT).
+Each window keeps its top 12 classes and names only classes some window kept, as sherpa returns them. Bench on
+the same code, sherpa int8 vs Core ML fp16: named 164 / 139 / 138 / 134 vs 163 / 144 / 143 / 138 (+14), stray
+11 / 20 / 6 / 35 vs 17 / 21 / 7 / 32 (+5). The extra silent-bed strays are mostly 0.1-0.4 s tails of a clip in
+the gap after it, or the same sound under another name; two are new 1 s "vehicle" lines, while sherpa's own
+1 s strays (crow, animal, chicken) are gone.
 
 # Counting short sounds (hits)
 
@@ -83,7 +95,9 @@ fixes. Runs: one local JSONL file.
 | replace implausible winners ("Heart murmur" → best other class) | worse labels ("cricket" for thunder) |
 | drop hits inside the ASR's spoken lines | removed 44 stray hits but also 36 right ones |
 | let hits inside the tagger's speech stretches through to the per-onset check | speech bed 138 → 143 named, stray 20 → 27: one stray per gain |
-| CoreML provider for the tagger | 18.8 s vs CPU 4.8-7.4 s for 3 min |
+| CoreML provider for the tagger (onnxruntime EP) | 18.8 s vs CPU 4.8-7.4 s for 3 min; a native Core ML conversion is the fast route (above) |
+| Apple SoundAnalysis | faster and 75% vs 67.5% ESC-50 top-1 in research (research/261016-model-alternatives), but a different 303-class taxonomy without male / female / child: every rule here would need re-tuning |
+| EmbeddingGemma 2 audio embeddings as a tagger | zero-shot ESC-50 24% (FluidUse PR 31) |
 
 Remaining misses are CED's own confusions (wind as "ocean", a washing machine as "pump", a can
 opening as "slap", a bell alarm as "jackhammer"): a better tagger or confirmed fixes, not card rules.

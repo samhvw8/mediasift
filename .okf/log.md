@@ -1,5 +1,11 @@
 # Update Log
 
+## 2026-10-16
+* **Updated**: [speech and speed](decisions/speech-and-speed.md) — audio and speech run beside the picture pass; CED on Core ML; 47 min talk 120 -> 70 s, reel 31 -> 20 s; rejected loop-filter skip, parakeet-vi ONNX; KenLM and FluidAudio blocked by the toolchain.
+* **Updated**: [sound sensing](decisions/sound-sensing.md) — Core ML CED tagger with bench (+14 named, +5 stray); SoundAnalysis and EG2 tagging rejected.
+* **Updated**: [the sense bench](benchmarks/sense-bench.md) and [pipeline](architecture/pipeline.md).
+* **Updated**: [speech and speed](decisions/speech-and-speed.md) — Vietnamese on the Mac now uses QUAN-Transcribe (Core ML via pyobjc): 47 min talk 128 s -> 18 s of speech; WER 5.45% vs whisper 2.75% on a clean dub, even on real speech; English eg2 reader rejected. Whole Mac-only card for the talk 259 s -> 120 s, peak 2.2 GB after an autorelease-pool leak fix (36 GB before).
+
 ## 2026-10-12
 * **Updated**: [speech and speed](decisions/speech-and-speed.md) — long files rechecked with the box: talk 259 -> 182 s, podcast 485 -> 286 s; the Mac's picture pass under swap is now the bottleneck.
 

@@ -43,8 +43,8 @@ questions in 32: compare repeat runs before calling a change.
 | synthetic | 22/26, 11 images (r1) | **26/26, 7 images** (r16) |
 | real, 4 landscape videos | 31/32, 58 images | **32/32, 55 images** (r15, one run) |
 | real, 2 phone videos | 15/16 | 15/16 (r17 + r18; the shared miss is a gesture at a spoken phrase) |
-| sound, 200 held-out clips | 0 by construction | silence 164, under speech 138, synthetic music 136, real song 134 (82 / 69 / 68 / 67%) |
-| sound, 40 clips | 0 | 36/40 |
+| sound, 200 held-out clips | 0 by construction | Core ML tagger (2026-10-16): silence 163, under speech 144, synthetic music 143, real song 138 (82 / 72 / 72 / 69%), stray 17 / 21 / 7 / 32; sherpa on the same code 164 / 139 / 138 / 134, stray 11 / 20 / 6 / 35 |
+| sound, 40 clips | 0 | 36/40 (5 stray; sherpa 3) |
 | voices | 0 | 1.00 agreement, 8/8 voice counts |
 
 # History of real-footage rounds

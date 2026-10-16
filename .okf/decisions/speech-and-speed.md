@@ -1,12 +1,12 @@
 ---
 type: Decision
 title: Speech and speed - transcription, the GPU box, and keeping the Mac responsive
-description: How framesift see transcribes (parakeet-mlx or whisper, on the Mac or a GPU box over ssh), how whisper words become cues, how the box's wait overlaps the local passes and falls back when the box is busy, and the resource measurements behind "the Mac must not lag".
+description: How framesift see transcribes (parakeet-mlx, QUAN-Transcribe for Vietnamese, or whisper, on the Mac or a GPU box over ssh), how whisper words become cues, how the box's wait overlaps the local passes and falls back when the box is busy, and the resource measurements behind "the Mac must not lag".
 tags: [see, asr, whisper, gpu-box, resources, lag]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-12T21:00:00Z"
+  at: "2026-10-16T12:00:00Z"
 resource: src/framesift/asr.py
 sources:
   - id: lagprobe
@@ -15,12 +15,16 @@ sources:
   - id: box
     resource: ~/workspace/infra/.okf/servers/me-ubuntu-home.md
     title: gpu-box (RTX 3060) - framesift installed as an editable uv tool
+  - id: quan
+    resource: https://huggingface.co/qnguyen3/QUAN-Transcribe-1.0-CoreML
+    title: QUAN-Transcribe-1.0 Core ML (Vietnamese CTC on the EmbeddingGemma 2 audio encoder)
 ---
 
 # Transcription
 
 Auto-picked: parakeet-mlx on Apple Silicon for its 25 languages (MLX buffer cache capped at 0),
-otherwise whisper (mlx-whisper, faster-whisper on CUDA or CPU). With `--on HOST` or `FRAMESIFT_ON`,
+Vietnamese through QUAN-Transcribe on Core ML (below), otherwise whisper (mlx-whisper, faster-whisper on
+CUDA or CPU). With `--on HOST` or `FRAMESIFT_ON`,
 the audio goes as FLAC over ssh to `framesift asr -` on that host[^box], which returns JSON cues and
 speaker letters; 1h45m podcast: box transcription 99 s (64x realtime), transfer 2 s. The first box run
 of that podcast cost the Mac 390 s of CPU against 785 s all-local, and none of its GPU.
@@ -32,6 +36,34 @@ began a sentence without a period ("lắm Mình nghĩ"), else at the cap; the fi
 A widest-gap rule left Vietnamese fragments ("Thì cái lời khuyên không"): whisper's word gaps are
 nearly uniform. Result: python_100s lines are whole sentences; the 2:44 Vietnamese reel has 0 lines
 under 30 characters. Parakeet returns sentences itself.
+
+**Vietnamese: QUAN-Transcribe on Core ML.**[^quan] The EmbeddingGemma 2 audio encoder with a CTC reader,
+one forward pass per <= 30 s piece, no decoder loop. It runs through pyobjc's CoreML (coremltools has no
+Python 3.14 build), with one function (`len_30s`) for every piece; line times come from the 40 ms CTC frames
+(`asr.ctc_words`), then `words_to_cues` (only its pause rules fire: no punctuation, no capitals).
+Measured 2026-10-16 on the M1 Pro, against mlx-whisper large-v3-turbo:
+
+| file | QUAN | mlx-whisper | WER vs reference |
+|---|---|---|---|
+| 47 min talk (clean TTS dub, script SRT as reference) | 18.2 s (156x) | 128 s (22x) | 5.45% vs 2.75% |
+| 2:44 reel (real speech, no reference) | 1.3 s (123x) | 12.2 s (13.5x) | about even by reading |
+
+Whole `see` runs, Mac only (box unset): the 47 min talk 259 s -> **120 s** (faster than the 182 s
+with the box), peak footprint 3.3 -> 2.2 GB, stutter p99 1.40 ms, none over 16 ms; the 2:44 reel 31 s
+(speech no longer the slow part: picture and OCR are). The first build leaked: Core ML returns
+autoreleased objects and a Python loop never drains the pool, so each 30 s piece kept ~380 MB and the talk
+reached a 36 GB footprint; each prediction now runs in `objc.autorelease_pool()`.
+
+QUAN's extra errors on the talk are deletions (152 vs 22): fillers ("ừ", "ừm": 33) and English names
+(ChatGPT, AGI, OpenAI). On the reel it got "rào cản gia nhập ngành" right where whisper did not, and spelled
+English loanwords phonetically ("hô tây cà phê nêu" for homestay, cafe, nail). Output is lowercase, without
+punctuation, with numbers as words. First use on a Mac downloads 665 MB and compiles once (~28 s); later
+runs load in ~1.7 s. The box keeps faster-whisper: there speech hides behind the picture pass, so its
+better English terms cost no time; QUAN serves the Mac when speech is the critical path.
+
+The English counterpart (eg2-transcribe reader v2, open) was not adopted: LibriSpeech test-clean / other
+4.21% / 10.42% against parakeet v3's ~1.9% / ~3.6%, and it can only write words from a fixed 200,000-word
+audiobook lexicon (no "Django", no "ChatGPT"). The 288x Mac app it reproduces has closed weights.
 
 # Overlap and fallback
 
@@ -96,6 +128,33 @@ The run also found a card bug: per-minute speech lines joined voice tags into
 `[voices A, male, B, male, male]`. They now list letters (`[voices A, B]`), and `transcript.txt`
 lines carry the speaker letter (`B: ...`) when more than one person speaks (card see-11).
 
+# Parallel passes and Core ML (2026-10-16)
+
+Profile of the 47 min talk after QUAN (per step, seconds): OCR 31, CED tagging 27.9, QUAN 21.4, picture decode +
+grid 20.7, events 3.7, speaker letters 4.3, language ID 1.1. Almost all of it is model or decoder compute, so a
+rewrite in Swift, Rust or Go would buy little; what helped was moving work to the GPU and overlapping passes.
+
+| change | 47 min talk (Mac only) | 2:44 reel | notes |
+|---|---|---|---|
+| QUAN, passes in sequence | 120 s | 31 s | |
+| audio + tagging beside the picture pass; Core ML speech starts when the tags hear speech | 79 s | | peak 2.2 -> 1.8 GB |
+| CED-small on Core ML ([sound sensing](/decisions/sound-sensing.md)), mel frames shared | **70-73 s** | **20 s** | CPU time 259 -> 133 s; peak 2.2 GB; stutter p99 2.7 ms, 0.01% over 16 ms |
+
+A run during another session's GPU job took 150 s (OCR 94 s, QUAN 37x): Vision, QUAN and CED share the one
+GPU, so a busy GPU slows every pass. MLX speech still runs after the local passes: its 3.3 GB peak would stack
+on the picture pass.
+
+| tried | result |
+|---|---|
+| `-skip_loop_filter all` for the picture decode | 23.3 -> 18.5 s decode on the 1080p talk, nothing on short files, but 7-32% of picture events changed (the reel +15% noise events): not worth a bench re-run for 3% |
+| VideoToolbox decode | still slower for this tiny-output scan (as measured before) |
+| parakeet-ctc-0.6b-Vietnamese (ONNX int8, onnx-asr) | 1.5x realtime on the CPU and broken syllables on the reel ("đúngôm", "h hômờ tâyà phê"); punctuation is its only gain |
+| QUAN + its KenLM (author: ~2 WER points better) | blocked: `kenlm` is a source-only package and the Mac's Command Line Tools cannot link (SDK missing); retry after reinstalling them |
+| FluidAudio (Swift, ANE parakeet, 129-210x on M4 Pro) for non-Vietnamese | blocked by the same toolchain; a subprocess to keep in sync if adopted |
+| Qwen3-ASR-1.7B as an accurate Vietnamese mode | not adopted: 10-13x realtime; mlx-whisper turbo already gives 2.75% on the dub with `--asr mlx-whisper` |
+
+Model survey behind these choices: `research/261016-model-alternatives/report.md`.
+
 # OCR cost
 
 OCR is now the slowest local pass (~9 s of 18 s on the reel: 164 accurate reads at ~51 ms). A
@@ -103,8 +162,9 @@ text-presence pre-check (`VNDetectTextRectanglesRequest`, 15x faster) missed rea
 regions on python_100s, 11 of 21 on ui_flow); 2-4 Vision threads gave 8.7 → 7.9 s. Left as is: the
 card is cached after its first run.
 
-Card times now: 32 s UI clip ~6 s, 2:23 explainer ~20 s, 2:44 reel 18-20 s, 6 min lecture ~56 s,
+Card times (before 2026-10-16; see above for the Core ML numbers): 32 s UI clip ~6 s, 2:23 explainer ~20 s, 2:44 reel 18-20 s, 6 min lecture ~56 s,
 1h45m podcast 213 s (with the box).
 
 [^box]: The box's install and service notes live in the infra bundle, not here.
+[^quan]: `qnguyen3/QUAN-Transcribe-1.0-CoreML` pinned at revision `13c3a2c` in `asr.py`; author's Vietnamese benchmark (avg WER 6.87% vs turbo 17.66%, the turbo average inflated by one set at 59.6%) on the model card of `qnguyen3/QUAN-Transcribe-1.0`. Gemma Terms of Use.
 [^lagprobe]: `uv run python bench/lagprobe.py [--csv FILE] -- framesift see VIDEO --force`; samples (CPU, footprint, swap, GPU) and stamped logs in `bench/results/res/`.
