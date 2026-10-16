@@ -71,18 +71,29 @@ had to zoom into shows where the card falls short, the data for the next round o
 
 ## Install
 
-You need:
+You need `ffmpeg` and `ffprobe` on your `PATH`, and `yt-dlp` if you want to read web URLs.
+framesift itself is a Python package (3.11 or later). Pick one way to install it:
 
-- Python 3.11 or later, and [uv](https://docs.astral.sh/uv/).
-- `ffmpeg` and `ffprobe` on your `PATH`.
-- Optional: `yt-dlp` to read web URLs, and [mise](https://mise.jdx.dev/) for the dev tasks and the
-  Core ML tagger build.
+| with | command |
+|---|---|
+| [uv](https://docs.astral.sh/uv/) | `uv tool install git+https://github.com/samhvw8/framesift` |
+| [mise](https://mise.jdx.dev/) | `mise use -g pypi:samhvw8/framesift` (`pipx:samhvw8/framesift` is the same) |
+| a clone, to change the code | `git clone https://github.com/samhvw8/framesift && cd framesift && uv tool install -e .` |
+
+mise can install the other tools too:
 
 ```bash
-brew install ffmpeg yt-dlp            # macOS; on Debian/Ubuntu: apt install ffmpeg, pipx install yt-dlp
-git clone https://github.com/samhvw8/framesift
-cd framesift
-uv tool install -e .                  # puts `framesift` on your PATH
+mise use -g pypi:samhvw8/framesift ffmpeg yt-dlp     # everything framesift needs, through mise
+brew install ffmpeg yt-dlp                           # or with Homebrew (macOS)
+sudo apt install ffmpeg && pipx install yt-dlp       # or on Debian / Ubuntu
+```
+
+mise's `github:` backend installs prebuilt release binaries, and framesift has none, so use
+`pypi:`. To update later, run `uv tool upgrade framesift` or `mise up pypi:samhvw8/framesift`.
+
+Check the install:
+
+```bash
 framesift see https://www.youtube.com/watch?v=aqz-KE-bpKQ   # first run downloads the models
 ```
 
@@ -98,6 +109,8 @@ Models download on first use into `~/.cache/framesift/models/` and the Hugging F
 Vietnamese model (665 MB) downloads only when a file has Vietnamese speech.
 
 ### Optional: the Core ML sound tagger (Apple Silicon)
+
+From a clone of this repository:
 
 ```bash
 mise run ced-coreml
@@ -130,15 +143,24 @@ skips the polite settings (`nice 10`, capped worker pools).
 
 ### With an agent
 
-Copy or link the skill into your agent's skills folder, for example for Claude Code:
+The repository ships an agent skill, [`skills/framesift/SKILL.md`](skills/framesift/SKILL.md). It
+tells the agent when to run `framesift see`, how to read the card, and when to `look` closer.
+Install the CLI first, then add the skill in one of these ways:
 
-```bash
-ln -s "$PWD/skills/framesift" ~/.claude/skills/framesift
+| agent | how |
+|---|---|
+| Claude Code, as a plugin (skill + prompt hook) | `/plugin install framesift --marketplace samhvw8/framesift` |
+| Claude Code, older versions | `/plugin marketplace add samhvw8/framesift`, then `/plugin install framesift@framesift` |
+| Claude Code, Codex, Cursor, OpenCode and others | `npx skills add samhvw8/framesift` |
+| any agent, by hand | copy or link `skills/framesift/` into the agent's skills folder, for example `ln -s "$PWD/skills/framesift" ~/.claude/skills/framesift` |
+
+The plugin also adds a `UserPromptSubmit` hook (`framesift hook`, about 80 ms). When a prompt names
+a video file or a video URL, it tells the agent to run `framesift see` on it. It stays silent when
+`framesift` is not installed. Without the plugin, add it to `~/.claude/settings.json` yourself:
+
+```json
+{"hooks": {"UserPromptSubmit": [{"hooks": [{"type": "command", "command": "framesift hook"}]}]}}
 ```
-
-The agent then runs `framesift see` when a task involves a video or audio file.
-`framesift hook` is a Claude Code `UserPromptSubmit` hook that points the agent at videos named in
-a prompt.
 
 ### Environment variables
 
@@ -151,7 +173,10 @@ a prompt.
 
 ### Development
 
+Coding agents: read [`AGENTS.md`](AGENTS.md) first.
+
 ```bash
+mise install                              # Python, uv and the pinned llama.cpp
 mise run test                             # unit + sense tests
 mise run samples                          # fetch the test videos into samples/ (needs yt-dlp)
 uv run python bench/sense/make_synth.py bench/sense/clips   # regenerate the synthetic clips

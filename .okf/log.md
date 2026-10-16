@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-16
+* **Added**: [distribution](decisions/distribution.md) — install from GitHub via uv or mise `pypi:`; Claude Code plugin + marketplace (skill and guarded hook); AGENTS.md for coding agents.
 * **Updated**: [speech and speed](decisions/speech-and-speed.md) — audio and speech run beside the picture pass; CED on Core ML; 47 min talk 120 -> 70 s, reel 31 -> 20 s; rejected loop-filter skip, parakeet-vi ONNX; KenLM and FluidAudio blocked by the toolchain.
 * **Updated**: [sound sensing](decisions/sound-sensing.md) — Core ML CED tagger with bench (+14 named, +5 stray); SoundAnalysis and EG2 tagging rejected.
 * **Updated**: [the sense bench](benchmarks/sense-bench.md) and [pipeline](architecture/pipeline.md).

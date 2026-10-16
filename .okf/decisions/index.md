@@ -10,3 +10,4 @@
 * [Picture sensing](picture-sensing.md) - flow tiles, event crops, camera moves, shot letters, drawn-in overlays, watermarks.
 * [Sound sensing](sound-sensing.md) - CED-small on 3 s windows, counting without syllables or drums, hedged names, speaker letters, corrections.
 * [Speech and speed](speech-and-speed.md) - parakeet / whisper, the GPU box overlap and fallback, whisper cue splitting, the Mac lag measurements.
+* [Distribution](distribution.md) - install from GitHub with uv or mise `pypi:`; the repo is a Claude Code plugin marketplace with the skill and a guarded prompt hook.
