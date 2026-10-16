@@ -125,3 +125,45 @@ def test_no_fragments_when_pauses_are_uniform():
     cues = words_to_cues(_timed(text, step=0.3))
     assert all(c.end - c.start >= 3.0 for c in cues[:-1]), [c.text for c in cues]
     assert cues[0].text.endswith("cho lắm") and cues[1].text.startswith("Mình nghĩ"), [c.text for c in cues]
+
+
+def test_ctc_frames_become_timed_words():
+    """QUAN-Transcribe emits one CTC unit per 40 ms frame: '▁' starts a word, repeats extend it,
+    blanks (0) end nothing, and a unit after a blank that repeats the previous one is a new token."""
+    import numpy as np
+    from framesift.asr import ctc_words
+    pieces = ["<blank>", "<unk>", "▁xin", "▁chào", "▁b", "ạn"]
+    best = np.array([0, 2, 2, 0, 3, 0, 0, 0, 0, 4, 5, 5, 0, 1, 0])
+    words = ctc_words(best, pieces, offset=10.0)
+    assert [w[2] for w in words] == [" xin", " chào", " bạn"]
+    assert words[0][:2] == (10.04, 10.12)            # frames 1-2
+    assert words[1][:2] == (10.16, 10.2)             # frame 4
+    assert words[2][:2] == (10.36, 10.48)            # frames 9-11, across '▁b' + 'ạn'
+    assert all(isinstance(t, float) for w in words for t in w[:2])
+
+
+def test_quiet_split_keeps_every_sample_and_its_offset():
+    import numpy as np
+    from framesift.asr import split_quiet
+    rng = np.random.default_rng(0)
+    x = rng.normal(0, 0.3, 16000 * 75).astype(np.float32)
+    x[16000 * 27:16000 * 27 + 1600] = 0.0            # a quiet 0.1 s at 27 s
+    parts = split_quiet(x, 30.0)
+    assert [o for o, _ in parts][0] == 0
+    assert all(len(p) <= 16000 * 30 for _, p in parts)
+    assert sum(len(p) for _, p in parts) == len(x)
+    assert all(o2 == o1 + len(p1) for (o1, p1), (o2, _) in zip(parts, parts[1:]))
+    assert 16000 * 27 <= parts[1][0] <= 16000 * 27 + 1600, "the cut lands in the quiet stretch"
+
+
+def test_vietnamese_on_apple_silicon_picks_quan(monkeypatch):
+    from framesift import asr
+    monkeypatch.setattr(asr, "apple_silicon", lambda: True)
+    monkeypatch.setattr(asr, "quan_available", lambda: True)
+    monkeypatch.setattr(asr, "_has", lambda m: True)
+    assert asr.pick("auto", "vi") == "quan-coreml"
+    assert asr.pick("auto", "en") == "parakeet-mlx"
+    assert asr.pick("auto", "ja") == "mlx-whisper"
+    assert asr.pick("mlx-whisper", "vi") == "mlx-whisper"
+    monkeypatch.setattr(asr, "quan_available", lambda: False)
+    assert asr.pick("auto", "vi") == "mlx-whisper"

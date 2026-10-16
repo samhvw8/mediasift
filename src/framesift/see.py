@@ -168,6 +168,33 @@ def _audio(path: str, info: decode.MediaInfo, subs: Path | None, asr_mode: str, 
     return beds + hits + sil, lambda: _speech(pcm, tags, talk, subs, asr_mode, early), talk, tags
 
 
+def _early_audio(path: str, info: decode.MediaInfo, asr_mode: str, host: str | None):
+    """Audio decoded and tagged beside the picture pass; when the tags hear speech, transcription
+    starts at once where it costs the Mac little memory: on the box, or with the Core ML backend
+    (GPU, ~2 GB peak). MLX backends (3.3 GB) still wait for the local passes to finish.
+    Returns (pcm, tags, future or None, detected language or None), or None for audio too short to tag."""
+    from concurrent.futures import ThreadPoolExecutor
+    from . import asr
+    pcm = decode.audio_pcm(path, sound.SR)
+    if len(pcm) < sound.SR // 2:
+        return None
+    tags = sound.tag(pcm, hop=0.5 if info.duration <= 1800 else 1.0)
+    fut, lang = None, None
+    if asr_mode == "on" or sum(e - s_ for s_, e in sound.speech_spans(tags)) >= 2.0:
+        job = None
+        if host:
+            job = (asr.remote, pcm, host)
+        else:
+            lang = asr.detect_language(pcm)
+            if asr.pick("auto", lang) == "quan-coreml":
+                job = (asr.transcribe, pcm, "quan-coreml", None, lang)
+        if job:
+            pool = ThreadPoolExecutor(1)
+            fut = pool.submit(*job)
+            pool.shutdown(wait=False)
+    return pcm, tags, fut, lang
+
+
 def _speech(pcm, tags, talk: float, subs: Path | None, asr_mode: str, early) -> tuple[list[dict], dict | None]:
     cues, asr_info, pre_voices = [], None, None
     if subs is not None:
@@ -180,12 +207,14 @@ def _speech(pcm, tags, talk: float, subs: Path | None, asr_mode: str, early) -> 
         try:
             r = early[2].result() if early and early[2] else asr.remote(pcm, host) if host else None
         except (RuntimeError, OSError, subprocess.TimeoutExpired) as e:
+            if not host:          # local Core ML speech failed: running it again would fail the same way
+                raise
             # A busy box (another job holding the GPU) costs speed, not the card: transcribe here.
             log(f"speech on {host} failed, transcribing here instead: {str(e).splitlines()[-1][:200]}")
             r = None
         try:
             if r is None:
-                r = asr.transcribe(pcm, "auto", None, None)
+                r = asr.transcribe(pcm, "auto", None, early[3] if early and len(early) > 3 else None)
             cues, asr_info = r.cues, {"backend": r.backend, "model": r.model, "language": r.language,
                                       "seconds": r.seconds}
             pre_voices = r.voices
@@ -271,24 +300,16 @@ def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = Non
     class _Now:                      # run in place (no pool): a picture failure stops before speech runs
         def __init__(self, fn, *a): self.fn, self.a = fn, a
         def result(self): return self.fn(*self.a)
-    # Speech on a GPU box is the exception: the Mac only waits on ssh (11.5 s of a 29 s card on a
-    # real 2:44 reel), so that wait runs beside the local passes. No local CPU or memory is added.
-    early = None
+    # Two exceptions run beside the picture pass: audio decoding and tagging (CPU, small), and speech
+    # that holds little Mac memory - on a GPU box (the Mac only waits on ssh) or the Core ML backend.
+    early, prep = None, None
     import os
     host = os.environ.get("FRAMESIFT_ON")
-    if host and info.has_audio and subs is None and asr_mode != "off":
+    if info.has_audio and subs is None and asr_mode != "off":
         from concurrent.futures import ThreadPoolExecutor
-        from . import asr
-        pcm = decode.audio_pcm(str(path), sound.SR)
-        if len(pcm) >= sound.SR // 2:
-            # Tag first: only audio with speech goes to the box (the same test `_audio` applies).
-            tags = sound.tag(pcm, hop=0.5 if info.duration <= 1800 else 1.0)
-            fut = None
-            if asr_mode == "on" or sum(e - s_ for s_, e in sound.speech_spans(tags)) >= 2.0:
-                pool = ThreadPoolExecutor(1)
-                fut = pool.submit(asr.remote, pcm, host)
-                pool.shutdown(wait=False)
-            early = (pcm, tags, fut)
+        pool = ThreadPoolExecutor(1)
+        prep = pool.submit(_early_audio, str(path), info, asr_mode, host)
+        pool.shutdown(wait=False)
     finish = None
     if True:
         fv = _Now(_visual, str(path), info) if info.has_video else None
@@ -300,6 +321,11 @@ def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = Non
             s.camera = events.camera_moves(g, screen=s.content == "screen")
             s.shots = events.shot_letters(g, [e.start for e in s.events if e.kind == "cut"])
             s.timings["visual"] = round(time.perf_counter() - t0, 1)
+        if prep is not None:
+            early = prep.result()
+            fa = _Now(_audio, str(path), info, subs, asr_mode, early) if early else None
+            if early is None:
+                s.holes.append("audio track too short to tag")
         if fa is not None:
             r = fa.result()
             if r is not None:

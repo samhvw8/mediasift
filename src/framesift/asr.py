@@ -1,10 +1,10 @@
 """Speech recognition behind one interface, picked per machine and per language.
 
-| machine        | language covered by Parakeet v3 | anything else (e.g. Vietnamese) |
-|----------------|---------------------------------|---------------------------------|
-| Apple Silicon  | parakeet-mlx                    | mlx-whisper                     |
-| NVIDIA CUDA    | faster-whisper, batched on GPU  | faster-whisper, batched on GPU  |
-| other          | faster-whisper on CPU           | faster-whisper on CPU           |
+| machine        | language covered by Parakeet v3 | Vietnamese        | anything else                  |
+|----------------|---------------------------------|-------------------|--------------------------------|
+| Apple Silicon  | parakeet-mlx                    | quan-coreml       | mlx-whisper                    |
+| NVIDIA CUDA    | faster-whisper, batched on GPU  | (same)            | faster-whisper, batched on GPU |
+| other          | faster-whisper on CPU           | (same)            | faster-whisper on CPU          |
 
 Every backend takes the mono 16 kHz int16 buffer framesift already decoded,
 so ffmpeg stays the only decoder.
@@ -36,6 +36,15 @@ DEFAULT_MODEL = {
     "faster-whisper-cuda": "large-v3-turbo",
     "faster-whisper-cpu": "small",
 }
+
+# QUAN-Transcribe 1.0 (EmbeddingGemma 2 audio encoder + CTC reader), Vietnamese only, as Core ML.
+# On a 47 min Vietnamese talk (M1 Pro): 156x realtime vs mlx-whisper turbo 22x; on real speech about as
+# accurate, worse on English loanwords and fillers; lowercase, no punctuation, numbers as words.
+QUAN_REPO = "qnguyen3/QUAN-Transcribe-1.0-CoreML"
+QUAN_REV = "13c3a2cf974c251668c1481713d35669aa2fb3e1"
+QUAN_PKG = "QuanTranscribe-fp16.mlpackage"
+QUAN_FN = "len_30s"          # one input length for every piece: one model load, 0.16 s per piece
+FRAME_S = 0.04               # one CTC frame
 
 
 @dataclass
@@ -90,12 +99,19 @@ def detect_language(pcm: np.ndarray) -> str | None:
     return info.language
 
 
+def quan_available() -> bool:
+    from . import coreml
+    return coreml.available()
+
+
 def pick(requested: str, language: str | None) -> str:
     if requested != "auto":
         return requested
     if apple_silicon():
         if language in PARAKEET_LANGS and _has("parakeet_mlx"):
             return "parakeet-mlx"
+        if language == "vi" and quan_available():
+            return "quan-coreml"
         if _has("mlx_whisper"):
             return "mlx-whisper"
     if not _has("faster_whisper"):
@@ -116,6 +132,8 @@ def transcribe(pcm: np.ndarray, backend: str = "auto", model: str | None = None,
         cues, used = _mlx_whisper(pcm, model or DEFAULT_MODEL[name], language)
     elif name == "faster-whisper":
         cues, used = _faster_whisper(pcm, model, language)
+    elif name == "quan-coreml":
+        cues, used = _quan_coreml(pcm)
     else:
         raise SystemExit(f"unknown ASR backend {name!r}")
     dt = time.perf_counter() - t0
@@ -170,6 +188,75 @@ def _faster_whisper(pcm: np.ndarray, model: str | None, language: str | None) ->
     # Word timestamps: segment times alone gave one cue spanning 4-29 s across a long silence.
     segs, _ = wm.transcribe(audio, vad_filter=True, language=language, word_timestamps=True)
     return words_to_cues([(w.start, w.end, w.word) for s in segs for w in (s.words or [])]), name
+
+
+def split_quiet(x: np.ndarray, chunk_s: float, search_s: float = 5.0) -> list[tuple[int, np.ndarray]]:
+    """(offset, piece) slices of at most chunk_s that cover x, each cut at the quietest 50 ms
+    in the last search_s before the limit (QUAN's own splitter, keeping offsets for timing)."""
+    n, win = int(chunk_s * SR), int(0.05 * SR)
+    search = min(int(search_s * SR), n - win)
+    out, start = [], 0
+    while len(x) - start > n:
+        lo = start + n - search
+        energy = np.convolve(x[lo:start + n].astype(np.float64) ** 2, np.ones(win), mode="valid")
+        cut = lo + int(np.argmin(energy)) + win // 2
+        out.append((start, x[start:cut]))
+        start = cut
+    out.append((start, x[start:]))
+    return out
+
+
+def ctc_words(best: np.ndarray, pieces: list[str], offset: float = 0.0) -> list[tuple[float, float, str]]:
+    """Greedy CTC path (one unit per 40 ms frame) -> timed words. Unit 0 is blank, 1 unknown;
+    a piece starting with '▁' starts a word; a word ends one frame after its last emitting frame."""
+    words: list[list] = []
+    prev = 0
+    for t, u in enumerate(best.tolist()):
+        if u >= 2:
+            at = offset + t * FRAME_S
+            if u != prev:
+                p = pieces[u]
+                if p.startswith("▁") or not words:
+                    words.append([at, at + FRAME_S, " " + p.lstrip("▁")])
+                else:
+                    words[-1][2] += p
+            words[-1][1] = at + FRAME_S
+        prev = u
+    return [(round(a, 2), round(b, 2), w) for a, b, w in words if w.strip()]
+
+
+def _quan_model():
+    """Fetch the pinned Core ML package once (665 MB), compile it once, load the 30 s function."""
+    import json
+    from . import coreml
+    from .sound import cache_root
+    d = cache_root() / "models" / f"quan-coreml-{QUAN_REV[:8]}"
+    if not (d / QUAN_PKG / "Manifest.json").exists():
+        from huggingface_hub import snapshot_download
+        _log(f"downloading the Vietnamese speech model (665 MB, once) from {QUAN_REPO}")
+        # local_dir gives real files: the Core ML compiler rejects the HF cache's symlinks.
+        snapshot_download(QUAN_REPO, revision=QUAN_REV, local_dir=d,
+                          allow_patterns=["config.json", "units.json", f"{QUAN_PKG}/*", f"{QUAN_PKG}/**"])
+    pieces = json.loads((d / "units.json").read_text(encoding="utf-8"))["pieces"]
+    return coreml.load(d / QUAN_PKG, QUAN_FN), pieces
+
+
+def _quan_coreml(pcm: np.ndarray) -> tuple[list[Cue], str]:
+    """One forward pass per <= 30 s piece, no decoder loop. Line times come from the CTC frames."""
+    from . import coreml
+    m, pieces = _quan_model()
+    n = 30 * SR
+    words: list[tuple[float, float, str]] = []
+    for off, piece in split_quiet(_float(pcm), 30.0):
+        if len(piece) < SR // 10:
+            continue
+        x = np.zeros((1, n), np.float32)
+        x[0, :len(piece)] = piece
+        lp, mask = coreml.predict(m, {"audio": x, "length": np.array([len(piece)], np.int32),
+                                      "streaming": np.zeros(1, np.float32),
+                                      "left_chunks": np.array([1e4], np.float32)}, ["log_probs", "frame_mask"])
+        words += ctc_words(lp[0, :int(mask.sum())].argmax(-1), pieces, off / SR)
+    return words_to_cues(words), f"{QUAN_REPO}@{QUAN_REV[:7]}"
 
 
 def words_to_cues(words: list[tuple[float, float, str]], max_len: float = 8.0, gap: float = 0.6) -> list[Cue]:

@@ -147,6 +147,7 @@ def test_remote_asr_overlaps_the_picture_pass(tmp_path, monkeypatch):
     real_visual = see._visual
     def timed_visual(*a):
         r = real_visual(*a)
+        time.sleep(3.0)        # a long picture pass: audio tagging runs beside it, so speech starts first
         marks["visual_end"] = time.perf_counter()
         return r
     monkeypatch.setattr(asr, "remote", fake_remote)
@@ -172,6 +173,42 @@ def test_a_failing_box_falls_back_to_local_speech(tmp_path, monkeypatch):
     monkeypatch.setenv("FRAMESIFT_ON", "fakehost")
     s, _ = see.sense(tmp_path / "a.mp4", tmp_path, asr_mode="on")
     assert [c["text"] for c in s.speech] == ["local"]
+
+
+def test_core_ml_speech_runs_beside_the_picture_pass(tmp_path, monkeypatch):
+    """Without a box, Vietnamese speech on Core ML (GPU, ~2 GB) starts during the picture pass:
+    the 47 min talk went 120 s -> 79 s. MLX backends (3.3 GB) still wait, so memory does not stack."""
+    import time
+    from framesift import asr
+    ff("-f", "lavfi", "-i", "testsrc2=s=320x180:d=4:r=15", "-f", "lavfi", "-i", "sine=f=300:d=4",
+       "-shortest", "-pix_fmt", "yuv420p", str(tmp_path / "a.mp4"))
+    marks = {}
+
+    def fake_transcribe(pcm, backend="auto", model=None, language=None):
+        marks.setdefault("asr_start", time.perf_counter())
+        marks["backend"] = backend
+        return asr.AsrResult([Cue(0.5, 2.0, "xin chào")], backend, "m", language, 0.1)
+
+    real_visual = see._visual
+    def slow_visual(*a):
+        r = real_visual(*a)
+        time.sleep(3.0)
+        marks["visual_end"] = time.perf_counter()
+        return r
+    monkeypatch.delenv("FRAMESIFT_ON", raising=False)
+    monkeypatch.setattr(asr, "detect_language", lambda pcm: "vi")
+    monkeypatch.setattr(asr, "pick", lambda req, lang: "quan-coreml" if lang == "vi" else "mlx-whisper")
+    monkeypatch.setattr(asr, "transcribe", fake_transcribe)
+    monkeypatch.setattr(see, "_visual", slow_visual)
+    s, _ = see.sense(tmp_path / "a.mp4", tmp_path, asr_mode="on")
+    assert [c["text"] for c in s.speech] == ["xin chào"]
+    assert marks["backend"] == "quan-coreml"
+    assert marks["asr_start"] < marks["visual_end"], "Core ML speech waited for the picture pass"
+
+    marks.clear()
+    monkeypatch.setattr(asr, "detect_language", lambda pcm: "ja")      # an MLX language: sequential
+    s, _ = see.sense(tmp_path / "a.mp4", tmp_path, asr_mode="on")
+    assert marks["asr_start"] > marks["visual_end"], "MLX speech must not stack on the picture pass"
 
 
 def test_long_talk_lists_speaker_letters_not_voice_strings(portrait):
