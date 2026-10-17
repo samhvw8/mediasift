@@ -68,6 +68,7 @@ what CED hears at its onsets, with pitch and decay words.
 | while music plays, a non-music class is named from 0.18 (not 0.25), over >= 1.5 s | beside "Music" CED scores real sounds 0.2-0.3; the right class was still its top non-music guess for 44 of 60 clips | real song 124 → 134, synthetic music 128 → 136; the song's strays at 0.18 were all 1.0 s runs |
 | **names below 0.3 read "maybe X"** everywhere | on the real song they were wrong more often than right (23 right, 30 wrong); the bench counts a wrong name on a real clip as neither hit nor stray | card wording |
 | plain words for obscure AudioSet names ("church bells ringing" for "Change ringing (campanology)") | right but unreadable | silence 161 → 164 (scoring unchanged) |
+| music beds carry mood and genre words, long ones a mood arc | [music and voice mood](/decisions/music-and-voice-mood.md) | 88% / 83% right when stated |
 | a single speaker is said once below the timeline, not `[voice male]` on every line | 34 identical tags on a Vietnamese reel | card wording |
 
 # Speakers

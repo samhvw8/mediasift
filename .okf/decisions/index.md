@@ -9,5 +9,6 @@
 * [mediasift see](see-sensor.md) - v0.3 sensor card instead of a storyboard: the problem, the parts, the first measurements, open questions.
 * [Picture sensing](picture-sensing.md) - flow tiles, event crops, camera moves, shot letters, drawn-in overlays, watermarks.
 * [Sound sensing](sound-sensing.md) - CED-small on 3 s windows, counting without syllables or drums, hedged names, speaker letters, corrections.
+* [Music and voice mood](music-and-voice-mood.md) - music beds carry CED's mood and genre words and a mood arc (88% right when stated, no new model); speech emotion measured at 45% held out and left out.
 * [Speech and speed](speech-and-speed.md) - parakeet / whisper, the GPU box overlap and fallback, whisper cue splitting, the Mac lag measurements.
 * [Distribution](distribution.md) - install from GitHub with uv or mise `pypi:`; the repo is a Claude Code plugin marketplace with the skill and a guarded prompt hook.
