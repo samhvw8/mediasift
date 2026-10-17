@@ -5,7 +5,7 @@ description: mediasift ships as a Python package installed from GitHub (uv or mi
 tags: [install, distribution, plugin, skill]
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-16T10:00:00Z"
+  at: "2026-10-17T13:30:00Z"
 resource: .claude-plugin/marketplace.json
 sources:
   - id: mise-pypi
@@ -23,10 +23,10 @@ sources:
 
 mediasift is a Python package with no prebuilt binaries, so it installs from the GitHub repository:
 
-| tool | command | tested 2026-10-16 |
+| tool | command | tested 2026-10-16 (as framesift); rechecked 2026-10-17 after the rename |
 |---|---|---|
-| uv | `uv tool install git+https://github.com/samhvw8/mediasift` | installed in a clean tool dir; `see` sensed the fixture in 11.7 s and downloaded the 22 MB tagger and the 40 MB speaker model |
-| mise | `mise use -g pypi:samhvw8/mediasift`[^mise-pypi] | installed in 18 s; `pipx:` gives the same tool. `mise up` keeps the old commit ("no latest version found": no GitHub releases); `mise install -f` moves to the newest commit. `uv tool upgrade` follows new commits |
+| uv | `uv tool install git+https://github.com/samhvw8/mediasift` | installed in a clean tool dir; `see` sensed the fixture in 11.7 s and downloaded the 22 MB tagger and the 40 MB speaker model. 2026-10-17: installs from `samhvw8/mediasift` and runs |
+| mise | `mise use -g pypi:samhvw8/mediasift`[^mise-pypi] | installed in 18 s (2026-10-17: 2.6 s, runs from mise's own install dir; when mise-versions.jdx.dev times out, `MISE_USE_VERSIONS_HOST=false` asks GitHub directly); `pipx:` gives the same tool. `mise up` keeps the old commit ("no latest version found": no GitHub releases); `mise install -f` moves to the newest commit. `uv tool upgrade` follows new commits |
 | mise | `mise use -g ffmpeg yt-dlp` | ffmpeg 9.0.2 (conda backend), yt-dlp (github backend) |
 
 mise's `github:` backend needs release binaries, so it does not apply to mediasift. There is no PyPI

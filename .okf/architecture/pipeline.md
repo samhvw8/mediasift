@@ -6,7 +6,7 @@ tags: [pipeline, architecture]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-10T21:00:00Z"
+  at: "2026-10-17T13:30:00Z"
 resource: src/mediasift/see.py
 ---
 
@@ -18,7 +18,7 @@ One cached command; why each part exists: [mediasift see](/decisions/see-sensor.
 |---|---|---|
 | cache key | `see.content_key` | size + first/last MiB + card version → `~/.cache/mediasift/see/<key>/`; URLs via yt-dlp into `cache/url/` (site subtitles replace ASR) |
 | picture | `events.build_grid`, `events.detect`, `events.cuts` | 256x144 frames at 15/5/2 fps → 32x18 colour blocks + largest local change → cuts, then space-time regions of change classified change / blink / motion / animating / scene, with lifetimes (undone or wiped away); global shift per frame → camera pans / tilts (screen: scrolls); a letter per shot, repeated when a place returns (`events.shot_letters`) |
-| sound | `sound.tag`, `sound.hits`, `sound.beds`, `sound.silences`, `sound.bursts`, `sound.quality`, `sound.voices` | CED-small on 3 s windows (Core ML on the GPU in batches of 64 when `mise run ced-coreml` built it, else sherpa-onnx on the CPU; numpy mel with frames shared across overlapping windows), spans trimmed to audible audio; counted short sounds with pitch words (syllables and a song's drums excluded); lasting sounds, "maybe X" below 0.3; silences; TitaNet voice letters |
+| sound | `sound.tag`, `sound.hits`, `sound.beds`, `sound.silences`, `sound.bursts`, `sound.quality`, `sound.voices` | CED-small on 3 s windows (Core ML on the GPU in batches of 64 when `mise run ced-coreml` built it, else sherpa-onnx on the CPU; numpy mel with frames shared across overlapping windows), spans trimmed to audible audio; counted short sounds with pitch words (syllables and a song's drums excluded); lasting sounds, "maybe X" below 0.3; silences; TitaNet voice letters; music beds carry CED's own mood and genre words when sure, and a mood arc when long ([music and voice mood](/decisions/music-and-voice-mood.md)) |
 | speech | `asr.transcribe` / `asr.remote` | parakeet-mlx (cache capped), QUAN-Transcribe on Core ML for Vietnamese (CTC frames give word times), or whisper (words grouped into cues split at commas, pauses or sentence capitals); `--on HOST` sends FLAC over ssh to `mediasift asr -`, overlapped with the picture and OCR passes, falling back to the Mac if the box fails |
 | text | `ocr.read` | Apple Vision on changed regions only; captions that repeat speech dropped; platform watermarks named once (`see.strip_watermarks`) |
 | images | `see.flow_sheets`, `see.event_sheets`, `decode.frames_at` | ~1 fps flow sheets (uniform on camera, change-weighted on screens), before/after crops; one decode pass or parallel seeks on long files |

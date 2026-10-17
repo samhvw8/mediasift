@@ -6,7 +6,7 @@ tags: [bench, evaluation, see, sound, voices]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-10T21:00:00Z"
+  at: "2026-10-17T13:30:00Z"
 resource: bench/sense
 sources:
   - id: synth
@@ -36,14 +36,14 @@ No agent can hear, so real-footage questions test sight and speech only: there t
 with arm B, and mediasift's gains are the senses B lacks. Run-to-run noise on real footage is 1-3
 questions in 32: compare repeat runs before calling a change.
 
-# Current scores (measured on card see-10; see-11 changed only speaker letters on long talks)
+# Current scores (measured on card see-10; see-11 changed only speaker letters on long talks; see-12 added music mood and genre words, rechecked on the sound bench only)
 
 | bench | arm B: images + transcript | mediasift |
 |---|---|---|
 | synthetic | 22/26, 11 images (r1) | **26/26, 7 images** (r16) |
 | real, 4 landscape videos | 31/32, 58 images | **32/32, 55 images** (r15, one run) |
 | real, 2 phone videos | 15/16 | 15/16 (r17 + r18; the shared miss is a gesture at a spoken phrase) |
-| sound, 200 held-out clips | 0 by construction | Core ML tagger (2026-10-16): silence 163, under speech 144, synthetic music 143, real song 138 (82 / 72 / 72 / 69%), stray 17 / 21 / 7 / 32; sherpa on the same code 164 / 139 / 138 / 134, stray 11 / 20 / 6 / 35 |
+| sound, 200 held-out clips | 0 by construction | Core ML tagger (2026-10-16): silence 163, under speech 144, synthetic music 143, real song 138 (82 / 72 / 72 / 69%), stray 17 / 21 / 7 / 32; sherpa on the same code 164 / 139 / 138 / 134, stray 11 / 20 / 6 / 35; see-12 real song unchanged (138, stray 32). The question benches were not rerun on see-12: only music lines changed, by a few words |
 | sound, 40 clips | 0 | 36/40 (5 stray; sherpa 3) |
 | voices | 0 | 1.00 agreement, 8/8 voice counts |
 
