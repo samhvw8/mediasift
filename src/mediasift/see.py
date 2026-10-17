@@ -17,6 +17,7 @@ import hashlib
 import json
 import math
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -81,8 +82,16 @@ def fetch(url: str) -> tuple[Path, Path | None]:
     final = lambda: [g for g in sorted(d.glob("video.*")) if re.fullmatch(r"video\.(mp4|mkv|webm|mov)", g.name)]
     if not ((d / "url.txt").exists() and final()):
         log(f"downloading {url}")
-        cmd = ["yt-dlp", "-q", "--no-playlist", "-f", "bv*[height<=720]+ba/b[height<=720]/b", "--merge-output-format", "mp4",
-               "--write-subs", "--write-auto-subs", "--sub-langs", "en.*,vi.*,orig", "--sub-format", "vtt",
+        # Original-language captions only: YouTube answers 429 for its auto-translations ('vi' on an
+        # English video), and without --ignore-errors that one subtitle cost the whole video (yt-dlp
+        # issue 13831; 5 of 7 real fetches). A translated track may still be tried and fail; it is ignored.
+        runtimes = [r for r in ("deno", "node", "bun") if shutil.which(r)]
+        if not runtimes:
+            log("no JavaScript runtime (deno, node or bun): yt-dlp may miss YouTube formats; `mise use -g deno` fixes it")
+        cmd = ["yt-dlp", "-q", "--no-playlist", "--ignore-errors", *[a for r in runtimes for a in ("--js-runtimes", r)],
+               "-f", "bv*[height<=720]+ba/b[height<=720]/b", "--merge-output-format", "mp4",
+               "--write-subs", "--write-auto-subs", "--sub-langs", r".*-orig,en,vi", "--sub-format", "vtt",
+               "--print-to-file", "%(language)s", str(d / "language.txt"),
                "-o", str(d / "video.%(ext)s"), url]
         r = subprocess.run(cmd, capture_output=True, text=True)
         if r.returncode != 0 and not final():
@@ -92,10 +101,27 @@ def fetch(url: str) -> tuple[Path, Path | None]:
         (d / "url.txt").write_text(url + "\n")
     if not final():
         raise RuntimeError(f"yt-dlp finished but no merged video in {d}")
-    video = final()[0]
+    return final()[0], _pick_subs(d)
+
+
+def _pick_subs(d: Path) -> Path | None:
+    """Captions in the video's own language, or none. Site subtitles replace speech recognition, so
+    a wrong pick prints another language's words as the speech: YouTube's auto-dubs each bring an
+    '-orig' track (an English talk came with de-DE-orig first). Unsure means no subtitles; ASR runs."""
     subs = sorted(d.glob("video*.vtt"))
-    manual = [s for s in subs if "orig" in s.name or not re.search(r"\.\w\w(-\w+)?\.vtt$", s.name)]
-    return video, (manual or subs or [None])[0]
+    code = lambda s: s.name[len("video."):-len(".vtt")]
+    lang = (d / "language.txt").read_text().strip() if (d / "language.txt").exists() else ""
+    if lang and lang not in ("NA", "None"):
+        base = lang.split("-")[0].lower()
+        mine = [s for s in subs if code(s).split("-")[0].lower() == base]
+        pick = ([s for s in mine if code(s).endswith("-orig")] or mine or [None])[0]
+    else:
+        orig = [s for s in subs if code(s).endswith("-orig")]
+        pick = orig[0] if len(orig) == 1 else subs[0] if len(subs) == 1 else None
+    if pick is None and subs:
+        log(f"captions in {len(subs)} languages, none sure to be the video's ({lang or 'language unknown'}): "
+            "transcribing the audio instead")
+    return pick
 
 
 def usage(event: str, **kw) -> None:
