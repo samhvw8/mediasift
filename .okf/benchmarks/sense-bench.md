@@ -21,8 +21,16 @@ sources:
   - id: voices
     resource: bench/sense/voices.py
     title: LibriSpeech dialogues, scored by pairwise agreement
+  - id: harmony
+    resource: bench/sense/harmony_rhythm.py
+    title: Harmony, key/mode shift, BPM, and cut-to-beat sync bench
+  - id: emotion
+    resource: bench/sense/segment_emotion.py
+    title: Speaker-normalized segment talk emotion bench (RAVDESS + calm/VN controls)
+  - id: modes
+    resource: bench/sense/mode_bench.py
+    title: Adaptive, probe, and preset sensing modes + incremental cache upgrade bench
 ---
-
 # The benches
 
 | bench | what it tests | how it is scored | run |
@@ -32,6 +40,9 @@ sources:
 | sound naming | ESC-50 clips spliced at known times over a still picture; 40 clips (folds 1-2) or 200 held out (all 50 classes, folds 3-5); beds: none, LibriSpeech speech, synthetic chords, a real CC BY song | a clip counts as named when a sound line over it carries an accepted word; stray lines are lines over no clip; no LLM | `real_sound.py [--set full] [--bed speech\|music\|song] [--snr 6]` |
 | voices | 8 LibriSpeech dialogues, 2-3 real speakers, 12 turns | pairwise agreement of speaker letters, voices found | `voices.py` |
 
+| harmony & rhythm | 18 chords/modes (`major`/`minor`/`drone`), 10 harmonic shifts, 10 BPMs, 8 speech/ambient false-BPM controls, 6 cut-sync cases | deterministic script judge | `uv run python bench/sense/harmony_rhythm.py` |
+| segment emotion | 12 RAVDESS actors (48 segments) + 4 calm multi-turn controls + 1 real VN narration clip | macro F1 across `calm`/`heated`/`animated`/`subdued` + 0 false flags | `uv run python bench/sense/segment_emotion.py` |
+| sensing modes | `resolve_passes` (10 cases), `classify_signal` (6 real videos), `probe` vs `full`, `podcast` vs `full`, and incremental `+ocr` upgrade | deterministic script judge | `uv run python bench/sense/mode_bench.py` |
 No agent can hear, so real-footage questions test sight and speech only: there the bar is parity
 with arm B, and mediasift's gains are the senses B lacks. Run-to-run noise on real footage is 1-3
 questions in 32: compare repeat runs before calling a change.
@@ -42,10 +53,13 @@ questions in 32: compare repeat runs before calling a change.
 |---|---|---|
 | synthetic | 22/26, 11 images (r1) | **26/26, 7 images** (r16) |
 | real, 4 landscape videos | 31/32, 58 images | **32/32, 55 images** (r15, one run) |
-| real, 2 phone videos | 15/16 | 15/16 (r17 + r18; the shared miss is a gesture at a spoken phrase) |
-| sound, 200 held-out clips | 0 by construction | Core ML tagger (2026-10-16): silence 163, under speech 144, synthetic music 143, real song 138 (82 / 72 / 72 / 69%), stray 17 / 21 / 7 / 32; sherpa on the same code 164 / 139 / 138 / 134, stray 11 / 20 / 6 / 35; see-12 real song unchanged (138, stray 32). The question benches were not rerun on see-12: only music lines changed, by a few words |
+| real, 2 phone videos | 13/16 (r19) | **15/16** (r17-r19; `tiktok_vi` 8/8, `reel_en` 7/8) |
+| sound, 200 held-out clips | 0 by construction | Core ML tagger (2026-10-16): silence 163, under speech 144, synthetic music 143, real song 138 (82 / 72 / 72 / 69%), stray 17 / 21 / 7 / 32; sherpa on the same code 164 / 139 / 138 / 134, stray 11 / 20 / 6 / 35; see-13 real song unchanged (138, stray 32) |
 | sound, 40 clips | 0 | 36/40 (5 stray; sherpa 3) |
 | voices | 0 | 1.00 agreement, 8/8 voice counts |
+| harmony & rhythm | 0 | **18/18** mode, **10/10** shift, **10/10** BPM, **0/8** false BPM, **6/6** cut sync |
+| segment emotion | 0 | **79.8% macro F1** (speaker-normalized prosody + CED vocal bursts + pauses vs 14.2% unnormalized), **0/5** false flags |
+| sensing modes | - | **10/10** pass resolution, **6/6** adaptive signal classification, **67% faster** `probe` on `python_100s`, **66% faster** & **61% fewer lines** `podcast` on `cs50_lecture` |
 
 # History of real-footage rounds
 
@@ -61,6 +75,7 @@ questions in 32: compare repeat runs before calling a change.
 | r14 | 31/32 | 31/32 | shot letters: Big Buck Bunny 8/8 |
 | r15 | 31/32 | 32/32 | drawn-in overlays, change colours |
 | r17-r18 | phones 15/16 | 14 → 15/16 | zoom hint, single-cut wording |
+| r19 | phones 13/16 | **15/16** | `look --say "phrase"`, harmony/rhythm, speaker-normalized emotion (`see-13`) |
 
 Lessons from the rounds: a cleanup that removes images an agent can see is a behaviour change and
 must be measured like one (r7); a bench that counts only "named" and "stray" hides confident wrong

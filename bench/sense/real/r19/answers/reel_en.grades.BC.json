@@ -1,0 +1,31 @@
+{
+  "video": "reel_en",
+  "grades": {
+    "B": {
+      "q01": 1,
+      "q02": 1,
+      "q03": 1,
+      "q04": 0,
+      "q05": 1,
+      "q06": 0,
+      "q07": 1,
+      "q08": 1
+    },
+    "C": {
+      "q01": 1,
+      "q02": 1,
+      "q03": 1,
+      "q04": 1,
+      "q05": 1,
+      "q06": 0,
+      "q07": 1,
+      "q08": 1
+    }
+  },
+  "notes": {
+    "B/q04": "answered left to right, but motion is toward the left edge (viewer's left)",
+    "B/q06": "answered pointing at camera, but fist is raised covering face/mouth",
+    "C/q04": "right to left matches movement toward left edge",
+    "C/q06": "making a fist misses location at face or covering mouth/nose"
+  }
+}

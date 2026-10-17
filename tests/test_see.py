@@ -219,3 +219,220 @@ def test_music_merged_on_and_off_keeps_its_mood():
     c = sound.SoundEvent(43.0, 50.0, "music", "bed", score=0.6, quality="sad")
     merged = see._merge_beds([a, b, c])
     assert len(merged) == 1 and merged[0].quality == "scary, then sad"
+
+
+def test_music_bed_reports_harmony_rhythm_and_beat_sync():
+    """Music beds >= 5 s carry key/mode, harmonic shift, BPM, and cut-to-beat sync on the card."""
+    from mediasift import see
+    sr = 16000
+
+    def _prog(root: int, minor: bool, sec: float) -> np.ndarray:
+        y = np.zeros(int(sec * sr), np.float32)
+        chords = [[0, 3, 7], [8, 12, 15], [5, 8, 12], [7, 10, 14]] if minor else [[0, 4, 7], [7, 11, 14], [9, 12, 16], [5, 9, 12]]
+        for b in range(int(sec / 0.5)):
+            t0 = int(b * 0.5 * sr)
+            t = np.arange(int(0.48 * sr), dtype=np.float32) / sr
+            ch = chords[(b // 2) % 4]
+            sig = sum(np.sin(2 * np.pi * (440.0 * 2 ** ((root + o - 69) / 12)) * t) for o in ch) * 0.15 * np.exp(-1.5 * t)
+            kick = 0.5 * np.sin(2 * np.pi * (60.0 + 80.0 * np.exp(-30 * t)) * t) * np.exp(-18 * t)
+            y[t0:t0 + len(t)] += sig + kick
+        return y
+
+    pcm = np.clip(np.concatenate([_prog(48, True, 6.0), _prog(51, False, 6.0)]) * 32768.0, -32768, 32767).astype(np.int16)
+    bed = sound.SoundEvent(0.0, 12.0, "music", "bed", score=0.8, quality="exciting")
+    cuts = [2.0, 4.0, 6.0, 8.0, 10.0]
+    sound.music_harmony_rhythm(pcm, [bed], cuts)
+    assert bed.harmony["harmony_arc"][0][2] == "minor"
+    assert bed.harmony["harmony_arc"][1][2] == "major"
+    assert abs(bed.rhythm["bpm"] - 120.0) <= 3.0
+    assert bed.beat_sync["synced"] and bed.beat_sync["hits"] == 5
+    line = see._sound_line(bed)[1]
+    assert "minor -> major" in line and "~120 BPM" in line and "cuts sync 5/5" in line, line
+
+def test_talk_emotion_segments_normalizes_per_speaker_and_stays_silent_on_calm():
+    """Speaker-relative segment emotion flags heated/subdued shifts and emits nothing on steady talk."""
+    from mediasift import see
+    t = np.arange(16000 * 30, dtype=np.float32) / 16000.0
+    # Baseline 0-12s: moderate 160 Hz voice; 12-20s: heated (+12 dB + strong upper harmonics); 20-30s: subdued (-8 dB)
+    y = np.zeros_like(t)
+    base_wave = 0.08 * np.sin(2 * np.pi * 160.0 * t) + 0.03 * np.sin(2 * np.pi * 320.0 * t)
+    y[:16000 * 12] = base_wave[:16000 * 12]
+    y[16000 * 12:16000 * 20] = (0.32 * np.sin(2 * np.pi * 210.0 * t[16000 * 12:16000 * 20])
+                                + 0.28 * np.sin(2 * np.pi * 840.0 * t[16000 * 12:16000 * 20]))
+    y[16000 * 20:] = 0.025 * np.sin(2 * np.pi * 145.0 * t[16000 * 20:])
+    pcm = np.clip(y * 32768.0, -32768, 32767).astype(np.int16)
+    speech = [
+        {"start": 0.5, "end": 3.5, "text": "Here is the normal baseline introduction.", "voice": "A"},
+        {"start": 4.0, "end": 7.5, "text": "We continue explaining the regular setup.", "voice": "A"},
+        {"start": 8.0, "end": 11.5, "text": "Everything is running at normal speed.", "voice": "A"},
+        {"start": 12.5, "end": 19.5, "text": "Stop! That is completely wrong and broken!", "voice": "A"},
+        {"start": 20.5, "end": 23.5, "text": "I don't know... maybe we missed it.", "voice": "A"},
+        {"start": 25.0, "end": 28.5, "text": "Sorry... I am unsure now.", "voice": "A"},
+    ]
+    segs = sound.talk_emotion_segments(pcm, None, speech)
+    emos = {s["emotion"] for s in segs}
+    assert "heated" in emos and "subdued" in emos, segs
+    assert all(s["start"] >= 12.0 for s in segs), segs
+
+    # Steady calm talk across all segments must emit 0 emotion flags
+    pcm_calm = np.clip(base_wave * 32768.0, -32768, 32767).astype(np.int16)
+    speech_calm = [
+        {"start": k * 4.0 + 0.5, "end": k * 4.0 + 3.5, "text": "Normal steady narration.", "voice": "A"}
+        for k in range(6)
+    ]
+    assert sound.talk_emotion_segments(pcm_calm, None, speech_calm) == []
+
+
+def test_look_say_matches_word_timestamps_subwords_vietnamese_and_fallback():
+    """`look --say PHRASE` resolves exact word spans, merges SentencePiece subwords, matches
+    accent-stripped Vietnamese, falls back to cue interpolation when `words` is absent, and
+    lists the 3 closest lines when a phrase is absent."""
+    import pytest
+    from mediasift import see
+
+    speech = [
+        {
+            "start": 3.92,
+            "end": 8.88,
+            "text": "If you're not sure what you're going to do the next day, then go to sleep on time.",
+            "words": [
+                {"start": 3.92, "end": 4.2, "text": " If"},
+                {"start": 6.24, "end": 6.4, "text": " go"},
+                {"start": 6.4, "end": 6.56, "text": " to"},
+                {"start": 6.56, "end": 6.8, "text": " sl"},
+                {"start": 6.8, "end": 6.96, "text": "eep"},
+                {"start": 6.96, "end": 7.12, "text": " on"},
+                {"start": 7.12, "end": 7.44, "text": " time."},
+            ],
+        },
+        {
+            "start": 10.0,
+            "end": 14.0,
+            "text": "Hôm nay chúng ta cùng tìm hiểu câu chuyện lịch sử thú vị này.",
+            "words": [
+                [10.0, 10.5, "Hôm"],
+                [10.5, 11.0, "nay"],
+                [11.8, 12.2, "câu"],
+                [12.2, 12.6, "chuyện"],
+                [12.6, 13.0, "lịch"],
+                [13.0, 13.4, "sử"],
+            ],
+        },
+        {
+            "start": 15.0,
+            "end": 21.0,
+            "text": "Start building an audience now even if you have no product to sell.",
+        },
+    ]
+    # 1. Subword merge + mid-cue word span ("go to sleep on time" inside 3.92-8.88s cue)
+    a, b, (ws, we) = see._match_say(speech, "go to sleep on time", 25.0)
+    assert (ws, we) == (6.24, 7.44)
+    assert 5.8 <= a <= 6.24 and 7.44 <= b <= 8.0
+
+    # 2. Accent-stripped Vietnamese match ("cau chuyen lich su" -> 11.8..13.4s)
+    a_vi, b_vi, (ws_vi, we_vi) = see._match_say(speech, "cau chuyen lich su", 25.0)
+    assert (ws_vi, we_vi) == (11.8, 13.4)
+
+    # 3. Cue-level interpolation fallback when `words` is absent
+    a_fb, b_fb, (ws_fb, we_fb) = see._match_say(speech, "building an audience", 25.0)
+    assert 15.0 <= ws_fb < we_fb <= 18.0
+
+    # 4. Missing phrase raises ValueError with closest transcript lines
+    with pytest.raises(ValueError, match="closest lines"):
+        see._match_say(speech, "quantum entanglement spacecraft", 25.0)
+
+
+def test_modes_pass_toggles_adaptive_classification_and_hook(clips, tmp_path, monkeypatch):
+    """`--mode`, `--with`, `--without`, `classify_signal`, incremental cache upgrade, and `hook.suggest_mode`."""
+    from mediasift import hook, see
+
+    assert set(see.resolve_passes("podcast")) == {"sounds", "speech", "voices", "emotion"}
+    assert set(see.resolve_passes("podcast", with_passes="ocr", without_passes="emotion")) == {
+        "pic", "ocr", "sounds", "speech", "voices",
+    }
+    assert set(see.resolve_passes("probe")) == {"pic", "sounds", "speech"}
+    assert set(see.resolve_passes("music")) == {"pic", "sounds", "harmony", "speech"}
+    assert set(see.resolve_passes("reel")) == {"pic", "ocr", "sounds", "speech"}
+
+    # Signal classification: screen, reel, music, and podcast
+    s_screen = see.Sensed("u.mp4", 60.0, 1280, 720, 30.0, 15.0, "screen")
+    assert see.classify_signal(s_screen)[0] == "screen"
+    s_reel = see.Sensed("r.mp4", 30.0, 720, 1280, 30.0, 15.0, "camera")
+    assert see.classify_signal(s_reel)[0] == "reel"
+    s_music = see.Sensed("m.mp4", 120.0, 1280, 720, 30.0, 15.0, "camera",
+                         sounds=[sound.SoundEvent(0.0, 90.0, "music", "bed", score=0.8)])
+    assert see.classify_signal(s_music)[0] == "music"
+    s_pod = see.Sensed("p.mp4", 600.0, 1280, 720, 30.0, 15.0, "camera",
+                       speech=[{"start": 0.0, "end": 400.0, "text": "long talk"}])
+    assert see.classify_signal(s_pod)[0] == "podcast"
+
+    # Hook mode suggestions
+    assert hook.suggest_mode("ep12_podcast.mp4", "summarize this interview") == "podcast"
+    assert hook.suggest_mode("https://youtube.com/shorts/abc123", "what is this brain rot reel") == "reel"
+    assert hook.suggest_mode("theme_song.mp4", "check the music beat sync") == "music"
+    assert hook.suggest_mode("bug_repro.mov", "ui walkthrough") == "screen"
+    assert hook.suggest_mode("mystery.mp4", "what happens here") == "adaptive"
+
+    # Incremental cache & view filtering on synth count clip
+    real_models = sound.cache_root() / "models"
+    if real_models.exists():
+        (tmp_path / "models").symlink_to(real_models)
+    monkeypatch.setenv("MEDIASIFT_CACHE", str(tmp_path))
+    out = see.see(clips["count"], asr_mode="off", mode="podcast")
+    card_pod = (out / "card.md").read_text()
+    assert " pic " not in card_pod
+    assert "beep x5" in card_pod
+    # Upgrade with `--with pic` reuses audio and adds picture events
+    out2 = see.see(clips["count"], asr_mode="off", mode="podcast", with_passes="pic")
+    card_upg = (out2 / "card.md").read_text()
+    assert "flashed (changed and changed back) 8 times" in card_upg
+    assert "beep x5" in card_upg
+
+
+def test_indra_ocr_fallback_and_box_cropping(clips, tmp_path, monkeypatch):
+    """When Apple Vision is absent (Linux), `ocr` falls back to Indra OCR for full frames,
+    region crops (with frame-relative coordinates), and `see()` event diffs."""
+    from PIL import Image, ImageDraw
+    from mediasift import ocr, see
+    from mediasift.see import font
+
+    if not ocr.indra_available():
+        import pytest
+        pytest.skip("indra-ocr not installed")
+
+    monkeypatch.setattr(ocr, "vision_available", lambda: False)
+    assert ocr.backend("auto") == "indra"
+    assert ocr.available() is True
+
+    img = tmp_path / "code_frame.png"
+    im = Image.new("RGB", (640, 360), "white")
+    d = ImageDraw.Draw(im)
+    f = font(28)
+    d.text((40, 40), "TOP HEADER 42", fill="black", font=f)
+    d.text((40, 240), "def spam():", fill="black", font=f)
+    im.save(img)
+
+    full_lines = ocr.read(img)
+    texts = [t for t, _ in full_lines]
+    assert any("TOP HEADER 42" in t for t in texts), texts
+    assert any("def spam():" in t for t in texts), texts
+
+    crop_lines = ocr.read(img, box=(0.0, 0.5, 1.0, 1.0))
+    crop_texts = [t for t, _ in crop_lines]
+    assert any("def spam():" in t for t in crop_texts), crop_texts
+    assert not any("TOP HEADER" in t for t in crop_texts), crop_texts
+    for _, (x0, y0, x1, y1) in crop_lines:
+        assert 0.5 <= y0 < y1 <= 1.0
+
+    # End-to-end screen clip through Indra fallback (simulating Linux)
+    import json
+    real_models = sound.cache_root() / "models"
+    if real_models.exists():
+        (tmp_path / "models").symlink_to(real_models)
+    monkeypatch.setenv("MEDIASIFT_CACHE", str(tmp_path))
+    out = see.see(clips["ui_flow"], asr_mode="off")
+    js = json.loads((out / "sensed.json").read_text())
+    card = (out / "card.md").read_text()
+    assert js["ocr"] is True
+    assert "on-screen text: OCR on changed regions" in card
+    assert any(e.get("text_added") for e in js["events"])

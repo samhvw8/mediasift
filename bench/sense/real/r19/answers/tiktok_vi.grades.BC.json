@@ -1,0 +1,28 @@
+{
+  "video": "tiktok_vi",
+  "grades": {
+    "B": {
+      "q01": 1,
+      "q02": 0,
+      "q03": 1,
+      "q04": 1,
+      "q05": 1,
+      "q06": 1,
+      "q07": 1,
+      "q08": 1
+    },
+    "C": {
+      "q01": 1,
+      "q02": 1,
+      "q03": 1,
+      "q04": 1,
+      "q05": 1,
+      "q06": 1,
+      "q07": 1,
+      "q08": 1
+    }
+  },
+  "notes": {
+    "B/q05": "About 4 seconds is at the upper edge of accepted range 2.5 to 4 seconds"
+  }
+}

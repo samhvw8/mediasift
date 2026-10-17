@@ -16,14 +16,15 @@ def _see(a: argparse.Namespace) -> None:
         os.environ["MEDIASIFT_FULL_SPEED"] = "1"
     if a.on:
         os.environ["MEDIASIFT_ON"] = a.on
-    out = see(a.video, force=a.force, asr_mode=a.asr)
+    out = see(a.video, force=a.force, asr_mode=a.asr, mode=a.mode,
+              with_passes=getattr(a, "with_passes", None), without_passes=getattr(a, "without_passes", None))
     sys.stdout.write((out / "card.md").read_text())
     print(f"\n(card and images in {out})")
 
 
 def _look_span(a: argparse.Namespace) -> None:
     from .see import look
-    print(look(a.video, a.span, a.n))
+    print(look(a.video, a.span, a.n, say=getattr(a, "say", None)))
 
 
 def _fix(a: argparse.Namespace) -> None:
@@ -90,9 +91,9 @@ def _find(a: argparse.Namespace) -> None:
 
 
 def _look(a: argparse.Namespace) -> None:
-    if a.span or not a.at:
-        if not a.span:
-            sys.exit("give a span: mediasift look VIDEO START-END")
+    if a.span or getattr(a, "say", None) or not a.at:
+        if not a.span and not getattr(a, "say", None):
+            sys.exit("give a span or --say: mediasift look VIDEO START-END | --say PHRASE")
         a.video = a.out
         return _look_span(a)
     from .query import load, look, render_look
@@ -144,6 +145,14 @@ def main(argv: list[str] | None = None) -> None:
 
     se = sub.add_parser("see", help="sense a video or URL: a timeline card of picture, sound and speech (cached)")
     se.add_argument("video", help="a video/audio file or a web URL (yt-dlp)")
+    se.add_argument("--mode", choices=["auto", "adaptive", "probe", "podcast", "music", "reel", "screen", "full"],
+                    default="auto",
+                    help="sensing profile: probe (fast S2T + keyframe grid), adaptive (auto-pick passes from signal), "
+                         "podcast, music, reel, screen, or full/auto (default)")
+    se.add_argument("--with", dest="with_passes", metavar="PASS[,PASS...]",
+                    help="enable specific passes: pic,ocr,sounds,harmony,speech,voices,emotion")
+    se.add_argument("--without", dest="without_passes", metavar="PASS[,PASS...]",
+                    help="disable specific passes: pic,ocr,sounds,harmony,speech,voices,emotion")
     se.add_argument("--asr", choices=["auto", "on", "off"], default="auto",
                     help="transcribe speech: auto = when the sound tagger hears speech (default)")
     se.add_argument("--force", action="store_true", help="recompute even if cached")
@@ -212,16 +221,16 @@ def main(argv: list[str] | None = None) -> None:
     fd.add_argument("--json", action="store_true")
     fd.set_defaults(fn=_find)
 
-    lk = sub.add_parser("look", help="see a span: `look VIDEO 12-15` (frames + sound strip), "
-                                     "or exact moments of an indexed dir: `look OUT --at 12.5,40`")
-    lk.add_argument("out", help="a video file/URL (with SPAN), or an analyze output dir (with --at)")
+    lk = sub.add_parser("look", help="see a span or spoken phrase: `look VIDEO 12-15` or `look VIDEO --say \"phrase\"` "
+                                     "(frames + sound strip), or exact moments of an indexed dir: `look OUT --at 12.5,40`")
+    lk.add_argument("out", help="a video file/URL (with SPAN or --say), or an analyze output dir (with --at)")
     lk.add_argument("span", nargs="?", help="START-END in seconds or m:ss, e.g. 11.5-13 or 1:02-1:10")
+    lk.add_argument("--say", metavar="PHRASE", help="zoom to the exact word timestamps where PHRASE is spoken")
     lk.add_argument("-n", type=int, default=8, help="frames across the span (default 8)")
     lk.add_argument("--at", help="comma-separated seconds, e.g. 12.5,40,41.5")
     lk.add_argument("--width", type=int, default=768)
     lk.add_argument("--json", action="store_true")
     lk.set_defaults(fn=_look)
-
     fr = sub.add_parser("frames", help="extract frames from a time range")
     fr.add_argument("video")
     fr.add_argument("--start", type=float, required=True)

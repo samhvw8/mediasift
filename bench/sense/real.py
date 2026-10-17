@@ -51,8 +51,8 @@ MATERIAL = {
     "B": "the folder {dir}: transcript.txt (timed speech) and contact sheets sheet_*.jpg, each holding 12 frames "
          "sampled every 1 s, labelled with their time.",
     "C": "the folder {dir}: card.md (read it first) and the images it names (plus transcript.txt when present). "
-         "You may also run `mediasift look {video} <start>-<end>` to see any time span of the video; "
-         "it prints the path of an image to read.",
+         "You may also run `uv run mediasift look {video} <start>-<end>` or `uv run mediasift look {video} --say \"<phrase>\"` "
+         "to see any time span or spoken phrase of the video; it prints the path of an image to read.",
 }
 
 
@@ -79,8 +79,8 @@ def sheets(video: Path, out: Path, fps: float, tile_w: int) -> int:
 
 
 def see_dir(video: Path) -> Path:
-    r = subprocess.run([str(Path.home() / ".local/bin/mediasift"), "see", str(video)], capture_output=True, text=True,
-                       check=True)
+    r = subprocess.run([sys.executable, "-m", "mediasift.cli", "see", str(video)], capture_output=True, text=True,
+                       check=True, cwd=str(REPO))
     return Path(r.stdout.strip().splitlines()[-1].split(" in ", 1)[1].rstrip(")"))
 
 

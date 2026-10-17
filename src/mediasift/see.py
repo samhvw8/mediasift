@@ -140,6 +140,62 @@ def usage(event: str, **kw) -> None:
 
 # ------------------------------------------------------------------ analysis
 
+PASSES = ("pic", "ocr", "sounds", "harmony", "speech", "voices", "emotion")
+MODES: dict[str, tuple[str, ...]] = {
+    "full": PASSES,
+    "auto": PASSES,
+    "probe": ("pic", "sounds", "speech"),
+    "podcast": ("sounds", "speech", "voices", "emotion"),
+    "music": ("pic", "sounds", "harmony", "speech"),
+    "reel": ("pic", "ocr", "sounds", "speech"),
+    "screen": ("pic", "ocr", "sounds", "speech"),
+    "adaptive": ("pic", "sounds", "speech"),
+}
+
+
+def _parse_pass_list(val: str | list[str] | tuple[str, ...] | set[str] | None) -> list[str]:
+    if not val:
+        return []
+    items = [x.strip().lower() for x in (val.split(",") if isinstance(val, str) else val) if x and x.strip()]
+    bad = [x for x in items if x not in PASSES]
+    if bad:
+        raise ValueError(f"unknown pass {', '.join(bad)!r}; choose from {', '.join(PASSES)}")
+    return items
+
+
+def resolve_passes_from_base(base: list[str] | tuple[str, ...],
+                             with_passes: str | list[str] | tuple[str, ...] | set[str] | None = None,
+                             without_passes: str | list[str] | tuple[str, ...] | set[str] | None = None) -> list[str]:
+    active = set(base)
+    add = set(_parse_pass_list(with_passes))
+    rem = set(_parse_pass_list(without_passes))
+    active |= add
+    if "ocr" in add:
+        active.add("pic")
+    if "harmony" in add:
+        active.add("sounds")
+    if "voices" in add or "emotion" in add:
+        active.update(("speech", "sounds"))
+    active -= rem
+    if "pic" in rem and "ocr" not in add:
+        active.discard("ocr")
+    if "speech" in rem:
+        active.discard("voices")
+        active.discard("emotion")
+    if "sounds" in rem:
+        active.discard("harmony")
+    return [p for p in PASSES if p in active]
+
+
+def resolve_passes(mode: str = "auto",
+                   with_passes: str | list[str] | tuple[str, ...] | set[str] | None = None,
+                   without_passes: str | list[str] | tuple[str, ...] | set[str] | None = None) -> list[str]:
+    m = (mode or "auto").strip().lower()
+    if m not in MODES:
+        raise ValueError(f"unknown mode {mode!r}; choose from {', '.join(MODES)}")
+    return resolve_passes_from_base(MODES[m], with_passes, without_passes)
+
+
 @dataclass
 class Sensed:
     source: str
@@ -151,7 +207,8 @@ class Sensed:
     content: str                                   # screen | camera | audio-only
     events: list[events.Event] = field(default_factory=list)
     sounds: list[sound.SoundEvent] = field(default_factory=list)
-    speech: list[dict] = field(default_factory=list)   # {start, end, text, voice}
+    speech: list[dict] = field(default_factory=list)   # {start, end, text, voice, words?}
+    talk_emotions: list[dict] = field(default_factory=list)  # segment speaker emotion shifts
     asr: dict | None = None
     ocr: bool = False
     sound_sensed: bool = False
@@ -160,8 +217,108 @@ class Sensed:
     camera: list[dict] = field(default_factory=list)       # pans / tilts (scrolls on a screen), events.camera_moves
     shots: list = field(default_factory=list)              # (start, letter): the same letter = the same place again
     timings: dict = field(default_factory=dict)
+    passes: list[str] = field(default_factory=lambda: list(PASSES))
+    detected_kind: str = ""
+    flows: list[str] = field(default_factory=list)
+    refs: dict[int, str] = field(default_factory=dict)
 
 
+def classify_signal(s: Sensed, talk_s: float | None = None) -> tuple[str, list[str]]:
+    """Infer the media profile ('screen', 'reel', 'podcast', 'music', 'film') and recommended passes
+    from the lightweight probe signals (32x18 grid, CED sound beds, and speech coverage)."""
+    dur = max(float(s.duration or 0.0), 1.0)
+    music_s = sum(
+        max(0.0, min(dur, x.end) - max(0.0, x.start))
+        for x in s.sounds
+        if x.kind == "bed" and x.label.lower().startswith(("music", "singing"))
+    )
+    speech_s = (
+        float(talk_s)
+        if talk_s is not None
+        else sum(max(0.0, min(dur, c["end"]) - max(0.0, c["start"])) for c in s.speech)
+    )
+    cuts = sum(1 for e in s.events if e.kind == "cut")
+    cut_rate = cuts / (dur / 60.0)
+    if s.content == "audio-only" or s.width == 0:
+        if music_s >= 0.30 * dur and speech_s < 0.25 * dur:
+            return "music", list(MODES["music"][1:])  # sounds, harmony, speech
+        return "podcast", list(MODES["podcast"])
+    if s.content == "screen":
+        return "screen", list(MODES["screen"])
+    if s.height > s.width and dur <= 240.0:
+        ps = list(MODES["reel"])
+        if music_s >= 0.45 * dur and cuts >= 3 and "harmony" not in ps:
+            ps.append("harmony")
+        return "reel", [p for p in PASSES if p in ps]
+    has_music = any(x.kind == "bed" and x.label.lower().startswith(("music", "singing")) for x in s.sounds)
+    if (music_s >= 0.25 * dur and speech_s < 0.20 * dur) or (has_music and speech_s < 0.05 * dur):
+        return "music", list(MODES["music"])
+    if speech_s >= 0.40 * dur and music_s < 0.15 * dur and cut_rate < 8.0:
+        return "podcast", ["pic", "sounds", "speech", "voices", "emotion"]
+    return "film", list(PASSES)
+
+
+def sensed_from_dict(js: dict) -> Sensed:
+    evs = [
+        events.Event(
+            id=int(e["id"]),
+            kind=e["kind"],
+            start=float(e["start"]),
+            end=float(e["end"]),
+            before=float(e["before"]),
+            after=float(e["after"]),
+            peak=float(e["peak"]),
+            region=events.Region(**e["region"]),
+            path=[tuple(float(v) for v in p) for p in e.get("path", [])],
+            shown_until=e.get("shown_until"),
+            undoes=e.get("undoes"),
+            text_added=list(e.get("text_added", [])),
+            text_removed=list(e.get("text_removed", [])),
+            sounds=list(e.get("sounds", [])),
+        )
+        for e in js.get("events", [])
+    ]
+    snds = [
+        sound.SoundEvent(
+            start=float(x["start"]),
+            end=float(x["end"]),
+            label=x["label"],
+            kind=x["kind"],
+            times=list(x.get("times", [])),
+            score=float(x.get("score", 0.0)),
+            quality=x.get("quality", ""),
+            moods=[tuple(m) for m in x.get("moods", [])],
+            harmony=dict(x.get("harmony", {})),
+            rhythm=dict(x.get("rhythm", {})),
+            beat_sync=dict(x.get("beat_sync", {})),
+        )
+        for x in js.get("sounds", [])
+    ]
+    return Sensed(
+        source=js["source"],
+        duration=float(js["duration"]),
+        width=int(js["width"]),
+        height=int(js["height"]),
+        fps=float(js["fps"]),
+        analysed_fps=float(js.get("analysed_fps", 0.0)),
+        content=js.get("content", "audio-only"),
+        events=evs,
+        sounds=snds,
+        speech=list(js.get("speech", [])),
+        talk_emotions=list(js.get("talk_emotions", [])),
+        asr=js.get("asr"),
+        ocr=bool(js.get("ocr", False)),
+        sound_sensed=bool(js.get("sound_sensed", False)),
+        holes=list(js.get("holes", [])),
+        watermarks=list(js.get("watermarks", [])),
+        camera=list(js.get("camera", [])),
+        shots=[tuple(sh) for sh in js.get("shots", [])],
+        timings=dict(js.get("timings", {})),
+        passes=list(js.get("passes") or PASSES),
+        detected_kind=js.get("detected_kind", ""),
+        flows=list(js.get("flows", [])),
+        refs={int(k): v for k, v in (js.get("refs") or {}).items()},
+    )
 def _visual(path: str, info: decode.MediaInfo) -> tuple[events.Grid, float]:
     # Brief events need a fast rate; long talks do not, and decoding is the cost there.
     fps = 15.0 if info.duration <= 600 else 5.0 if info.duration <= 2400 else 2.0
@@ -191,8 +348,7 @@ def _audio(path: str, info: decode.MediaInfo, subs: Path | None, asr_mode: str, 
     talk = sum(e - s for s, e in sp)
     # Speech is collected last (`finish`), so a transcription running on a GPU box overlaps
     # the picture and OCR passes instead of holding them up.
-    return beds + hits + sil, lambda: _speech(pcm, tags, talk, subs, asr_mode, early), talk, tags
-
+    return beds + hits + sil, lambda run_voices=True: _speech(pcm, tags, talk, subs, asr_mode, early, run_voices=run_voices), talk, tags, pcm
 
 def _early_audio(path: str, info: decode.MediaInfo, asr_mode: str, host: str | None):
     """Audio decoded and tagged beside the picture pass; when the tags hear speech, transcription
@@ -221,7 +377,7 @@ def _early_audio(path: str, info: decode.MediaInfo, asr_mode: str, host: str | N
     return pcm, tags, fut, lang
 
 
-def _speech(pcm, tags, talk: float, subs: Path | None, asr_mode: str, early) -> tuple[list[dict], dict | None]:
+def _speech(pcm, tags, talk: float, subs: Path | None, asr_mode: str, early, run_voices: bool = True) -> tuple[list[dict], dict | None]:
     cues, asr_info, pre_voices = [], None, None
     if subs is not None:
         from .transcript import load
@@ -249,9 +405,9 @@ def _speech(pcm, tags, talk: float, subs: Path | None, asr_mode: str, early) -> 
     speech = []
     if subs is not None or pre_voices is None:
         cues = _dedupe(cues, subtitles=subs is not None)
-        who = sound.voices(pcm, [(c.start, c.end) for c in cues])
+        who = sound.voices(pcm, [(c.start, c.end) for c in cues]) if run_voices else [None] * len(cues)
     else:
-        who = pre_voices                       # computed on the transcribing host
+        who = pre_voices if run_voices else [None] * len(cues)
     genders = [sound.voice(tags, c.start, c.end) for c in cues]
     # One gender per voice letter (the majority of its lines): per-line tags flicker.
     per: dict[str, str | None] = {}
@@ -261,8 +417,13 @@ def _speech(pcm, tags, talk: float, subs: Path | None, asr_mode: str, early) -> 
         per[v] = top if top and gs.count(top) >= 0.6 * len(gs) else None
     for c, v, g_ in zip(cues, who, genders):
         g_ = per.get(v) if v else g_
-        speech.append({"start": round(c.start, 2), "end": round(c.end, 2), "text": c.text,
-                       "voice": f"{v}" + (f", {g_}" if g_ else "") if v else g_})
+        item = {"start": round(c.start, 2), "end": round(c.end, 2), "text": c.text,
+                "voice": f"{v}" + (f", {g_}" if g_ else "") if v else g_}
+        if getattr(c, "words", None):
+            merged_w = _merge_subwords(c.words)
+            if merged_w:
+                item["words"] = merged_w
+        speech.append(item)
     return speech, asr_info
 
 
@@ -315,80 +476,105 @@ def _ocr_events(path: str, info: decode.MediaInfo, evs: list[events.Event], work
     return True
 
 
-def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = None) -> tuple[Sensed, events.Grid | None]:
+def _sync_sound_events(s: Sensed) -> None:
+    for snd in s.sounds:
+        for t in (snd.times or [snd.start]):
+            for e in s.events:
+                if snd.label in ("silence", "music", "singing"):
+                    continue
+                if abs(e.start - t) <= 0.15:
+                    if _snd_name(snd.label) not in e.sounds:
+                        e.sounds.append(_snd_name(snd.label))
+                elif e.kind == "motion" and e.start < t < e.end and snd.kind == "hits":
+                    tag = f"{_snd_name(snd.label)} at {t:.1f}s, mid-motion"
+                    if tag not in e.sounds:
+                        e.sounds.append(tag)
+
+
+def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = None,
+          mode: str = "auto", with_passes: str | None = None, without_passes: str | None = None) -> tuple[Sensed, events.Grid | None]:
     decode.require_ffmpeg()
     t0 = time.perf_counter()
     info = decode.probe(str(path))
-    s = Sensed(str(path), info.duration, info.width, info.height, info.fps, 0.0, "audio-only")
+    active = set(resolve_passes(mode, with_passes, without_passes))
+    if asr_mode == "off":
+        active -= {"speech", "voices", "emotion"}
+    s = Sensed(str(path), info.duration, info.width, info.height, info.fps, 0.0,
+               "camera" if info.has_video else "audio-only")
     g = None
-    # One pass after the other: overlapping them stacked the decoder's and the speech
-    # model's memory and pushed a 16 GB Mac into swap; the time saved was a few seconds.
     class _Now:                      # run in place (no pool): a picture failure stops before speech runs
         def __init__(self, fn, *a): self.fn, self.a = fn, a
         def result(self): return self.fn(*self.a)
-    # Two exceptions run beside the picture pass: audio decoding and tagging (CPU, small), and speech
-    # that holds little Mac memory - on a GPU box (the Mac only waits on ssh) or the Core ML backend.
     early, prep = None, None
     import os
     host = os.environ.get("MEDIASIFT_ON")
-    if info.has_audio and subs is None and asr_mode != "off":
+    want_audio = info.has_audio and bool(active & {"sounds", "harmony", "speech", "voices", "emotion"})
+    want_speech = info.has_audio and info.has_video and ("pic" in active) and ("speech" in active) and subs is None and asr_mode != "off"
+    if want_speech:
         from concurrent.futures import ThreadPoolExecutor
         pool = ThreadPoolExecutor(1)
         prep = pool.submit(_early_audio, str(path), info, asr_mode, host)
         pool.shutdown(wait=False)
     finish = None
-    if True:
-        fv = _Now(_visual, str(path), info) if info.has_video else None
-        fa = _Now(_audio, str(path), info, subs, asr_mode, early) if info.has_audio else None
-        if fv is not None:
-            g, s.analysed_fps = fv.result()
-            s.events = events.detect(g)
-            s.content = "screen" if g.identical > 0.3 else "camera"
-            s.camera = events.camera_moves(g, screen=s.content == "screen")
-            s.shots = events.shot_letters(g, [e.start for e in s.events if e.kind == "cut"])
-            s.timings["visual"] = round(time.perf_counter() - t0, 1)
-        if prep is not None:
-            early = prep.result()
-            fa = _Now(_audio, str(path), info, subs, asr_mode, early) if early else None
-            if early is None:
-                s.holes.append("audio track too short to tag")
-        if fa is not None:
-            r = fa.result()
-            if r is not None:
-                s.sounds, finish, talk, tags = r
-                s.sound_sensed = True
-                s.timings["audio"] = round(time.perf_counter() - t0, 1)
-            else:
-                s.holes.append("audio track too short to tag")
-    if info.has_video:
+    talk = 0.0
+    tags = None
+    pcm_audio = None
+    if info.has_video and "pic" in active:
+        tv = time.perf_counter()
+        g, s.analysed_fps = _visual(str(path), info)
+        s.events = events.detect(g)
+        s.content = "screen" if g.identical > 0.3 else "camera"
+        s.camera = events.camera_moves(g, screen=s.content == "screen")
+        s.shots = events.shot_letters(g, [e.start for e in s.events if e.kind == "cut"])
+        s.timings["visual"] = round(time.perf_counter() - tv, 1)
+    if prep is not None:
+        early = prep.result()
+        if early is None:
+            s.holes.append("audio track too short to tag")
+    if want_audio and (prep is None or early is not None):
+        ta = time.perf_counter()
+        r = _audio(str(path), info, subs, asr_mode if "speech" in active else "off", early)
+        if r is not None:
+            s.sounds, finish, talk, tags, pcm_audio = r
+            s.sound_sensed = "sounds" in active
+            s.timings["audio"] = round(time.perf_counter() - ta, 1)
+        else:
+            s.holes.append("audio track too short to tag")
+    s.detected_kind, auto_passes = classify_signal(s, talk_s=talk)
+    if (mode or "auto").strip().lower() == "adaptive":
+        active = set(resolve_passes_from_base(auto_passes, with_passes, without_passes))
+        if asr_mode == "off":
+            active -= {"speech", "voices", "emotion"}
+        s.sound_sensed = "sounds" in active and bool(s.sounds or pcm_audio is not None)
+    if pcm_audio is not None and "harmony" in active:
+        cut_t = [e.start for e in s.events if e.kind == "cut"]
+        sound.music_harmony_rhythm(pcm_audio, s.sounds, cut_t)
+    if info.has_video and "pic" in active:
         if s.analysed_fps < 10:
             s.holes.append(f"picture read at {s.analysed_fps:g} fps: changes shorter than {1 / s.analysed_fps:.1f} s can be missed")
-        # Sound and picture together: a click that lands with a change is probably its cause.
-        for snd in s.sounds:
-            for t in (snd.times or [snd.start]):
-                for e in s.events:
-                    if snd.label in ("silence", "music", "singing"):
-                        continue
-                    if abs(e.start - t) <= 0.15:
-                        e.sounds.append(_snd_name(snd.label))
-                    elif e.kind == "motion" and e.start < t < e.end and snd.kind == "hits":
-                        e.sounds.append(f"{_snd_name(snd.label)} at {t:.1f}s, mid-motion")
-        t1 = time.perf_counter()
-        s.ocr = _ocr_events(str(path), info, s.events, out / "frames", s.analysed_fps)
-        if s.ocr:
-            s.timings["ocr"] = round(time.perf_counter() - t1, 1)
-        else:
-            s.holes.append("on-screen text not read (OCR needs macOS Vision)")
-    if finish is not None:
+        if "sounds" in active:
+            _sync_sound_events(s)
+        if "ocr" in active:
+            t1 = time.perf_counter()
+            s.ocr = _ocr_events(str(path), info, s.events, out / "frames", s.analysed_fps)
+            if s.ocr:
+                s.timings["ocr"] = round(time.perf_counter() - t1, 1)
+            else:
+                s.holes.append("on-screen text not read (install indra-ocr on Linux or pyobjc Vision on macOS)")
+    if finish is not None and "speech" in active:
         t2 = time.perf_counter()
-        s.speech, s.asr = finish()
+        s.speech, s.asr = finish(run_voices="voices" in active)
         s.timings["speech_wait"] = round(time.perf_counter() - t2, 1)
     if not info.has_audio:
         s.holes.append("no audio track")
-    elif not s.speech and s.asr is None and any(x.label == "speech" for x in s.sounds):
+    elif "speech" in active and not s.speech and s.asr is None and any(x.label == "speech" for x in s.sounds):
         s.holes.append("speech heard but not transcribed")
     if s.speech:
-        _drop_captions(s)
+        if "ocr" in active:
+            _drop_captions(s)
+        if pcm_audio is not None and "emotion" in active:
+            s.talk_emotions = sound.talk_emotion_segments(pcm_audio, tags, s.speech)
+    s.passes = [p for p in PASSES if p in active]
     s.timings["total"] = round(time.perf_counter() - t0, 1)
     return s, g
 
@@ -511,10 +697,21 @@ def _sound_line(s_: sound.SoundEvent) -> tuple[float, str]:
         span, body = f"{ts(s_.start)}-{ts(s_.end)}", f"[{name}]"
         if len(s_.times) > 1:
             body = f"[{name}, {len(s_.times)} separate bursts] starting at {_times(s_.times)} s"
-        # Music: its mood and genre, and where a long score changes mood (a film's turns).
+        # Music: its mood, genre, harmony, tempo, beat-sync, and where a score shifts.
         arc = ", then ".join(f"{w} {ts(a)}-{ts(b)}" for a, b, w in s_.moods)
-        if s_.quality or arc:
-            body += f" ({'; '.join(x for x in (s_.quality, arc) if x)})"
+        harm = ""
+        if s_.harmony:
+            h_arc = s_.harmony.get("harmony_arc") or []
+            if len(h_arc) >= 2:
+                harm = f"{h_arc[0][2]} -> {h_arc[1][2]} at {ts(h_arc[1][0])}"
+            elif s_.harmony.get("mode"):
+                harm = s_.harmony["mode"]
+        rhy = f"~{s_.rhythm['bpm']:.0f} BPM" if s_.rhythm and s_.rhythm.get("bpm") else ""
+        bsync = (f"cuts sync {s_.beat_sync['hits']}/{s_.beat_sync['total']}"
+                 if s_.beat_sync and s_.beat_sync.get("synced") else "")
+        meta = "; ".join(x for x in (s_.quality, arc, harm, rhy, bsync) if x)
+        if meta:
+            body += f" ({meta})"
     return s_.start, f"{span:<15} snd {body}"
 
 
@@ -537,9 +734,15 @@ def _merge_beds(sounds: list[sound.SoundEvent], gap: float = 6.0) -> list[sound.
             if s_.quality and s_.quality not in said:
                 prev.quality = ", then ".join([*said, s_.quality])
             prev.moods += s_.moods
+            if not prev.harmony and s_.harmony:
+                prev.harmony = dict(s_.harmony)
+            if not prev.rhythm and s_.rhythm:
+                prev.rhythm = dict(s_.rhythm)
+            if not prev.beat_sync and s_.beat_sync:
+                prev.beat_sync = dict(s_.beat_sync)
             continue
         out.append(sound.SoundEvent(s_.start, s_.end, s_.label, s_.kind, list(s_.times), s_.score, s_.quality,
-                                    list(s_.moods)))
+                                    list(s_.moods), dict(s_.harmony), dict(s_.rhythm), dict(s_.beat_sync)))
     for o in out:
         if o.kind == "bed" and -1.0 in o.times:
             o.label = f"{o.label}, on and off"
@@ -593,7 +796,7 @@ def _frames_at(path: str, times: list[float], work: Path, width: int = 768) -> l
     return [name(t) for t in times]
 
 
-def flow_sheets(path: str, s: Sensed, g: events.Grid | None, out: Path) -> list[str]:
+def flow_sheets(path: str, s: Sensed, g: events.Grid | None, out: Path, max_frames: int | None = None) -> list[str]:
     if g is None:
         return []
     # About one frame per second up to 4 minutes (uniform 1 fps sheets were the strongest
@@ -602,6 +805,8 @@ def flow_sheets(path: str, s: Sensed, g: events.Grid | None, out: Path) -> list[
     d = max(s.duration, 1.0)
     n = int(d) if d <= 240 else int(240 + 60 * math.sqrt((d - 240) / 60))
     n = int(np.clip(n, 12, 480 if d <= 1200 else 240))   # long talks: the transcript and `look` carry the rest
+    if max_frames is not None:
+        n = min(n, max_frames)
     if s.content == "camera":
         # On camera footage pixel change is mostly people and camera moving, not information:
         # change-weighting starved a slide animation while a lecturer walked (bench round 4).
@@ -738,21 +943,30 @@ def listed(s: Sensed) -> tuple[list[list[events.Event]], int]:
     return [g for g in pics if id(g) in kept], len(pics) - len(kept)
 
 
-def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> str:
+def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str,
+         active_passes: set[str] | list[str] | None = None, show_profile: bool = False) -> str:
     strip_watermarks(s)
+    active = set(active_passes if active_passes is not None else PASSES)
     kind = {"screen": "screen recording", "camera": "camera/film footage", "audio-only": "audio only"}[s.content]
-    talk ="no speech" if not s.speech else f"{len(s.speech)} speech lines"
+    talk = "no speech" if not (s.speech and "speech" in active) else f"{len(s.speech)} speech lines"
     lines = [f"# {src_label}  ({ts(s.duration)}, {kind}, {s.width}x{s.height}, {talk})", ""]
-    sensed = [f"picture: every frame at {s.analysed_fps:g} fps" if s.width else None,
-              "sound: tagged every 0.5-1 s (AudioSet classes) + short sounds counted" if s.sound_sensed else None,
-              f"speech: {s.asr['backend']} ({s.asr.get('model', '')})" if s.asr else None,
-              "on-screen text: OCR on changed regions" if s.ocr else None]
-    lines.append("Sensed: " + "; ".join(x for x in sensed if x) + ".")
+    sensed = [f"picture: every frame at {s.analysed_fps:g} fps" if ("pic" in active and s.width and s.analysed_fps) else None,
+              "sound: tagged every 0.5-1 s (AudioSet classes) + short sounds counted" if ("sounds" in active and s.sound_sensed) else None,
+              f"speech: {s.asr['backend']} ({s.asr.get('model', '')})" if ("speech" in active and s.asr) else None,
+              "on-screen text: OCR on changed regions" if ("ocr" in active and s.ocr) else None]
+    lines.append("Sensed: " + ("; ".join(x for x in sensed if x) or "none") + ".")
+    skipped = [p for p in PASSES if p not in active]
+    if show_profile or skipped:
+        det = s.detected_kind or classify_signal(s)[0]
+        skip_note = f"; skipped: {', '.join(skipped)} — add with `--with {','.join(skipped[:2])}`" if skipped else ""
+        lines.append(f"Profile: detected: {det} (active: {', '.join(p for p in PASSES if p in active)}{skip_note}).")
     if s.holes:
         lines.append("Not sensed: " + "; ".join(s.holes) + ".")
-    if s.watermarks:
+    if "ocr" in active and s.watermarks:
         marks = "; ".join(f'"{w}"' for w in s.watermarks[:4])
         lines.append(f"Watermark (moves around the frame; not listed below): {marks}.")
+    use_flows = flows if "pic" in active else []
+    use_refs = refs if "pic" in active else {}
     lines += ["", "How to use this card:",
               "- The timeline below is complete for what the sensors detect; times are seconds from the start.",
               ("- To SEE the sequence, read the flow sheets: 12 frames each, about one per second plus the first frame "
@@ -760,89 +974,107 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
                if s.content == "camera" else
                "- To SEE the sequence, read the flow sheets: 12 frames each, about one per second where the picture "
                "changes and one per still stretch, each tile labelled with its time and the event (#id) on screen. "
-               "Open the sheet that covers the time you need:") if flows else "- No picture.",
-              *([f"  {', '.join(flows[i:i + 4])}" for i in range(0, len(flows), 4)] if flows else []),
+               "Open the sheet that covers the time you need:") if use_flows else "- No picture.",
+              *([f"  {', '.join(use_flows[i:i + 4])}" for i in range(0, len(use_flows), 4)] if use_flows else []),
               *([f"- ev_NN.jpg rows show single events as [where | before | after] crops, for small detail"
                  f"{'' if s.content == 'camera' else '; each is labelled with its #id and time, and some brief ones have no line below'}."]
-                if refs else []),
-              f"- To zoom on any span: `mediasift look \"{s.source}\" START-END` (frames + a strip of the sound). "
+                if use_refs else []),
+              f"- To zoom on any span or spoken phrase: `mediasift look \"{s.source}\" START-END` or `--say \"words\"` (frames + a strip of the sound). "
               "Use it for a gesture, a face or small text at one moment: flow tiles are ~1 small frame a second.",
               "- Words like 'small red area at bottom' come from pixel statistics; open an image before relying on them.", ""]
     rows: list[tuple[float, str]] = []
-    cut_times = [e.start for e in s.events if e.kind == "cut"]
-    # Shot letters: a letter is a place, the same letter again is a cut back to it (real bench q07).
-    letter = {round(t, 2): lab for t, lab in s.shots}
-    lab = lambda t: f" {letter[round(t, 2)]}" if round(t, 2) in letter else ""
-    if len(cut_times) == 1:
-        t0 = cut_times[0]
-        again = s.shots and lab(t0).strip() == s.shots[0][1]
-        what = f"same place again (shot {s.shots[0][1]}, as at the start)" if again else f"new shot{lab(t0)}"
-        rows.append((t0, f"{ts(t0):<15} pic CUT: {what}"))
-    elif cut_times:
-        opens = f"; the video opens on shot {s.shots[0][1]}, the same letter again = the same place" if s.shots else ""
-        rows.append((cut_times[0], f"{ts(cut_times[0])}-{ts(cut_times[-1]):<7} pic CUTS ({len(cut_times)} new shots{opens}) at "
-                                   + ", ".join(f"{t:.1f}{lab(t)}" for t in cut_times[:60])
-                                   + (f", ... (+{len(cut_times) - 60})" if len(cut_times) > 60 else "") + " s"))
-    keep, dropped = listed(s)
-    for grp in keep:
-        rows.append(_event_line(grp, refs))
-    # Which way the picture travelled: ~1 fps frames cannot show it (real bench: 'pan or tilt?').
-    for m in s.camera[:40]:
-        who = "page" if m["words"].startswith("scrolls") else "camera"
-        pace = " slowly" if m["speed"] < 0.08 else " fast" if m["speed"] > 0.5 else ""
-        rows.append((m["start"], f"{ts(m['start'])}-{ts(m['end']):<7} pic {who} {m['words']}{pace}"))
-    if len(s.camera) > 40:
-        lines.insert(-1, f"- {len(s.camera) - 40} more camera moves are not listed.")
-    if dropped:
-        lines.insert(-1, f"- {dropped} smaller picture changes are not listed; the flow sheets show them.")
-    talk = [(c["start"], c["end"]) for c in s.speech]
-    def under_speech(x):
-        cover = sum(max(0.0, min(e, x.end) - max(b, x.start)) for b, e in talk)
-        return cover > 0.7 * max(x.end - x.start, 1e-6)
-    snds = [x for x in _merge_beds(s.sounds) if not (x.kind == "bed" and not x.label.startswith(("music", "singing"))
-                                                       and under_speech(x))]
-    # A voice through a podcast mic reads to the tagger as 'radio' or 'groan'; under speech that is the voice.
-    cap = int(np.clip(30 + s.duration / 60, 30, 150))
-    if len(snds) > cap:
-        rank = sorted(snds, key=lambda x: (x.kind == "silence", -(len(x.times) or 1) * (x.score or 0.3) * (x.end - x.start + 1)))
-        keep_ids = {id(x) for x in rank[:cap]}
-        lines.insert(-1, f"- {len(snds) - cap} minor sound lines (short silences, weak tags) are not listed.")
-        snds = [x for x in snds if id(x) in keep_ids]
-    for snd in snds:
-        rows.append(_sound_line(snd))
-    voices = sorted({c["voice"] for c in s.speech if _letter(c.get("voice"))}) \
-        or sorted({c["voice"] for c in s.speech if c.get("voice")})
-    tag = len(_letters(s.speech)) > 1          # one voice throughout: say it once below, not on every line
-    if len(s.speech) <= 150:
-        for c in s.speech:
-            v = f"[voice {c['voice']}] " if tag and c.get("voice") else ""
-            rows.append((c["start"], f"{ts(c['start'])}-{ts(c['end']):<7} say {v}\"{c['text']}\""))
-    else:
-        # A long talk: one line per minute here, every word in transcript.txt (grep it).
-        mins: dict[int, list] = {}
-        for c in s.speech:
-            mins.setdefault(int(c["start"] // 60), []).append(c)
-        for m, cs in sorted(mins.items()):
-            words = " ".join(c["text"] for c in cs).split()
-            vs = _letters(cs)
-            v = f"[voices {', '.join(vs)}] " if tag and vs else ""
-            rows.append((m * 60.0, f"{ts(m * 60)}-{ts(m * 60 + 60):<7} say {v}\"{' '.join(words[:20])}{' ...' if len(words) > 20 else ''}\""))
+    if "pic" in active:
+        cut_times = [e.start for e in s.events if e.kind == "cut"]
+        letter = {round(t, 2): lab for t, lab in s.shots}
+        lab = lambda t: f" {letter[round(t, 2)]}" if round(t, 2) in letter else ""
+        if len(cut_times) == 1:
+            t0 = cut_times[0]
+            again = s.shots and lab(t0).strip() == s.shots[0][1]
+            what = f"same place again (shot {s.shots[0][1]}, as at the start)" if again else f"new shot{lab(t0)}"
+            rows.append((t0, f"{ts(t0):<15} pic CUT: {what}"))
+        elif cut_times:
+            opens = f"; the video opens on shot {s.shots[0][1]}, the same letter again = the same place" if s.shots else ""
+            rows.append((cut_times[0], f"{ts(cut_times[0])}-{ts(cut_times[-1]):<7} pic CUTS ({len(cut_times)} new shots{opens}) at "
+                                       + ", ".join(f"{t:.1f}{lab(t)}" for t in cut_times[:60])
+                                       + (f", ... (+{len(cut_times) - 60})" if len(cut_times) > 60 else "") + " s"))
+        if "ocr" not in active:
+            saved = [(e.text_added, e.text_removed) for e in s.events]
+            for e in s.events:
+                e.text_added, e.text_removed = [], []
+        try:
+            keep, dropped = listed(s)
+            for grp in keep:
+                rows.append(_event_line(grp, use_refs))
+        finally:
+            if "ocr" not in active:
+                for e, (ta, tr) in zip(s.events, saved):
+                    e.text_added, e.text_removed = ta, tr
+        for m in s.camera[:40]:
+            who = "page" if m["words"].startswith("scrolls") else "camera"
+            pace = " slowly" if m["speed"] < 0.08 else " fast" if m["speed"] > 0.5 else ""
+            rows.append((m["start"], f"{ts(m['start'])}-{ts(m['end']):<7} pic {who} {m['words']}{pace}"))
+        if len(s.camera) > 40:
+            lines.insert(-1, f"- {len(s.camera) - 40} more camera moves are not listed.")
+        if dropped:
+            lines.insert(-1, f"- {dropped} smaller picture changes are not listed; the flow sheets show them.")
+    if "sounds" in active:
+        talk_spans = [(c["start"], c["end"]) for c in s.speech]
+        def under_speech(x):
+            cover = sum(max(0.0, min(e, x.end) - max(b, x.start)) for b, e in talk_spans)
+            return cover > 0.7 * max(x.end - x.start, 1e-6)
+        snds = [x for x in _merge_beds(s.sounds) if not (x.kind == "bed" and not x.label.startswith(("music", "singing"))
+                                                           and under_speech(x))]
+        cap = int(np.clip(30 + s.duration / 60, 30, 150))
+        if len(snds) > cap:
+            rank = sorted(snds, key=lambda x: (x.kind == "silence", -(len(x.times) or 1) * (x.score or 0.3) * (x.end - x.start + 1)))
+            keep_ids = {id(x) for x in rank[:cap]}
+            lines.insert(-1, f"- {len(snds) - cap} minor sound lines (short silences, weak tags) are not listed.")
+            snds = [x for x in snds if id(x) in keep_ids]
+        for snd in snds:
+            if "harmony" not in active and (snd.harmony or snd.rhythm or snd.beat_sync):
+                snd_copy = sound.SoundEvent(snd.start, snd.end, snd.label, snd.kind, list(snd.times),
+                                            snd.score, snd.quality, list(snd.moods))
+                rows.append(_sound_line(snd_copy))
+            else:
+                rows.append(_sound_line(snd))
+    voices = (sorted({c["voice"] for c in s.speech if _letter(c.get("voice"))})
+              or sorted({c["voice"] for c in s.speech if c.get("voice")})) if "voices" in active else []
+    tag = ("voices" in active) and (len(_letters(s.speech)) > 1)
+    if "emotion" in active:
+        for emo in s.talk_emotions:
+            v_emo = f" {emo['voice']}" if tag and emo.get("voice") else ""
+            why = f" ({', '.join(emo['reasons'])})" if emo.get("reasons") else ""
+            rows.append((emo["start"], f"{ts(emo['start'])}-{ts(emo['end']):<7} talk{v_emo} [{emo['emotion']}{why}]"))
+    if "speech" in active:
+        if len(s.speech) <= 150:
+            for c in s.speech:
+                v = f"[voice {c['voice']}] " if tag and c.get("voice") else ""
+                rows.append((c["start"], f"{ts(c['start'])}-{ts(c['end']):<7} say {v}\"{c['text']}\""))
+        else:
+            mins: dict[int, list] = {}
+            for c in s.speech:
+                mins.setdefault(int(c["start"] // 60), []).append(c)
+            for m, cs in sorted(mins.items()):
+                words = " ".join(c["text"] for c in cs).split()
+                vs = _letters(cs) if tag else []
+                v = f"[voices {', '.join(vs)}] " if tag and vs else ""
+                rows.append((m * 60.0, f"{ts(m * 60)}-{ts(m * 60 + 60):<7} say {v}\"{' '.join(words[:20])}{' ...' if len(words) > 20 else ''}\""))
+        if len(s.speech) > 150:
+            lines.insert(-1, f"- Speech is summarised one line per minute below; every line with times is in transcript.txt "
+                             f"({len(s.speech)} lines): grep it.")
     rows.sort(key=lambda r: r[0])
-    if len(s.speech) > 150:
-        lines.insert(-1, f"- Speech is summarised one line per minute below; every line with times is in transcript.txt "
-                         f"({len(s.speech)} lines): grep it.")
     lines.append("## Timeline")
     lines.append("```")
     lines += [r[1] for r in rows] or ["(nothing changed in picture or sound)"]
     lines.append("```")
-    if not tag and voices:
-        lines += ["", f"One voice throughout ({voices[0]}); no change of speaker was found."]
-    elif tag:
-        lines += ["", f"Voices: {'; '.join(voices)}. Letters group lines by speaker (a speaker-embedding model; "
-                      "right on every real-speech bench dialogue); they are not names. Male/female comes from the "
-                      "sound tagger. Lines under 0.8 s carry no letter."]
+    if "speech" in active and "voices" in active:
+        if not tag and voices:
+            lines += ["", f"One voice throughout ({voices[0]}); no change of speaker was found."]
+        elif tag:
+            lines += ["", f"Voices: {'; '.join(voices)}. Letters group lines by speaker (a speaker-embedding model; "
+                          "right on every real-speech bench dialogue); they are not names. Male/female comes from the "
+                          "sound tagger. Lines under 0.8 s carry no letter."]
     return "\n".join(lines) + "\n"
-
 
 def _letter(voice: str | None) -> str | None:
     """The speaker letter of a voice tag ("B, male" -> "B"); None for a gender-only tag ("male")."""
@@ -865,7 +1097,73 @@ def transcript_text(s: Sensed) -> str:
     return "".join(out)
 
 
-def see(src: str, force: bool = False, asr_mode: str = "auto") -> Path:
+def _upgrade_sensed(path: Path, out: Path, s: Sensed, missing: set[str], wanted: set[str],
+                    subs: Path | None, asr_mode: str) -> Sensed:
+    info = decode.probe(str(path))
+    t0 = time.perf_counter()
+    if "pic" in missing and info.has_video:
+        tv = time.perf_counter()
+        g, s.analysed_fps = _visual(str(path), info)
+        s.events = events.detect(g)
+        s.content = "screen" if g.identical > 0.3 else "camera"
+        s.camera = events.camera_moves(g, screen=s.content == "screen")
+        s.shots = events.shot_letters(g, [e.start for e in s.events if e.kind == "cut"])
+        if s.sounds:
+            _sync_sound_events(s)
+        s.flows = flow_sheets(str(path), s, g, out)
+        s.refs = event_sheets(str(path), s, out)
+        s.timings["visual"] = round(time.perf_counter() - tv, 1)
+    if "ocr" in missing and info.has_video:
+        t1 = time.perf_counter()
+        s.ocr = _ocr_events(str(path), info, s.events, out / "frames", s.analysed_fps or 15.0)
+        if s.ocr:
+            s.timings["ocr"] = round(time.perf_counter() - t1, 1)
+            s.holes = [h for h in s.holes if "OCR" not in h]
+        if s.speech:
+            _drop_captions(s)
+        strip_watermarks(s)
+        s.refs = event_sheets(str(path), s, out)
+    audio_missing = missing & {"sounds", "harmony", "speech", "voices", "emotion"}
+    if audio_missing and info.has_audio:
+        pcm = decode.audio_pcm(str(path), sound.SR)
+        tags = None
+        if missing & {"sounds", "speech", "voices", "emotion"}:
+            tags = sound.tag(pcm, hop=0.5 if info.duration <= 1800 else 1.0)
+        if "sounds" in missing and tags is not None:
+            r = _audio(str(path), info, subs, "off", (pcm, tags, None, None))
+            if r is not None:
+                s.sounds = r[0]
+                s.sound_sensed = True
+                if s.events:
+                    _sync_sound_events(s)
+        if "harmony" in missing and s.sounds:
+            sound.music_harmony_rhythm(pcm, s.sounds, [e.start for e in s.events if e.kind == "cut"])
+        if "speech" in missing and asr_mode != "off":
+            talk = sum(e - b for b, e in sound.speech_spans(tags)) if tags is not None else 0.0
+            s.speech, s.asr = _speech(pcm, tags, talk, subs, asr_mode, None, run_voices="voices" in wanted)
+            if s.ocr:
+                _drop_captions(s)
+        elif "voices" in missing and s.speech and tags is not None:
+            who = sound.voices(pcm, [(c["start"], c["end"]) for c in s.speech])
+            genders = [sound.voice(tags, c["start"], c["end"]) for c in s.speech]
+            per: dict[str, str | None] = {}
+            for v in set(x for x in who if x):
+                gs = [g_ for x, g_ in zip(who, genders) if x == v and g_]
+                top = max(set(gs), key=gs.count) if gs else None
+                per[v] = top if top and gs.count(top) >= 0.6 * len(gs) else None
+            for c, v, g_ in zip(s.speech, who, genders):
+                g_ = per.get(v) if v else g_
+                c["voice"] = f"{v}" + (f", {g_}" if g_ else "") if v else g_
+        if "emotion" in missing and s.speech and tags is not None:
+            s.talk_emotions = sound.talk_emotion_segments(pcm, tags, s.speech)
+    s.passes = [p for p in PASSES if p in (set(s.passes) | wanted)]
+    s.detected_kind = s.detected_kind or classify_signal(s)[0]
+    s.timings["upgrade"] = round(time.perf_counter() - t0, 2)
+    return s
+
+
+def see(src: str, force: bool = False, asr_mode: str = "auto",
+        mode: str = "auto", with_passes: str | None = None, without_passes: str | None = None) -> Path:
     subs = None
     if URL.match(src):
         path, subs = fetch(src)
@@ -876,29 +1174,62 @@ def see(src: str, force: bool = False, asr_mode: str = "auto") -> Path:
             raise FileNotFoundError(src)
         label = path.name
     out = out_dir(path, asr_mode)
-    if (out / "card.md").exists() and not force:
-        usage("see", key=out.name, cached=True)
+    m = (mode or "auto").strip().lower()
+    explicit_profile = (m not in ("auto", "full")) or bool(with_passes) or bool(without_passes)
+    if (out / "sensed.json").exists() and not force:
+        js = json.loads((out / "sensed.json").read_text())
+        s = sensed_from_dict(js)
+        if not s.flows and (out / "flow_01.jpg").exists():
+            s.flows = [p.name for p in sorted(out.glob("flow_*.jpg"))]
+        cached_passes = set(s.passes)
+        if m == "adaptive":
+            core_missing = {"pic", "sounds", "speech"} - cached_passes
+            if core_missing:
+                s = _upgrade_sensed(path, out, s, core_missing, cached_passes | core_missing, subs, asr_mode)
+                cached_passes = set(s.passes)
+            s.detected_kind, auto_p = classify_signal(s)
+            wanted = set(resolve_passes_from_base(auto_p, with_passes, without_passes))
+        else:
+            wanted = set(resolve_passes(m, with_passes, without_passes))
+        if asr_mode == "off":
+            wanted -= {"speech", "voices", "emotion"}
+        missing = wanted - cached_passes
+        if missing:
+            polite.enter()
+            log(f"upgrading {label} (+{','.join(p for p in PASSES if p in missing)}) -> {out}")
+            s = _upgrade_sensed(path, out, s, missing, wanted, subs, asr_mode)
+            (out / "sensed.json").write_text(json.dumps({"mediasift": __version__, "card": CARD_VERSION, **asdict(s)},
+                                                        indent=1, ensure_ascii=False, default=str))
+            if s.speech:
+                (out / "transcript.txt").write_text(transcript_text(s))
+        tmp = out / "card.md.tmp"
+        tmp.write_text(card(s, s.flows, s.refs, label, active_passes=wanted, show_profile=explicit_profile))
+        tmp.replace(out / "card.md")
+        usage("see", key=out.name, cached=not bool(missing), mode=m, passes=sorted(wanted))
         return out
+    if force and (out / "frames").exists():
+        shutil.rmtree(out / "frames", ignore_errors=True)
     out.mkdir(parents=True, exist_ok=True)
     polite.enter()
     log(f"sensing {label} -> {out}")
-    s, g = sense(path, out, asr_mode, subs)
+    s, g = sense(path, out, asr_mode, subs, mode=m, with_passes=with_passes, without_passes=without_passes)
     strip_watermarks(s)
     t = time.perf_counter()
-    flows = flow_sheets(str(path), s, g, out)
-    refs = event_sheets(str(path), s, out)
+    if "pic" in s.passes and g is not None:
+        s.flows = flow_sheets(str(path), s, g, out, max_frames=12 if m == "probe" else None)
+        if m != "probe":
+            s.refs = event_sheets(str(path), s, out)
     s.timings["images"] = round(time.perf_counter() - t, 1)
     (out / "sensed.json").write_text(json.dumps({"mediasift": __version__, "card": CARD_VERSION, **asdict(s)},
                                                 indent=1, ensure_ascii=False, default=str))
     (out / "source.txt").write_text(str(path) + "\n")
     if s.speech:
         (out / "transcript.txt").write_text(transcript_text(s))
-    # The card marks the cache entry complete, so it is written last and atomically.
     tmp = out / "card.md.tmp"
-    tmp.write_text(card(s, flows, refs, label))
+    tmp.write_text(card(s, s.flows, s.refs, label, active_passes=s.passes, show_profile=explicit_profile))
     tmp.replace(out / "card.md")
     usage("see", key=out.name, cached=False, polite=polite.active(), duration=round(s.duration, 1), content=s.content,
-          events=len(s.events), sounds=len(s.sounds), speech=len(s.speech), timings=s.timings)
+          mode=m, passes=s.passes, events=len(s.events), sounds=len(s.sounds), speech=len(s.speech), timings=s.timings)
     log(f"done in {s.timings['total'] + s.timings['images']:.1f}s ({', '.join(f'{k} {v}s' for k, v in s.timings.items())})")
     return out
 
@@ -920,18 +1251,156 @@ def parse_span(span: str, duration: float) -> tuple[float, float]:
     return s_, e_
 
 
-def look(src: str, span: str, n: int = 8, width: int = TILE_W) -> Path:
-    """Frames evenly spread over a span, with the sound drawn underneath on the same time axis."""
+def _word_entry(w) -> tuple[float, float, str] | None:
+    if isinstance(w, (list, tuple)) and len(w) >= 3:
+        return float(w[0]), float(w[1]), str(w[2])
+    if isinstance(w, dict) and "start" in w and "end" in w:
+        return float(w["start"]), float(w["end"]), str(w.get("text", w.get("word", "")))
+    if hasattr(w, "start") and hasattr(w, "end"):
+        return float(w.start), float(w.end), str(getattr(w, "text", getattr(w, "word", "")))
+    return None
+
+
+def _merge_subwords(words: list) -> list[list]:
+    entries = [e for w in (words or []) if (e := _word_entry(w)) is not None]
+    if not entries:
+        return []
+    sp_mode = any(raw.startswith(" ") for _, _, raw in entries[1:])
+    merged: list[list] = []
+    for ws, we, raw in entries:
+        if not raw:
+            continue
+        is_cont = (
+            (sp_mode and not raw[0].isspace())
+            or (not raw[0].isalnum() and not raw[0].isspace())
+            or (bool(merged) and merged[-1][2].endswith("'"))
+        )
+        if merged and is_cont:
+            merged[-1][1] = round(max(merged[-1][1], we), 2)
+            merged[-1][2] += raw
+        elif raw.strip():
+            merged.append([round(ws, 2), round(we, 2), raw.strip()])
+    return merged
+
+
+def _norm_tokens(text: str, strip_accents: bool = False) -> list[str]:
+    import unicodedata
+    s = text.lower()
+    if strip_accents:
+        s = s.replace("đ", "d")
+        s = "".join(ch for ch in unicodedata.normalize("NFD", s) if unicodedata.category(ch) != "Mn")
+    return re.findall(r"\w+", s)
+
+
+def _match_say(speech: list[dict], phrase: str, duration: float) -> tuple[float, float, tuple[float, float]]:
+    """Match `phrase` against `speech[i]['words']` (or cue text fallback).
+    Returns `(span_start, span_end, (word_start, word_end))`."""
+    import difflib
+    q_toks = _norm_tokens(phrase)
+    if not q_toks:
+        raise ValueError(f"empty --say phrase {phrase!r}")
+    q_ascii = _norm_tokens(phrase, strip_accents=True)
+
+    flat_words: list[tuple[float, float, str, str, str]] = []
+    for c in speech:
+        for ws, we, wt in _merge_subwords(c.get("words") or []):
+            toks = _norm_tokens(wt)
+            atoks = _norm_tokens(wt, strip_accents=True)
+            for tok, atok in zip(toks, atoks):
+                flat_words.append((float(ws), float(we), wt, tok, atok))
+
+    def _pad(ws: float, we: float) -> tuple[float, float, tuple[float, float]]:
+        span_len = max(0.05, we - ws)
+        need = max(0.0, 1.2 - span_len)
+        a = max(0.0, ws - max(0.25, need * 0.45))
+        b = min(duration, we + max(0.35, need * 0.55))
+        if b <= a:
+            b = min(duration, a + 1.2)
+        return a, b, (ws, we)
+
+    if flat_words:
+        k = len(q_toks)
+        q_str = " ".join(q_toks)
+        qa_str = " ".join(q_ascii)
+        for use_ascii in (False, True):
+            target = qa_str if use_ascii else q_str
+            for i in range(len(flat_words) - k + 1):
+                cand = " ".join(flat_words[j][4 if use_ascii else 3] for j in range(i, i + k))
+                if cand == target:
+                    return _pad(flat_words[i][0], flat_words[i + k - 1][1])
+        best_ratio = 0.0
+        best_span: tuple[float, float] | None = None
+        for win_k in sorted({max(1, k - 1), k, min(len(flat_words), k + 1)}):
+            for i in range(len(flat_words) - win_k + 1):
+                cand = " ".join(flat_words[j][3] for j in range(i, i + win_k))
+                r = difflib.SequenceMatcher(None, q_str, cand).ratio()
+                if r > best_ratio:
+                    best_ratio = r
+                    best_span = (flat_words[i][0], flat_words[i + win_k - 1][1])
+        if best_span is not None and best_ratio >= 0.68:
+            return _pad(best_span[0], best_span[1])
+
+    q_str = " ".join(q_toks)
+    qa_str = " ".join(q_ascii)
+    best_cue_score = 0.0
+    best_cue: dict | None = None
+    for c in speech:
+        c_str = " ".join(_norm_tokens(c.get("text", "")))
+        ca_str = " ".join(_norm_tokens(c.get("text", ""), strip_accents=True))
+        if q_str in c_str or qa_str in ca_str:
+            log("no word timestamps on matched line; interpolating cue span")
+            idx = ca_str.find(qa_str) if q_str not in c_str else c_str.find(q_str)
+            ref = ca_str if q_str not in c_str else c_str
+            tgt = qa_str if q_str not in c_str else q_str
+            c_dur = max(0.2, float(c["end"]) - float(c["start"]))
+            f0 = max(0.0, idx / max(1, len(ref)))
+            f1 = min(1.0, (idx + len(tgt)) / max(1, len(ref)))
+            ws = float(c["start"]) + f0 * c_dur
+            we = float(c["start"]) + f1 * c_dur
+            return _pad(ws, we)
+        c_toks = c_str.split()
+        for i in range(max(1, len(c_toks) - len(q_toks) + 1)):
+            sub = " ".join(c_toks[i:i + len(q_toks)])
+            sc = difflib.SequenceMatcher(None, q_str, sub).ratio()
+            if sc > best_cue_score:
+                best_cue_score = sc
+                best_cue = c
+
+    if best_cue is not None and best_cue_score >= 0.72:
+        log("no exact word match; using closest speech cue")
+        return _pad(float(best_cue["start"]), float(best_cue["end"]))
+
+    scored = sorted(
+        speech,
+        key=lambda c: difflib.SequenceMatcher(None, q_str, " ".join(_norm_tokens(c.get("text", "")))).ratio(),
+        reverse=True,
+    )[:3]
+    candidates = "; ".join(f"[{ts(c['start'])}-{ts(c['end'])}] \"{c['text']}\"" for c in scored) or "(no speech)"
+    raise ValueError(f"phrase {phrase!r} not found in transcript; closest lines: {candidates}")
+
+
+def look(src: str, span: str | None = None, n: int = 8, width: int = TILE_W, say: str | None = None) -> Path:
+    """Frames evenly spread over a span (or around `--say PHRASE`), with the sound drawn underneath."""
     path = Path(fetch(src)[0] if URL.match(src) else Path(src).expanduser().resolve())
     info = decode.probe(str(path))
-    a, b = parse_span(span, info.duration)
+    focus_words: tuple[float, float] | None = None
+    if say is not None:
+        side = out_dir(path) / "sensed.json"
+        if not side.exists():
+            see(str(path))
+        js = json.loads(side.read_text())
+        a, b, focus_words = _match_say(js.get("speech", []), say, info.duration)
+    elif span is not None:
+        a, b = parse_span(span, info.duration)
+    else:
+        raise ValueError("give a span (START-END) or --say PHRASE")
     out = out_dir(path) / "look"
     out.mkdir(parents=True, exist_ok=True)
     if not info.has_video:              # audio only: the sound strip is the whole picture
         sheet = Image.new("RGB", (1280, 160), "black")
-        _sound_strip(sheet, path, a, b, [a, b], 0, 160)
+        _sound_strip(sheet, path, a, b, [a, b], 0, 160, focus_words=focus_words)
         name = f"look_{a:09.2f}-{b:09.2f}.jpg"
-        usage("look", key=out.parent.name, start=round(a, 2), end=round(b, 2), n=0)
+        usage("look", key=out.parent.name, start=round(a, 2), end=round(b, 2), n=0, say=bool(say))
         sheet.save(out / name, quality=88)
         return out / name
     n = max(1, min(n, int((b - a) * min(info.fps or 30, 30)) or 1))
@@ -948,14 +1417,15 @@ def look(src: str, span: str, n: int = 8, width: int = TILE_W) -> Path:
         _label(tile, f"{t:.2f}s", 20)
         sheet.paste(tile, ((i % cols) * tw, (i // cols) * th))
     if info.has_audio:
-        _sound_strip(sheet, path, a, b, times, rows * th, strip_h)
+        _sound_strip(sheet, path, a, b, times, rows * th, strip_h, focus_words=focus_words)
     name = f"look_{a:09.2f}-{b:09.2f}.jpg"
-    usage("look", key=out.parent.name, start=round(a, 2), end=round(b, 2), n=n)
+    usage("look", key=out.parent.name, start=round(a, 2), end=round(b, 2), n=n, say=bool(say))
     sheet.save(out / name, quality=88)
     return out / name
 
 
-def _sound_strip(sheet: Image.Image, path: Path, a: float, b: float, times: list[float], y0: int, h: int) -> None:
+def _sound_strip(sheet: Image.Image, path: Path, a: float, b: float, times: list[float], y0: int, h: int,
+                 focus_words: tuple[float, float] | None = None) -> None:
     """Loudness envelope, silence shaded, the tagger's labels and speech words, on the frames' time axis."""
     pcm = decode.audio_pcm(str(path), sound.SR)
     seg = pcm[int(a * sound.SR): int(b * sound.SR)].astype(np.float32) / 32768.0
@@ -968,7 +1438,7 @@ def _sound_strip(sheet: Image.Image, path: Path, a: float, b: float, times: list
         lv = np.clip((db + 60) / 60, 0, 1)
         mid = y0 + h - 30
         for x, v in enumerate(lv):
-            d.line((x, mid - v * (h - 50), x, mid), fill=(90, 160, 255) if v > 0.08 else (60, 60, 70))
+            d.line((x, mid - v * (h - 62), x, mid), fill=(90, 160, 255) if v > 0.08 else (60, 60, 70))
     f = font(15)
     for t in times:
         x = (t - a) / (b - a) * W
@@ -987,12 +1457,30 @@ def _sound_strip(sheet: Image.Image, path: Path, a: float, b: float, times: list
                 x1 = min(W, (snd["end"] - a) / (b - a) * W)
                 d.rectangle((x0, y0 + h - 26, x1, y0 + h - 4), outline=(200, 200, 200))
                 d.text((x0 + 4, y0 + h - 25), _snd_name(snd["label"]), fill="white", font=f)
+        if focus_words is not None:
+            fx0 = max(0, (focus_words[0] - a) / max(b - a, 1e-6) * W)
+            fx1 = min(W, (focus_words[1] - a) / max(b - a, 1e-6) * W)
+            d.rectangle((fx0, y0 + 8, fx1, y0 + h - 28), outline=(255, 220, 80), width=2)
         said = [c for c in js.get("speech", []) if c["end"] >= a and c["start"] <= b]
-        for k, c in enumerate(said):
-            x0 = max(0, (c["start"] - a) / (b - a) * W)
-            x1 = (said[k + 1]["start"] - a) / (b - a) * W if k + 1 < len(said) else W
-            text = f"\"{c['text']}\""
-            while len(text) > 4 and d.textlength(text, font=f) > max(x1 - x0 - 8, 40) * (2 if k % 2 else 1.6):
-                text = text[:-5] + "...\""          # fit before the next line starts (rows alternate)
-            d.text((x0 + 4, y0 + 12 + 18 * (k % 2)), text, fill=(180, 255, 180), font=f)
-    d.text((W - 300, y0 + 12), f"sound {a:.1f}-{b:.1f}s (orange = short sounds)", fill=(150, 150, 150), font=f)
+        raw_words: list[tuple[float, float, str]] = []
+        for c in said:
+            for ws, we, wt in _merge_subwords(c.get("words") or []):
+                raw_words.append((float(ws), float(we), str(wt)))
+        in_words = [(ws, we, wt) for ws, we, wt in raw_words if we >= a and ws <= b]
+        if in_words and (focus_words is not None or b - a <= 5.0):
+            step_w = max(1, (len(in_words) + 7) // 8)  # cap at 8 word labels across the strip
+            picked = in_words[::step_w][:8]
+            for k, (ws, we, wt) in enumerate(picked):
+                x0 = min(W - 48, max(2, (ws - a) / max(b - a, 1e-6) * W))
+                in_focus = focus_words is not None and ws >= focus_words[0] - 0.05 and we <= focus_words[1] + 0.05
+                col = (255, 235, 110) if in_focus else (180, 255, 180)
+                d.text((x0 + 2, y0 + 10 + 17 * (k % 2)), wt, fill=col, font=f)
+        else:
+            for k, c in enumerate(said):
+                x0 = max(0, (c["start"] - a) / (b - a) * W)
+                x1 = (said[k + 1]["start"] - a) / (b - a) * W if k + 1 < len(said) else W
+                text = f"\"{c['text']}\""
+                while len(text) > 4 and d.textlength(text, font=f) > max(x1 - x0 - 8, 40) * (2 if k % 2 else 1.6):
+                    text = text[:-5] + "...\""          # fit before the next line starts (rows alternate)
+                d.text((x0 + 4, y0 + 10 + 17 * (k % 2)), text, fill=(180, 255, 180), font=f)
+    d.text((W - 295, y0 + h - 25), f"sound {a:.1f}-{b:.1f}s (orange = short sounds)", fill=(150, 150, 150), font=f)

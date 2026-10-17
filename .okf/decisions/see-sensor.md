@@ -44,9 +44,10 @@ five-lens council; every part was then kept or cut by measurement.[^council]
 | sync | a sound within 150 ms of a picture change is written on the change ("together with a beep: #3, #6 of the 8") | the only arm that answered the audio-visual question |
 | speakers | TitaNet letters per line, one gender per letter | [sound](/decisions/sound-sensing.md) |
 | speech | parakeet or whisper, on the Mac or a GPU box over ssh, overlapped with the local passes | [speech and speed](/decisions/speech-and-speed.md) |
-| on-screen text | Apple Vision on changed regions; captions that repeat speech and platform watermarks left out | [picture](/decisions/picture-sensing.md) |
+| on-screen text | Apple Vision on macOS, Indra OCR (`datalab-to/indra-ocr` ONNX) on Linux, on changed regions; captions that repeat speech and platform watermarks left out | [picture](/decisions/picture-sensing.md) |
 | images | ~1 fps flow sheets shaped like the video (uniform on camera, change-weighted on screens, every shot's first frame), before/after crops | [picture](/decisions/picture-sensing.md) |
-| `look VIDEO A-B` | frames over a span with a sound strip; the card says when to use it | - |
+| `look VIDEO A-B` / `--say "phrase"` | frames over a span or matched spoken phrase (`speech[i].words`) with a sound strip; the card says when to use it | [roadmap](/decisions/roadmap.md) |
+| `--mode` / `--with` / `--without` | `probe` (fast S2T + 32x18 grid + 1 keyframe sheet), `adaptive` (auto-picks passes from signal), `podcast`, `music`, `reel`, `screen`, `full`, with incremental `sensed.json` cache upgrades | [roadmap](/decisions/roadmap.md) |
 | `fix` / `feedback` | agent corrections that teach sound names | [sound](/decisions/sound-sensing.md) |
 
 # First measurements
