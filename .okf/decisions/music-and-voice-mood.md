@@ -90,13 +90,35 @@ drop below even odds) applies.
 What the card already says about a voice's state stays: CED names laughter, shouting, yelling,
 screaming, crying and whispering as sounds (they are outside the speech classes).
 
+# Segment-level harmony, rhythm, beat sync, and talk emotion
+
+Per-utterance absolute speech emotion failed because pitch and loudness vary more across speakers,
+microphones, and Vietnamese lexical tones than across emotions. Moving from isolated 2 s clips to
+**segment-level changes relative to each speaker's own modal baseline** works without adding any new
+model weights:
+
+| sense | method | bench (`bench/sense/harmony_rhythm.py`, `bench/sense/segment_emotion.py`) | result | cost per audio min |
+|---|---|---|---|---|
+| Harmony mode & shift | 12-bin constant-Q row-normalized chromagram (`C2..C6`, spectral whitening) + bass (`C2..F4`) + Krumhansl-Kessler profile + CUSUM two-segment chroma distance (`audio.analyze_harmony_rhythm`) | 18 progressions (`major`, `minor`, `drone`) + 10 major<->minor shifts | **18/18 (100%)** mode, **10/10 (100%)** shift within +/- 1.5 s | < 0.05 s CPU |
+| Rhythm BPM & beat sync | Dual-band (full + bass/kick) onset-flux autocorrelation (`64..180 BPM`, 3/2 dotted-subharmonic guard, >= 68% active-beat coverage) + cut-to-beat alignment (`audio.cut_beat_sync`) | 10 rhythmic beds + 8 ambient/speech-only controls + 6 cut-sync cases | **10/10 (100%)** BPM within +/- 4%, **0/8** false BPMs, **6/6 (100%)** cut sync | included above |
+| Segment talk emotion | Per-speaker Shortest-Half (Rousseeuw modal cluster) baseline over utterance RMS, voiced spectral tilt (`1-3.5 kHz` vs `60-400 Hz`), and `siftasr` word pace (`syll/s`), gated by multi-cue convergence + CED non-verbal vocal bursts (`sound.talk_emotion_segments`) | 48 multi-segment streams across 12 held-out RAVDESS actors (`calm`, `heated`, `animated`, `subdued`) + 4 calm controls + real Vietnamese narration (`tiktok_vi.mp4`) | **79.8% macro F1** (vs **14.2%** global unnormalized prosody, **68.6%** prosody-only), **0/5** false flags on calm talk | < 0.05 s CPU |
+
+Card rendering (`card.md` and `sensed.json`):
+
+- Music beds >= 5 s append mode (or `minor -> major at MM:SS` when a shift occurs), `~NNN BPM`, and `cuts sync K/N` to the existing `snd [music] (...)` line.
+- Non-calm talk segments emit `MM:SS.s-MM:SS.s talk A [heated (+3.8 dB, sharp tone)]` (or `animated`, `subdued`) on `card.md` and `talk_emotions` in `sensed.json`.
+- `siftasr` word timestamps (`words: [(start, end, text), ...]`) are preserved in `sensed.json` across local and `--on HOST` ASR passes.
+
 # Tried and dropped
 
 | idea | result |
 |---|---|
 | `laion/larger_clap_music` | loads with all-zero logits under transformers 5 |
 | SenseVoice emotion tags | constant `NEUTRAL` in this sherpa-onnx build; not debugged further |
-| cheap prosody / CED probes for emotion | near chance across datasets |
+| unnormalized single-utterance prosody / CED probes for emotion | 14.2% macro F1 on multi-segment actor streams; speaker identity and microphone gain swamp emotion |
+| linear FFT bin summation in `_chroma_basis` without $1/f$ Jacobian or spectral whitening | upper octave (`1-2 kHz`) had 16x more FFT bins than bass and broadband noise flattened chroma (`top2 = 0.20`), misclassifying real songs as `B drone` |
+| single-band onset autocorrelation without 3/2 subharmonic guard | syncopated hi-hats locked onto $2/3 \times \text{BPM}$ (`93.5 BPM` on `140 BPM`) and speech bursts triggered false BPMs |
+| 15th-70th percentile mean for speaker baseline | when >= 50% of a clip is heated/animated, the 70th percentile absorbs the heated utterances (+3 dB bias) and triggers false `heated` flags on calm control segments; Shortest-Half (45% modal cluster) eliminated all false flags |
 | YouTube fetch of AudioSet clips | bot check after ~160 clips; used the HF parquet mirror (label column first, then the rows) |
 
 # Open

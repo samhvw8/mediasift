@@ -272,7 +272,9 @@ class SoundEvent:
     score: float = 0.0
     quality: str = ""        # how it sounds: "low, dull" / "high, bright, ringing"; music: "scary, electronic"
     moods: list = field(default_factory=list)   # long music: [(start, end, "tender"), (start, end, "scary")]
-
+    harmony: dict = field(default_factory=dict) # {"key": "C", "mode": "minor", "harmony_arc": [...]}
+    rhythm: dict = field(default_factory=dict)  # {"bpm": 120.0, "pulse_clarity": 0.82}
+    beat_sync: dict = field(default_factory=dict)  # {"synced": True, "hits": 5, "total": 6, "ratio": 0.833}
 
 def _runs(mask: np.ndarray, times: np.ndarray, hop: float, gap: float, min_len: float) -> list[tuple[float, float]]:
     out: list[list[float]] = []
@@ -597,3 +599,355 @@ def trim(ev: list[SoundEvent], track) -> list[SoundEvent]:
 
 
 HOP_TRACK = 0.05   # audio.HOP_S
+
+
+# ------------------------------------------------------------------ harmony, rhythm & talk emotion
+
+CED_LAUGH = {16, 17, 18, 19, 66}  # Laughter, Giggle, Snicker, Chuckle, Cheering
+CED_TENSE = {6, 8, 14}            # Shout, Yell, Screaming (exclude Groan/Grunt: fire on close-mic chest voice)
+CED_SUBDUED = {13, 20, 21, 22, 24}  # Whispering, Crying, Sigh, Gasp, Whimper
+
+_WORDS_ANIMATED = {
+    "haha", "hehe", "wow", "amazing", "awesome", "great", "fantastic", "incredible", "love", "excited",
+    "yay", "fun", "fast", "tuyệt", "quá đã", "hay quá", "vui", "đỉnh", "thích",
+}
+_WORDS_HEATED = {
+    "stop", "wrong", "never", "hate", "terrible", "awful", "worst", "angry", "furious", "ridiculous",
+    "stupid", "broken", "fail", "wtf", "damn", "sai", "lỗi", "tệ", "bực", "không thể",
+}
+_WORDS_SUBDUED = {
+    "maybe", "sorry", "sad", "unfortunately", "afraid", "unsure", "tired", "slow", "missed", "lost",
+    "buồn", "tiếc", "chắc", "không biết", "mệt", "khó",
+}
+
+
+def music_harmony_rhythm(pcm: np.ndarray, ev: list[SoundEvent],
+                         cut_times: list[float] = ()) -> list[SoundEvent]:
+    """Populate `harmony`, `rhythm`, and `beat_sync` on music/singing beds >= 5 s."""
+    from . import audio
+    for e in ev:
+        if e.kind != "bed" or not e.label.startswith(("music", "singing")):
+            continue
+        if e.end - e.start < 5.0:
+            continue
+        a = max(0, int(round(e.start * SR)))
+        b = min(len(pcm), int(round(e.end * SR)))
+        if b - a < 5 * SR:
+            continue
+        hr = audio.analyze_harmony_rhythm(pcm[a:b], SR)
+        # Shift relative harmony_arc times to absolute timeline seconds
+        arc_abs = [(round(e.start + s0, 2), round(e.start + s1, 2), m, k)
+                   for s0, s1, m, k in hr.get("harmony_arc", [])]
+        e.harmony = {
+            "key": hr["key"],
+            "mode": hr["mode"],
+            "tension": hr["tension"],
+            "harmony_arc": arc_abs if len(arc_abs) > 1 else [],
+        }
+        beats_abs = [round(e.start + bt, 3) for bt in hr.get("beats", [])]
+        e.rhythm = {
+            "bpm": hr["bpm"],
+            "pulse_clarity": hr["pulse_clarity"],
+        }
+        bed_cuts = [c for c in cut_times if e.start <= c <= e.end]
+        if beats_abs and len(bed_cuts) >= 3:
+            sync = audio.cut_beat_sync(beats_abs, bed_cuts)
+            if sync["synced"]:
+                e.beat_sync = sync
+    return ev
+
+
+def _auto_talk_windows(speech: list[dict], p: dict[str, np.ndarray]) -> list[tuple[float, float, str]]:
+    """Partition speech cues per speaker into coherent 6-20 s talk segments split on pauses >= 1.0 s
+    or large local loudness/prosody shifts."""
+    if not speech:
+        return []
+    out: list[tuple[float, float, str]] = []
+    cur_v = (speech[0].get("voice") or "A").split(",")[0].strip()
+    seg_s = float(speech[0]["start"])
+    seg_e = float(speech[0]["end"])
+
+    def _cue_rms(c: dict) -> float:
+        m = (p["times"] >= c["start"]) & (p["times"] <= c["end"]) & p["voiced"]
+        return float(np.median(p["rms_db"][m])) if m.any() else -35.0
+
+    cur_rms = [_cue_rms(speech[0])]
+    for c in speech[1:]:
+        v = (c.get("voice") or "A").split(",")[0].strip()
+        s, e = float(c["start"]), float(c["end"])
+        gap = s - seg_e
+        c_rms = _cue_rms(c)
+        rms_jump = abs(c_rms - float(np.median(cur_rms))) >= 3.2 and (seg_e - seg_s) >= 5.0
+        if v != cur_v or gap >= 1.15 or (seg_e - seg_s) >= 18.0 or rms_jump:
+            if seg_e - seg_s >= 3.0:
+                out.append((round(seg_s, 2), round(seg_e, 2), cur_v))
+            cur_v = v
+            seg_s, seg_e = s, e
+            cur_rms = [c_rms]
+        else:
+            seg_e = max(seg_e, e)
+            cur_rms.append(c_rms)
+    if seg_e - seg_s >= 3.0:
+        out.append((round(seg_s, 2), round(seg_e, 2), cur_v))
+    return out
+
+
+def talk_emotion_segments(pcm: np.ndarray, tags: Tags | None, speech: list[dict],
+                          windows: list[tuple[float, float]] | None = None,
+                          prosody_only: bool = False) -> list[dict]:
+    """Detect within-speaker emotional state shifts across talk segments (`heated`, `animated`,
+    `subdued`, or `calm` when `windows` is explicitly passed).
+
+    Normalizes each speaker against their own baseline across the recording so naturally loud,
+    quiet, or tonal (Vietnamese) speakers do not trigger false emotion labels.
+    """
+    from . import audio
+    if not speech and not windows:
+        return []
+    p = audio.prosody_features(pcm, SR)
+    times = p["times"]
+    voiced = p["voiced"]
+    rms_db = p["rms_db"]
+    tilt_db = p["tilt_db"]
+    log_f0 = np.log2(np.maximum(p["f0_hz"], 50.0))
+
+    # Build per-speaker speech mask and baseline stats
+    spk_cues: dict[str, list[dict]] = {}
+    for c in speech:
+        v = (c.get("voice") or "A").split(",")[0].strip() or "A"
+        spk_cues.setdefault(v, []).append(c)
+    if not spk_cues:
+        spk_cues["A"] = []
+
+    spk_base: dict[str, dict[str, float]] = {}
+    for v, cues in spk_cues.items():
+        cue_r, cue_t, cue_f = [], [], []
+        m_spk = np.zeros(len(times), dtype=bool)
+        for c in cues:
+            mc = (times >= c["start"]) & (times <= c["end"]) & voiced
+            m_spk |= mc
+            if int(mc.sum()) >= 2:
+                cue_r.append(float(np.median(rms_db[mc])))
+                cue_t.append(float(np.median(tilt_db[mc])))
+                cue_f.append(float(np.median(log_f0[mc])))
+        mv = m_spk if m_spk.any() else voiced
+        if not mv.any():
+            spk_base[v] = {"rms": -25.0, "mad_rms": 2.0, "tilt": -8.0, "mad_tilt": 1.8,
+                           "f0": np.log2(150.0), "mad_f0": 0.12, "pace": 3.0, "gap": 0.30}
+            continue
+        r_vals = rms_db[mv]
+        t_vals = tilt_db[mv]
+        f_vals = log_f0[mv]
+
+        # Shortest-Half (Rousseeuw modal cluster) across utterance cues finds the speaker's
+        # steady conversational baseline even when half the stream is emotional excursions
+        if len(cue_r) >= 4:
+            cr = np.asarray(cue_r, np.float32)
+            ct = np.asarray(cue_t, np.float32)
+            cf = np.asarray(cue_f, np.float32)
+            order = np.argsort(cr)
+            k_half = max(3, int(np.ceil(len(cr) * 0.45)))
+            best_span = 1e9
+            best_idx = order[:k_half]
+            for i0 in range(len(cr) - k_half + 1):
+                sub = order[i0:i0 + k_half]
+                span = float(cr[sub[-1]] - cr[sub[0]]) + 0.35 * float(np.std(ct[sub]))
+                if span < best_span:
+                    best_span = span
+                    best_idx = sub
+            b_rms = float(np.median(cr[best_idx]))
+            b_tilt = float(np.median(ct[best_idx]))
+            b_f0 = float(np.median(cf[best_idx]))
+        else:
+            b_rms = float(np.median(r_vals))
+            b_tilt = float(np.median(t_vals))
+            b_f0 = float(np.median(f_vals))
+
+        mad_r = max(1.8, float(1.4826 * np.median(np.abs(r_vals - b_rms))))
+        mad_t = max(1.5, float(1.4826 * np.median(np.abs(t_vals - b_tilt))))
+        mad_f = max(0.08, float(1.4826 * np.median(np.abs(f_vals - b_f0))))
+
+        paces = []
+        gaps = []
+        for idx_c, c in enumerate(cues):
+            dur_c = max(0.2, float(c["end"]) - float(c["start"]))
+            n_w = len(c.get("words") or (c.get("text") or "").split())
+            if n_w >= 2:
+                paces.append(n_w / dur_c)
+            if idx_c > 0:
+                g = float(c["start"]) - float(cues[idx_c - 1]["end"])
+                if 0.0 <= g <= 2.5:
+                    gaps.append(g)
+        spk_base[v] = {
+            "rms": b_rms,
+            "mad_rms": mad_r,
+            "tilt": b_tilt,
+            "mad_tilt": mad_t,
+            "f0": b_f0,
+            "mad_f0": mad_f,
+            "pace": float(np.median(paces)) if paces else 3.0,
+            "gap": float(np.median(gaps)) if gaps else 0.30,
+        }
+    if windows is not None:
+        seg_list = [(float(s), float(e), "A") for s, e in windows]
+    else:
+        seg_list = _auto_talk_windows(speech, p)
+
+    results: list[dict] = []
+    for s, e, v_hint in seg_list:
+        cues_in = [c for c in speech if float(c["end"]) > s + 0.1 and float(c["start"]) < e - 0.1]
+        v = v_hint
+        if cues_in:
+            v = (cues_in[0].get("voice") or v_hint).split(",")[0].strip() or "A"
+        base = spk_base.get(v) or next(iter(spk_base.values()))
+
+        mv = (times >= s) & (times <= e) & voiced
+        if int(mv.sum()) < 4:
+            if windows is not None:
+                results.append({"start": round(s, 2), "end": round(e, 2), "voice": v,
+                                "emotion": "calm", "d_rms_db": 0.0, "pace_ratio": 1.0, "cues": []})
+            continue
+
+        seg_rms = float(np.median(rms_db[mv]))
+        seg_rms_p85 = float(np.percentile(rms_db[mv], 85))
+        seg_tilt = float(np.median(tilt_db[mv]))
+        seg_f0 = float(np.median(log_f0[mv]))
+        seg_f0_span = float(np.percentile(log_f0[mv], 90) - np.percentile(log_f0[mv], 10))
+
+        d_rms = seg_rms - base["rms"]
+        d_rms_peak = seg_rms_p85 - base["rms"]
+        d_tilt = seg_tilt - base["tilt"]
+        d_f0 = seg_f0 - base["f0"]
+
+        # Speaking pace and pause gaps inside segment
+        seg_words = sum(len(c.get("words") or (c.get("text") or "").split()) for c in cues_in)
+        spk_dur = sum(max(0.15, min(e, float(c["end"])) - max(s, float(c["start"]))) for c in cues_in)
+        seg_pace = (seg_words / spk_dur) if spk_dur > 0.3 and seg_words > 0 else base["pace"]
+        pace_ratio = seg_pace / max(base["pace"], 0.5)
+
+        seg_gaps = [float(cues_in[k]["start"]) - float(cues_in[k - 1]["end"])
+                    for k in range(1, len(cues_in))
+                    if 0.0 <= float(cues_in[k]["start"]) - float(cues_in[k - 1]["end"]) <= 3.0]
+        mean_gap = float(np.mean(seg_gaps)) if seg_gaps else base["gap"]
+        voiced_ratio = float(mv.sum()) / max(1, int(((times >= s) & (times <= e)).sum()))
+
+        # Optional CED vocal bursts & spoken stance cues (disabled in Approach 2 prosody_only)
+        ced_laugh = ced_tense = ced_sub = 0.0
+        lex_anim = lex_heat = lex_sub = 0
+        if not prosody_only:
+            if tags is not None and len(tags.times):
+                mt = (tags.times >= s) & (tags.times <= e)
+                if mt.any():
+                    pr = tags.probs[mt].astype(np.float32)
+                    ced_laugh = float(pr[:, sorted(CED_LAUGH)].sum(axis=1).max())
+                    ced_tense = float(pr[:, sorted(CED_TENSE)].sum(axis=1).max())
+                    ced_sub = float(pr[:, sorted(CED_SUBDUED)].sum(axis=1).max())
+            txt_all = " ".join((c.get("text") or "") for c in cues_in).lower()
+            for w in _WORDS_ANIMATED:
+                if w in txt_all:
+                    lex_anim += 1
+            for w in _WORDS_HEATED:
+                if w in txt_all:
+                    lex_heat += 1
+            for w in _WORDS_SUBDUED:
+                if w in txt_all:
+                    lex_sub += 1
+            if "..." in txt_all:
+                lex_sub += 1
+
+        # Score the 3 non-calm states relative to the speaker's modal calm baseline
+        # 1. Subdued / hesitant: drop in vocal loudness (-2.8 dB or more) or long pauses + quiet/sigh
+        score_subdued = (
+            max(0.0, (-d_rms - 2.4) * 0.45)
+            + max(0.0, (-d_tilt - 1.5) * 0.20)
+            + (0.60 if not prosody_only and mean_gap >= 0.65 else 0.0)
+            + (0.35 if not prosody_only and pace_ratio <= 0.85 else 0.0)
+            + (0.75 if ced_sub >= 0.06 else 0.0)
+            + (0.50 * min(lex_sub, 2))
+        )
+        if d_rms > -1.8 and ced_sub < 0.08 and mean_gap < 0.65:
+            score_subdued = 0.0
+
+        # 2. High arousal (heated vs animated): requires clear vocal elevation (> +2.8 dB or pitch/burst)
+        arousal_lift = (
+            max(0.0, d_rms - 2.2) * 0.30
+            + max(0.0, d_tilt - 1.8) * 0.22
+            + max(0.0, d_f0 - 0.10) * 2.2
+        )
+        if prosody_only:
+            # Pure prosody separation: heated pushes louder RMS (> +8 dB) and harsher spectral tilt;
+            # animated has moderate RMS lift (+2.2 to +8.5 dB) or higher pitch/f0 modulation
+            score_heated = (
+                arousal_lift
+                + (0.85 if d_rms >= 8.5 or d_tilt >= 4.5 else -0.45)
+            )
+            score_animated = (
+                arousal_lift
+                + (0.75 if 2.0 <= d_rms < 8.5 or (d_f0 >= 0.12 and d_rms < 10.0) else 0.0)
+                + max(0.0, seg_f0_span - 0.25) * 0.6
+            )
+            if d_rms < 2.2 and d_f0 < 0.12:
+                score_heated = score_animated = 0.0
+        else:
+            score_heated = (
+                arousal_lift
+                + (0.70 if d_rms >= 8.5 or d_tilt >= 4.5 else 0.0)
+                + (0.80 if ced_tense >= 0.08 else 0.0)
+                + (0.65 * min(lex_heat, 2))
+                - (0.75 if ced_laugh >= 0.08 or lex_anim > 0 else 0.0)
+            )
+            score_animated = (
+                arousal_lift
+                + (0.50 if 1.8 <= d_rms < 9.0 or d_f0 >= 0.10 else 0.0)
+                + (0.35 if pace_ratio >= 1.12 else 0.0)
+                + (0.90 if ced_laugh >= 0.08 else 0.0)
+                + (0.65 * min(lex_anim, 2))
+                - (0.65 if lex_heat > 0 and ced_laugh < 0.08 else 0.0)
+            )
+            # Convergence gate: when automatic segmentation runs (`windows is None`), require strong
+            # acoustic shift (>= 5.0 dB) OR acoustic shift (>= 2.5 dB) + non-acoustic corroboration
+            has_non_acoustic = (ced_laugh >= 0.08 or ced_tense >= 0.08 or ced_sub >= 0.08
+                                or lex_anim > 0 or lex_heat > 0 or lex_sub > 0 or mean_gap >= 0.65)
+            if windows is None and (abs(d_rms) < 2.5 or (not has_non_acoustic and abs(d_rms) < 5.0)):
+                score_subdued = score_heated = score_animated = 0.0
+        best_emo = "calm"
+        best_sc = max(score_subdued, score_heated, score_animated)
+        if best_sc >= 1.05:
+            if score_subdued >= score_heated and score_subdued >= score_animated:
+                best_emo = "subdued"
+            elif score_heated >= score_animated:
+                best_emo = "heated"
+            else:
+                best_emo = "animated"
+
+        if best_emo == "calm" and windows is None:
+            continue
+
+        reasons: list[str] = []
+        if abs(d_rms) >= 1.5:
+            reasons.append(f"{d_rms:+.1f} dB")
+        if abs(d_tilt) >= 1.8:
+            reasons.append("sharp tone" if d_tilt > 0 else "soft tone")
+        if pace_ratio >= 1.18 or pace_ratio <= 0.84:
+            reasons.append(f"{pace_ratio:.1f}x pace")
+        if mean_gap >= 0.65 and best_emo == "subdued":
+            reasons.append("long pauses")
+        if ced_laugh >= 0.05:
+            reasons.append("laughter")
+        elif ced_tense >= 0.05:
+            reasons.append("strained voice")
+        elif ced_sub >= 0.06:
+            reasons.append("sigh/quiet")
+
+        results.append({
+            "start": round(s, 2),
+            "end": round(e, 2),
+            "voice": v,
+            "emotion": best_emo,
+            "score": round(float(best_sc), 3),
+            "d_rms_db": round(d_rms, 1),
+            "d_tilt_db": round(d_tilt, 1),
+            "pace_ratio": round(pace_ratio, 2),
+            "reasons": reasons,
+        })
+    return results
