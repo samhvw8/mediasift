@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw, ImageFont
 from . import __version__, audio, decode, events, polite, sound
 from .transcript import Cue
 
-CARD_VERSION = "see-11"   # bump when the card format changes: the cache key includes it
+CARD_VERSION = "see-12"   # bump when the card format changes: the cache key includes it
 TILE_W, TILE_H = 320, 180          # the size uniform 1 fps sheets used in the bench: enough, ~920 tokens a sheet
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 URL = re.compile(r"^https?://")
@@ -485,6 +485,10 @@ def _sound_line(s_: sound.SoundEvent) -> tuple[float, str]:
         span, body = f"{ts(s_.start)}-{ts(s_.end)}", f"[{name}]"
         if len(s_.times) > 1:
             body = f"[{name}, {len(s_.times)} separate bursts] starting at {_times(s_.times)} s"
+        # Music: its mood and genre, and where a long score changes mood (a film's turns).
+        arc = ", then ".join(f"{w} {ts(a)}-{ts(b)}" for a, b, w in s_.moods)
+        if s_.quality or arc:
+            body += f" ({'; '.join(x for x in (s_.quality, arc) if x)})"
     return s_.start, f"{span:<15} snd {body}"
 
 
@@ -502,8 +506,14 @@ def _merge_beds(sounds: list[sound.SoundEvent], gap: float = 6.0) -> list[sound.
         if s_.kind == "bed" and prev is not None and s_.start - prev.end <= gap and quiet < 1.0:
             prev.end = max(prev.end, s_.end)
             prev.times.append(-1.0)   # marks "on and off"
+            # Each stretch's music mood survives the merge, in order, said once.
+            said = [q for q in prev.quality.split(", then ") if q]
+            if s_.quality and s_.quality not in said:
+                prev.quality = ", then ".join([*said, s_.quality])
+            prev.moods += s_.moods
             continue
-        out.append(sound.SoundEvent(s_.start, s_.end, s_.label, s_.kind, list(s_.times), s_.score, s_.quality))
+        out.append(sound.SoundEvent(s_.start, s_.end, s_.label, s_.kind, list(s_.times), s_.score, s_.quality,
+                                    list(s_.moods)))
     for o in out:
         if o.kind == "bed" and -1.0 in o.times:
             o.label = f"{o.label}, on and off"

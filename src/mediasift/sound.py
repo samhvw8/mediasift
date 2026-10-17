@@ -270,7 +270,8 @@ class SoundEvent:
     kind: str                # "bed" (lasting sound), "hits" (counted short sounds), "silence"
     times: list[float] = field(default_factory=list)   # for hits: each onset
     score: float = 0.0
-    quality: str = ""        # how it sounds: "low, dull" / "high, bright, ringing"
+    quality: str = ""        # how it sounds: "low, dull" / "high, bright, ringing"; music: "scary, electronic"
+    moods: list = field(default_factory=list)   # long music: [(start, end, "tender"), (start, end, "scary")]
 
 
 def _runs(mask: np.ndarray, times: np.ndarray, hop: float, gap: float, min_len: float) -> list[tuple[float, float]]:
@@ -284,6 +285,60 @@ def _runs(mask: np.ndarray, times: np.ndarray, hop: float, gap: float, min_len: 
         else:
             out.append([s, e])
     return [(float(s), float(e)) for s, e in out if e - s >= min_len]
+
+
+# CED's own mood and genre classes. On 742 held-out AudioSet eval clips (top 12 classes kept per
+# window, as here) the top mood was right 88% of the time at >= 0.10 (35% of clips) and ~65% at
+# 0.05-0.10 (chance 14%); the top genre 83% at >= 0.15. Open-vocabulary words ("epic") from CLAP
+# or the MTG-Jamendo head scored lower on the same clips (decisions/music-and-voice-mood.md).
+MOODS = {276: "happy", 277: "funny", 278: "sad", 279: "tender", 280: "exciting", 281: "angry", 282: "scary"}
+GENRES = set(range(216, 266)) - {218}       # Pop music .. Independent music; not Beatboxing
+MOOD_SURE, MOOD_MAYBE, GENRE_SURE = 0.10, 0.05, 0.15
+ARC_MIN_S, ARC_STEP_S = 60.0, 15.0
+
+
+def _mood(mean: np.ndarray, maybe: bool = True) -> str:
+    i = max(MOODS, key=lambda k: mean[k])
+    if mean[i] >= MOOD_SURE:
+        return MOODS[i]
+    return f"maybe {MOODS[i]}" if maybe and mean[i] >= MOOD_MAYBE else ""
+
+
+def character(mean: np.ndarray, mood: bool = True) -> str:
+    """'scary, electronic' for a music run's mean class scores; only what passed the bench's cut.
+    Without the mood when a mood arc says it better."""
+    g = max(GENRES, key=lambda k: mean[k])
+    genre = _LABELS_PLAIN.get(g, "") if mean[g] >= GENRE_SURE else ""
+    return ", ".join(w for w in (_mood(mean) if mood else "", genre) if w)
+
+
+def mood_arc(tags: Tags, s: float, e: float) -> list[tuple[float, float, str]]:
+    """A long music run's sure moods per 15 s stretch, merged; empty unless the mood changes."""
+    if e - s < ARC_MIN_S:
+        return []
+    arc: list[list] = []
+    for a in np.arange(s, e, ARC_STEP_S):
+        m = (tags.times >= a) & (tags.times < min(a + ARC_STEP_S, e))
+        word = _mood(tags.probs[m].astype(np.float32).mean(axis=0), maybe=False) if m.any() else ""
+        b = float(min(a + ARC_STEP_S, e))
+        if not word:
+            continue
+        if arc and arc[-1][2] == word and a - arc[-1][1] <= ARC_STEP_S:
+            arc[-1][1] = b
+        else:
+            arc.append([float(a), b, word])
+    return [tuple(x) for x in arc] if len({x[2] for x in arc}) > 1 else []
+
+
+_LABELS_PLAIN = {216: "pop", 217: "hip hop", 219: "rock", 220: "heavy metal", 221: "punk", 222: "grunge",
+                 223: "progressive rock", 224: "rock and roll", 225: "psychedelic rock", 226: "rhythm and blues",
+                 227: "soul", 228: "reggae", 229: "country", 230: "swing", 231: "bluegrass", 232: "funk", 233: "folk",
+                 234: "Middle Eastern", 235: "jazz", 236: "disco", 237: "classical", 238: "opera", 239: "electronic",
+                 240: "house", 241: "techno", 242: "dubstep", 243: "drum and bass", 244: "electronica", 245: "EDM",
+                 246: "ambient", 247: "trance", 248: "Latin American", 249: "salsa", 250: "flamenco", 251: "blues",
+                 252: "children's", 253: "new-age", 254: "vocal", 255: "a cappella", 256: "African", 257: "afrobeat",
+                 258: "Christian", 259: "gospel", 260: "Asian", 261: "Carnatic", 262: "Bollywood", 263: "ska",
+                 264: "traditional", 265: "indie"}
 
 
 def beds(tags: Tags, speech_spans: list[tuple[float, float]]) -> list[SoundEvent]:
@@ -305,7 +360,9 @@ def beds(tags: Tags, speech_spans: list[tuple[float, float]]) -> list[SoundEvent
                 tags.names[i] == "Music" for i in MUSIC) else 0.0
             if mean[top] > generic:
                 label = tags.names[top]
-        ev.append(SoundEvent(s, e, label, "bed", score=float(music[m].mean())))
+        arc = mood_arc(tags, s, e)
+        ev.append(SoundEvent(s, e, label, "bed", score=float(music[m].mean()), quality=character(mean, not arc),
+                             moods=arc))
     skip = SPEECH | MUSIC | SINGING | {SILENCE}
     other = [i for i in range(527) if i not in skip and tags.names[i] and tags.names[i] not in VAGUE]
     # Beside "Music" CED scores a real sound 0.2-0.3 (200-clip song bench), so while music plays

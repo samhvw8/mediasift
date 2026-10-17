@@ -168,3 +168,54 @@ def test_moving_balls_stay_motion_not_drawn_in(clips):
     evs = events.detect(grid(clips["motion"]))
     big = [e for e in evs if e.region.area > 0.015 and e.end - e.start >= 0.9]
     assert [e.kind for e in big if e.start < 9] == ["motion", "motion"], [(e.kind, round(e.start, 1)) for e in big]
+
+
+def _music_tags(n: int, mood: dict[int, float], genre: dict[int, float] = {}, hop: float = 0.5) -> sound.Tags:
+    names = [""] * 527
+    names[137] = "Music"
+    for i in (*mood, *genre):
+        names[i] = {276: "Happy music", 278: "Sad music", 279: "Tender music", 282: "Scary music",
+                    239: "Electronic music", 253: "New-age music"}[i]
+    probs = np.zeros((n, 527), np.float16)
+    probs[:, 137] = 0.7
+    for i, p in (*mood.items(), *genre.items()):
+        probs[:, i] = p
+    return sound.Tags(np.arange(n) * hop + 1.5, probs, names, hop)
+
+
+def test_music_bed_says_its_mood_and_genre():
+    """CED's own AudioSet mood and genre classes, on 742 held-out AudioSet eval clips: a mood scored
+    >= 0.10 was right 88% of the time (7 moods), a genre >= 0.15 83% (9 genres). Free: same tagger."""
+    bed = sound.beds(_music_tags(20, {282: 0.2}, {239: 0.2}), [])[0]
+    assert bed.quality == "scary, electronic"
+    assert "[music] (scary, electronic)" in __import__("mediasift.see").see._sound_line(bed)[1]
+
+
+def test_weak_music_mood_is_hedged_and_faint_one_left_out():
+    """Moods at 0.05-0.10 were right ~65% of the time (chance 14%): 'maybe'. Below 0.05: not said."""
+    assert sound.beds(_music_tags(20, {278: 0.07}), [])[0].quality == "maybe sad"
+    assert sound.beds(_music_tags(20, {278: 0.03}), [])[0].quality == ""
+
+
+def test_long_music_bed_carries_its_mood_arc():
+    """A score that turns from tender to scary is where a film turns: a long bed lists the stretches."""
+    tags = _music_tags(240, {279: 0.2})                     # 120 s at a 0.5 s hop
+    tags.probs[120:, 279] = 0
+    tags.names[282] = "Scary music"
+    tags.probs[120:, 282] = 0.2
+    bed = sound.beds(tags, [])[0]
+    assert [m[2] for m in bed.moods] == ["tender", "scary"]
+    assert 55 < bed.moods[1][0] < 65
+    line = __import__("mediasift.see").see._sound_line(bed)[1]
+    assert "(tender 00:01.2-01:01.2, then scary 01:01.2-02:01.2)" in line, line
+
+
+def test_music_merged_on_and_off_keeps_its_mood():
+    """Tears of Steel: a score that drops out under dialogue merged into one bed and lost the
+    'scary' its later stretch carried."""
+    from mediasift import see
+    a = sound.SoundEvent(10.0, 20.0, "music", "bed", score=0.6)
+    b = sound.SoundEvent(23.0, 40.0, "music", "bed", score=0.6, quality="scary")
+    c = sound.SoundEvent(43.0, 50.0, "music", "bed", score=0.6, quality="sad")
+    merged = see._merge_beds([a, b, c])
+    assert len(merged) == 1 and merged[0].quality == "scary, then sad"

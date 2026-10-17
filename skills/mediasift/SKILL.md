@@ -40,7 +40,7 @@ The card's timeline interleaves three kinds of line, all timestamped:
 | line | means |
 |---|---|
 | `pic` | the picture changed: where (`small red area at bottom`), how (`changed`, `flashed ... and changed back`, `moved: left (...)`, `kept changing in place`), how long it stayed (`it lasted 0.7 s`), how many times (`changed 10 times, at ...`), text that appeared (OCR), and a sound that landed with it. `CUTS (n) at ...` lists new shots. |
-| `snd` | a sound: `[music]`, `[siren]`, `[telephone tone, 2 separate bursts]`, `[beep x5] at 1.5, 2.9 ... s (mid-pitched (~1000 Hz), short, sharp)`, `[silence 2.9 s]` |
+| `snd` | a sound: `[music]`, `[music] (scary, electronic)` (mood and genre only when the tagger is fairly sure; `maybe` when less; long scores list where the mood changes), `[siren]`, `[telephone tone, 2 separate bursts]`, `[beep x5] at 1.5, 2.9 ... s (mid-pitched (~1000 Hz), short, sharp)`, `[silence 2.9 s]` |
 | `say` | speech with times; `[voice A]`/`[voice B]` group lines by speaker (not identity); with one speaker the tag is left out and said once below |
 
 Many questions are answered by the card alone: what an error said, how many times something
