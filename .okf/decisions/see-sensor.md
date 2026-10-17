@@ -6,7 +6,7 @@ tags: [see, sensor, decision]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-10T21:00:00Z"
+  at: "2026-10-17T15:00:00Z"
 resource: src/mediasift/see.py
 sources:
   - id: council
@@ -74,6 +74,23 @@ the cache ignored `--asr`; a half-finished download or interrupted run could be 
 picture failure waited for speech; remote ASR could hang or choke on a login banner; onset
 detection copied whole recordings (~1 GB per hour). Later real-use fixes: test runs no longer write
 into the real usage log (`tests/conftest.py`).
+
+# URL fetch
+
+`see URL` downloads with yt-dlp into `cache/url/`; site subtitles, when right, replace speech recognition.
+Measured 2026-10-17: 5 of 7 real URL fetches had failed. yt-dlp asked for YouTube's auto-translated captions
+(`--sub-langs en.*,vi.*` takes `vi` on an English video, `en` on a Vietnamese one), YouTube answers HTTP 429 for
+translations only, and yt-dlp aborted before the video (yt-dlp issue 13831). Now: `--ignore-errors`,
+`--sub-langs .*-orig,en,vi`, and `--js-runtimes` for each of deno / node / bun on PATH (without one, YouTube
+"formats may be missing"; one stderr line says so). The logged failure (`hz639bJjCr0`) then downloads.
+
+That run exposed a worse bug the crash had hidden: YouTube auto-dubs bring one `-orig` caption track per dubbed
+language, and the picker took `de-DE-orig` for an English talk, which would have printed German as the speech.
+Captions now follow the video's language (`%(language)s`, saved by `--print-to-file`); when it is unknown and
+several caption languages exist, none is used and ASR runs (one stderr line). yt-dlp already downloads the
+original audio (`original (default)`), not a dub. Tests: `tests/test_fetch.py` (a fake yt-dlp with the real
+429 and dub behaviour); real checks: `x7X9w_GIm1s` card speech from `en-orig`, `hz639bJjCr0` picks `en-orig`
+of 9 tracks.
 
 # Not measured or open
 

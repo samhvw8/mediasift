@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-17
+* **Fixed**: [URL fetch](decisions/see-sensor.md) — 5 of 7 real fetches died on HTTP 429 for YouTube's auto-translated captions; `--ignore-errors`, original-language captions only, JS runtimes passed. Captions now follow the video's language: an auto-dubbed English talk had been given German `de-DE-orig`.
 * **Updated**: [the sense bench](benchmarks/sense-bench.md) (see-12: sound bench rechecked, question benches not rerun), [pipeline](architecture/pipeline.md) (music words in the sound row), [distribution](decisions/distribution.md) (uv and mise installs rechecked under the new name).
 * **Renamed**: framesift is now **mediasift** — package `src/mediasift`, CLI `mediasift`, skill `skills/mediasift`, env `MEDIASIFT_ON` / `MEDIASIFT_CACHE`, cache `~/.cache/mediasift`, repo `samhvw8/mediasift` (GitHub redirects the old URL). The name now covers audio-only files as well as video. Older entries below keep the old name; bench prompts, results, council notes and research under the old name are records and were not rewritten.
 * **Added**: [music and voice mood](decisions/music-and-voice-mood.md) — music beds say mood (>= 0.10, 88% right on 742 held-out AudioSet clips) and genre (>= 0.15, 83%), long beds a mood arc; merged beds keep their words; card see-12. Speech emotion (emotion2vec+ 45% on EmoNet-Voice, RAVDESS contaminated), SenseVoice, CLAP and MTG-Jamendo measured and left out. Sound bench unchanged (song 138 / 32).
