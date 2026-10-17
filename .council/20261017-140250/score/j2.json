@@ -1,0 +1,32 @@
+{
+  "scores": {
+    "C01": {"value": 6, "feasibility": 4, "running_cost": 5, "novelty": 8, "specificity": 8, "off_brief": false},
+    "C02": {"value": 6, "feasibility": 6, "running_cost": 7, "novelty": 7, "specificity": 8, "off_brief": false},
+    "C03": {"value": 8, "feasibility": 7, "running_cost": 6, "novelty": 6, "specificity": 8, "off_brief": false},
+    "C04": {"value": 7, "feasibility": 6, "running_cost": 6, "novelty": 6, "specificity": 8, "off_brief": false},
+    "C05": {"value": 7, "feasibility": 6, "running_cost": 8, "novelty": 7, "specificity": 8, "off_brief": false},
+    "C06": {"value": 5, "feasibility": 4, "running_cost": 4, "novelty": 7, "specificity": 6, "off_brief": false},
+    "C07": {"value": 8, "feasibility": 6, "running_cost": 6, "novelty": 6, "specificity": 7, "off_brief": false},
+    "C08": {"value": 7, "feasibility": 5, "running_cost": 5, "novelty": 7, "specificity": 6, "off_brief": false},
+    "C09": {"value": 6, "feasibility": 4, "running_cost": 3, "novelty": 7, "specificity": 5, "off_brief": false},
+    "C10": {"value": 7, "feasibility": 9, "running_cost": 8, "novelty": 4, "specificity": 9, "off_brief": false},
+    "C11": {"value": 4, "feasibility": 5, "running_cost": 6, "novelty": 7, "specificity": 6, "off_brief": false},
+    "C12": {"value": 6, "feasibility": 6, "running_cost": 7, "novelty": 5, "specificity": 8, "off_brief": false},
+    "C13": {"value": 3, "feasibility": 8, "running_cost": 9, "novelty": 6, "specificity": 8, "off_brief": false}
+  },
+  "notes": {
+    "C01": "Strong idea for the dub job, but it needs anydub integration, a re-sense per dub and a calibration step before it can act on its own.",
+    "C02": "Directly fixes the 'read like English' dub pace using signals the tool already has; serves only the dub job.",
+    "C03": "Targets real, observed ASR failures that poison every downstream job, and keeps errors visible instead of dropping them.",
+    "C04": "Fits the fact-check job well, and gating it behind --check keeps the default card cost flat; the second backend adds compute.",
+    "C05": "Works on the most common real input and can remove the heaviest pass (MLX), but the Vietnamese diacritic OCR is untested.",
+    "C06": "Credit lines are cheap, but the fingerprint morgue and the original-search add a growing store and network calls for a rare job.",
+    "C07": "Answers the most often repeated real request (link and cite several videos) and saves many tokens; the index needs upkeep.",
+    "C08": "Big potential token savings, but the rent ledger, leases and crossover knobs are new machinery that needs tuning.",
+    "C09": "Many harvesters and monthly audits form a standing operational burden on a one-person tool.",
+    "C10": "Fixes a measured defect (733 dead commands) cheaply and adds an honest degrade ladder; low novelty, high certainty.",
+    "C11": "Interesting editorial signals, but few of the owner's real jobs need cue sheets or splice forensics.",
+    "C12": "One roster line serves citing, casting and claim attribution at a small card cost; the name binding needs a judge.",
+    "C13": "Nearly free to run, but it serves a narrow corner of the dub job."
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "scores": {
+    "C01": {"value": 7, "feasibility": 4, "running_cost": 4, "novelty": 8, "specificity": 7, "off_brief": false},
+    "C02": {"value": 6, "feasibility": 6, "running_cost": 6, "novelty": 7, "specificity": 7, "off_brief": false},
+    "C03": {"value": 8, "feasibility": 7, "running_cost": 6, "novelty": 6, "specificity": 8, "off_brief": false},
+    "C04": {"value": 7, "feasibility": 6, "running_cost": 6, "novelty": 5, "specificity": 7, "off_brief": false},
+    "C05": {"value": 8, "feasibility": 7, "running_cost": 8, "novelty": 7, "specificity": 9, "off_brief": false},
+    "C06": {"value": 5, "feasibility": 4, "running_cost": 3, "novelty": 7, "specificity": 6, "off_brief": false},
+    "C07": {"value": 8, "feasibility": 7, "running_cost": 6, "novelty": 5, "specificity": 8, "off_brief": false},
+    "C08": {"value": 7, "feasibility": 6, "running_cost": 5, "novelty": 7, "specificity": 6, "off_brief": false},
+    "C09": {"value": 6, "feasibility": 4, "running_cost": 3, "novelty": 7, "specificity": 5, "off_brief": false},
+    "C10": {"value": 7, "feasibility": 8, "running_cost": 8, "novelty": 4, "specificity": 9, "off_brief": false},
+    "C11": {"value": 4, "feasibility": 6, "running_cost": 6, "novelty": 7, "specificity": 6, "off_brief": false},
+    "C12": {"value": 6, "feasibility": 6, "running_cost": 7, "novelty": 5, "specificity": 8, "off_brief": false},
+    "C13": {"value": 4, "feasibility": 8, "running_cost": 9, "novelty": 7, "specificity": 8, "off_brief": false}
+  },
+  "notes": {
+    "C01": "Strong idea for the dub job, but couples two tools through a cues contract and a calibration gate, so it is costly to build right and to keep in sync.",
+    "C02": "Directly attacks the 'reads like English' dub pace with free signals, but serves only the dub job.",
+    "C03": "Stops hidden ASR loops and misses from reaching fact-checks and summaries while shortening the card; the escalation budget is the only running cost.",
+    "C04": "Useful for fact-check, but a second ASR backend per token and a ledger block are justified only once real fact-check volume shows up, as it admits.",
+    "C05": "Fits the most common real input (captioned reels), gives a free Vietnamese judge and can skip the 3.3 GB MLX pass; the first test is clear.",
+    "C06": "Provenance is rarely asked for, and scraping originals and sound pages is a fragile, breaking dependency.",
+    "C07": "Answers the repeated 'link these talks with timestamps' job and cuts large token costs; an index that must stay in sync is the main upkeep.",
+    "C08": "Real token savings, but the rent ledger, leases and per-job renders add knobs and a second rendering path to maintain.",
+    "C09": "Right instinct (fix is unused), but many harvesters and monthly audits make a standing operational burden for one user.",
+    "C10": "Fixes a measured breakage (733 dead commands) and silent degradation, and deletes running cost rather than adding it.",
+    "C11": "Clever editor's view, but most of it adds card lines no measured owner question needs.",
+    "C12": "Tidy roster serving citing and casting at low cost; the value depends on multi-speaker media the owner seldom uses.",
+    "C13": "Cheap and well judged, but a small gain for the dub job alone."
+  }
+}

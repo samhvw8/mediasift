@@ -1,0 +1,97 @@
+{
+  "concepts": [
+    {
+      "id": "C01",
+      "title": "The dub that checks itself: card invariance against the source",
+      "pitch": "The source card becomes both anydub's mix spec (`cues.json`: per-cue bed level under dialogue, speaker rates) and the answer key: `mediasift check DUB --against SOURCE` re-senses the dub and prints only broken invariants (a lost `snd` bed, a cue ducked to -29 dB instead of -16, a beat-phase jump where the bed was stretched, a number or name token that changed, a line paced like translated English against a native-Vietnamese pace reference built from the owner's own cached reels), and anydub remixes failing spans before it says done. It is gated by calibration: CED's hearing floor under a loud voice is measured from anydub's own separated stems, and a check may auto-remix only once its false-alarm rate on source-vs-source and sabotaged mixes is under 1 in 20. Generalised, every transform the owner runs (dub, summary, credit, re-encode) states which card facts it must keep, so a sensor earns its place by joining an invariant a `check` can break.",
+      "parents": ["m01.1", "m02.7", "m04.3", "m06.3", "m01.6", "m01.r1.1", "m01.r1.5", "m01.r1.6", "m02.r1.4", "m04.r1.1", "m06.r1.1", "m01.r2.1", "m01.r2.3", "m01.r2.6", "m02.r2.3", "m04.r2.5", "m06.r2.1"],
+      "members": ["m01", "m02", "m04", "m06"]
+    },
+    {
+      "id": "C02",
+      "title": "Gap map with walls: where a dubbed line may land",
+      "pitch": "Vietnamese runs longer than English, and anydub's answer (speed up) produces the 'read like English' pace, so a `gaps.tsv` sidecar ranks every speech-free window as `free` (silence), `bed -16 dB` (music a line may cover at the measured duck) or `beat` (a button, sting or plot sound synced to picture, never covered), and marks `speech heard, not transcribed` windows so no dubbed line is stretched over lost speech. Off-camera lines (from the free voice/shot join, lip landmarks only where needed) may borrow the following gap up to the first hard wall; on-camera lines and cuts cannot. Lines under a singing bed are tagged `lyric` once, which tells anydub to keep the original voice and tells the claims block the chorus is not a claim.",
+      "parents": ["m01.2", "m01.3", "m07.7", "m07.r1.3", "m01.r2.2", "m06.r2.2", "m06.r2.5", "m07.r2.2"],
+      "members": ["m01", "m06", "m07"]
+    },
+    {
+      "id": "C03",
+      "title": "Speech integrity: underline what was not really heard",
+      "pitch": "ASR loops ('bắt tự' x44), speech CED heard but ASR barely wrote (6 words in 15 s on Tears of Steel), and chunks whose language differs from the file's are one fact, 'this line is not what was said', so they share one mark (`~` on the words, one `do not quote:` footer) and the card gets shorter while it stops hiding errors. Flagged spans go into one escalation queue on `sensed.json` with a fixed compute budget per card (re-hear on the vocal stem separated only where the alarm fires, a second backend, the other-language model), and whatever the budget does not cover stays on the card as a priced `say?` line, so nothing is dropped silently. The only bench kept is the owner's sentence: zero underlined tokens reach a web search.",
+      "parents": ["m01.8", "m02.2", "m05.4", "m05.6", "m08.3", "m01.r1.4", "m02.r1.2", "m05.r1.2", "m08.r1.2", "m04.r2.1", "m08.r2.4"],
+      "members": ["m01", "m02", "m04", "m05", "m08"]
+    },
+    {
+      "id": "C04",
+      "title": "Claims ledger: every number and name says which witnesses back it",
+      "pitch": "A fact-check searches a few tokens, not a transcript, so every number, date, proper noun, negation and @handle goes into one ranked block (or `claims.tsv` with a pointer line) where each entry lists its witnesses: heard, heard twice by a second backend (run only on tokens no other witness backs, and first where music is loud), shown on screen, subtitled, or description-only, with `[15|50]` and the OR'd search string to type when they disagree. Numbers, negations and dates are never auto-corrected, because a caption that contradicts the voice may be the claim itself, and each claim carries who asserts it (on-camera speaker vs narrator over unrelated footage). The counterview is built in: this stays off the default card behind `see --check` until session logs show real fact-check jobs, and any forensic flag ships with its measured false-alarm rate.",
+      "parents": ["m03.3", "m05.2", "m07.6", "m04.6", "m03.r1.1", "m03.r1.2", "m04.r1.4", "m05.r1.4", "m06.r1.5", "m07.r1.2", "m03.r2.1", "m03.r2.2", "m05.r2.3"],
+      "members": ["m03", "m04", "m05", "m06", "m07"]
+    },
+    {
+      "id": "C05",
+      "title": "The creator's burned-in captions become the speech track and the free judge",
+      "pitch": "On captioned reels (the owner's most common real input) one alignment of OCR caption runs to ASR lines sorts every pair three ways: echoes (deleted from the card and scored as a free real-Vietnamese WER), near-misses on a name (a spelling fix the creator already made) and standalone graphics (to translate and fact-check). Pushed further, when a few caption lines agree with ASR the caption track becomes the `say` text and the 3.3 GB MLX pass runs only on uncaptioned spans and disagreements. The guard: CapCut and TikTok auto-captions are themselves ASR, so a caption counts as an independent witness only after caption-ASR error correlation is measured, and the first test is whether `ocr.py`'s `vi-VT` code even reads Vietnamese diacritics.",
+      "parents": ["m01.5", "m02.1", "m08.4", "m01.r1.2", "m02.r1.1", "m08.r1.3", "m02.r2.1", "m07.r2.3"],
+      "members": ["m01", "m02", "m07", "m08"]
+    },
+    {
+      "id": "C06",
+      "title": "Provenance: a credit block per role and a local morgue of fingerprints",
+      "pitch": "From data mediasift already downloads and throws away (yt-dlp info JSON, the sound field, corner watermark OCR, ffprobe tags), print one credit line with a source per role (picture author, voice or 'original sound' owner, music track, poster, and for anydub output a declared synthetic dub voice stamped into the file), where disagreement between sources is itself the re-upload signal. Every card also stores per-shot and per-bed fingerprints, so a new `see` reads the two-axis case (same shots + new voice = re-voiced copy; same audio + new footage = old claim on new pictures), can `peek` candidate originals' storyboards or a TikTok sound page to name the earliest post, and can list sentences a re-voicer added that the original never said. Every match prints its chance-match rate from a negative control over unrelated cached cards.",
+      "parents": ["m03.4", "m03.5", "m03.6", "m04.2", "m06.4", "m06.5", "m01.r1.3", "m03.r1.3", "m03.r1.6", "m04.r1.2", "m06.r1.2", "m06.r1.6", "m07.r1.5", "m01.r2.5", "m02.r2.4", "m03.r2.3", "m03.r2.4", "m06.r2.4"],
+      "members": ["m01", "m02", "m03", "m04", "m06", "m07"]
+    },
+    {
+      "id": "C07",
+      "title": "The cache as a citable library: grep, quote, link and restore context",
+      "pitch": "'Link these four talks' costs ~150k tokens of transcript re-reading today, so every cached `sensed.json` becomes a shingle index the agent queries instead: `grep` and `quote` return cite handles (`3b5f@12:31`) with speaker name, face frame and the same moment in other videos, and each new card gets an `also said in: <card> @41:10` line for free. The same index aligns a short clip back onto its long source to list what the clip dropped ('...but only in mice'), lets `cite-check` verify a finished summary's timestamps and rewrite re-upload citations to the canonical source time, and keeps a series term base so a recurring name is spelled and dubbed the same way across videos.",
+      "parents": ["m02.4", "m03.7", "m04.7", "m03.r1.4", "m07.r1.6", "m08.r1.4", "m01.r2.4", "m03.r2.5", "m04.r2.3"],
+      "members": ["m01", "m02", "m03", "m04", "m07", "m08"]
+    },
+    {
+      "id": "C08",
+      "title": "The card is a rendered view that pays rent per job",
+      "pitch": "Sense once into `sensed.json`, then render per job (`--for factcheck|dub|summary|bug`, passed by the prompt hook from the owner's own words), with a rent ledger that charges each column its token share on real cards and evicts it by default unless a bench question, or a paired ablation with enough statistical power, shows it changes an answer; leases expire unless renewed. Taken furthest, the default timeline card is deleted for long media: a ~10-line contents page plus lookups, with images priced and indexed down to one tile, and the full card only below a crossover length read off the tokens-per-answered-job curve. The kill test runs first: a speech-only card replayed on the owner's real jobs decides which picture and sound lines survive at all.",
+      "parents": ["m02.6", "m05.5", "m07.4", "m08.2", "m08.5", "m08.6", "m08.7", "m02.r1.3", "m05.r1.5", "m07.r1.4", "m08.r1.5", "m08.r1.6", "m05.r2.5", "m07.r2.1", "m08.r2.1", "m08.r2.2", "m08.r2.3", "m08.r2.5"],
+      "members": ["m02", "m05", "m07", "m08"]
+    },
+    {
+      "id": "C09",
+      "title": "Real use is the bench: judges harvested from what the owner does next",
+      "pitch": "`fix` has been called zero times, so labels come from by-products already on disk: the owner's pushback in the next message, web searches that rewrote a card term, screenshots he sends with a video, creator chapters, platform subtitles, descriptive-audio tracks and timestamped comments, all written by one writer into one `selfgrade.jsonl` schema whose harvesters fail their own lease test when they go quiet. Each loop prints its months-to-verdict from real row rates and falls back to a synthetic proxy when the clock is too long, real-footage keys come from an independent transcript instead of mediasift's own, and a monthly silent-success audit re-senses three uncomplained jobs on the strongest path to find errors nobody noticed. A planted-false-hedge test checks whether agents obey warning lines at all, and a monthly `gaps` report ranks what the owner still checks by hand.",
+      "parents": ["m02.3", "m02.5", "m04.4", "m05.1", "m07.1", "m08.8", "m02.r1.5", "m04.r1.3", "m04.r1.5", "m04.r1.6", "m05.r1.3", "m02.r2.2", "m02.r2.5", "m04.r2.2", "m05.r2.2", "m05.r2.6"],
+      "members": ["m02", "m04", "m05", "m07", "m08"]
+    },
+    {
+      "id": "C10",
+      "title": "A cache that knows its age and a card that says how much was sensed",
+      "pitch": "733 of 734 cached cards point agents at a dead `framesift look`, so the header and commands render at read time from the current binary, a test walks the real cache and fails on any dead command, and `sensed.json` records which sensor revision made each track so a pin bump re-senses only the stale track or only the flagged span (seconds, not a 47-minute rerun) and a known-defects table warns on cards it cannot heal. When a fetch or backend fails, `see URL` steps down a ladder (full sense, storyboard plus platform captions, info JSON only) and the first line states the rung reached and what is therefore missing, with a priced fix instruction, so the agent never fact-checks the post text believing it heard the video.",
+      "parents": ["m02.8", "m04.5", "m05.3", "m05.7", "m08.1", "m02.r1.6", "m05.r1.1", "m08.r1.1", "m04.r2.4", "m05.r2.1", "m05.r2.4"],
+      "members": ["m02", "m04", "m05", "m08"]
+    },
+    {
+      "id": "C11",
+      "title": "What the editor did: music cues, sync, chapters and continuity",
+      "pitch": "A music supervisor's cue sheet replaces mood adjectives: numbered cues M1..Mn with in/out, background vs featured, source vs score, ending shape (button, tail, cut off), cuts on the beat and hit points, instruments plus an energy verb, all from signals `see` already computes and discards. Stings plus slide titles give chapter boundaries printed only where two witnesses agree (judged by YouTube chapters), a speechless reel gets one edit block instead of pixel geometry, hit points rank the key stills the owner would screenshot, and an unbroken beat grid under speech becomes forensic evidence that a quote was or was not spliced under B-roll, worded as a 'music discontinuity' until its false-flag rate on unedited talks is measured.",
+      "parents": ["m03.2", "m04.1", "m06.1", "m06.2", "m06.6", "m06.7", "m06.8", "m07.5", "m07.8", "m03.r1.5", "m06.r1.3", "m06.r1.4", "m02.r2.6", "m06.r2.3", "m07.r2.4", "m07.r2.5"],
+      "members": ["m02", "m03", "m04", "m06", "m07"]
+    },
+    {
+      "id": "C12",
+      "title": "One voice roster: name, face, pace and owner, introduced once",
+      "pitch": "Like a describer who names a person once and then uses the name, each voice gets one roster line (`D = \"Tom\" (named by C 00:22.9), on screen shot X, 3.1 syl/s, male; C = narrator, off screen, voice of @xyz`) and every `say` line carries only the bare letter. Names bind only when two of three witnesses agree (direct address in the dialogue, a lower-third shown while that voice speaks, the uploader of a solo reel); on/off screen comes from the free voice-letter/shot-letter join, with Apple Vision lip checks only where it cannot decide; pace and pitch band form a casting sheet anydub uses to pick voices and base rates. One roster serves citing by name, casting the dub, and knowing a claim comes from a borrowed off-screen voice.",
+      "parents": ["m01.7", "m03.1", "m07.2", "m07.3", "m05.r1.6", "m07.r1.1", "m07.r2.6"],
+      "members": ["m01", "m03", "m05", "m07"]
+    }
+  ],
+  "orphans": [
+    {
+      "id": "C13",
+      "title": "Acoustic space per line: the futz tag",
+      "pitch": "The card already said `[radio]` under \"We have main engine start\", but anydub will voice that line studio-clean. Dubbing mixers match the space: phone band, radio, PA, far-mic, big reverb. A per-line space word from things already computed (CED's telephone/radio/reverberation classes on the window under the line, plus the voice's spectral band edges) tells anydub which of a handful of fixed filters to apply. Cheap, no new model. Judge: synthetic clips where scripted lines are band-passed or convolved with a room impulse, answers known; the sense bench can carry it as one question type. Card cost: none unless a line is not \"plain\", and then two words on a line that already exists.",
+      "parents": ["m01.4"],
+      "members": ["m01"]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "scores": {
+    "C01": {"value": 7, "feasibility": 5, "running_cost": 6, "novelty": 8, "specificity": 7, "off_brief": false},
+    "C02": {"value": 6, "feasibility": 6, "running_cost": 8, "novelty": 6, "specificity": 7, "off_brief": false},
+    "C03": {"value": 9, "feasibility": 7, "running_cost": 6, "novelty": 6, "specificity": 8, "off_brief": false},
+    "C04": {"value": 7, "feasibility": 6, "running_cost": 6, "novelty": 6, "specificity": 7, "off_brief": false},
+    "C05": {"value": 8, "feasibility": 7, "running_cost": 9, "novelty": 7, "specificity": 9, "off_brief": false},
+    "C06": {"value": 5, "feasibility": 4, "running_cost": 5, "novelty": 7, "specificity": 6, "off_brief": false},
+    "C07": {"value": 8, "feasibility": 7, "running_cost": 6, "novelty": 5, "specificity": 8, "off_brief": false},
+    "C08": {"value": 7, "feasibility": 6, "running_cost": 5, "novelty": 7, "specificity": 6, "off_brief": false},
+    "C09": {"value": 6, "feasibility": 4, "running_cost": 3, "novelty": 7, "specificity": 5, "off_brief": false},
+    "C10": {"value": 7, "feasibility": 9, "running_cost": 8, "novelty": 4, "specificity": 9, "off_brief": false},
+    "C11": {"value": 4, "feasibility": 5, "running_cost": 6, "novelty": 7, "specificity": 6, "off_brief": false},
+    "C12": {"value": 6, "feasibility": 6, "running_cost": 7, "novelty": 5, "specificity": 8, "off_brief": false},
+    "C13": {"value": 4, "feasibility": 8, "running_cost": 9, "novelty": 6, "specificity": 9, "off_brief": false}
+  },
+  "notes": {
+    "C01": "Strong idea for the re-voice job, but it couples two tools and needs a calibration harness before any check can act, and every dub gets re-sensed.",
+    "C02": "Directly targets the 'reads like English' dub pace with signals mediasift already has; it only helps dubbing.",
+    "C03": "Stops wrong speech from feeding fact-checks and summaries without hiding it, which matches crash-over-corrupt; the escalation budget adds some compute.",
+    "C04": "Well aimed at fact-checking and sensibly kept off the default card, but the second-backend re-hearing and the witness logic add machinery for a job that is used rarely.",
+    "C05": "Uses the most common real input (captioned reels) to get a free Vietnamese judge and possibly skip the 3.3 GB MLX pass, and the first test is concrete.",
+    "C06": "The credit line is cheap and useful, but the fingerprint morgue covers a cache that is almost all bench runs and adds network peeks and a store that keeps growing.",
+    "C07": "Answers the most-repeated real ask (link several videos with citations), at the cost of an index that has to stay in sync with the cache.",
+    "C08": "Real token savings, but the rent ledger, leases and crossover curve are knobs that need retuning, and deleting the long-media timeline is risky.",
+    "C09": "Gives the judge gate a real source of labels, but many harvesters, leases and monthly audits are a standing burden to run.",
+    "C10": "Fixes a real defect (733 dead commands) and makes partial senses honest; cheap, concrete and testable, though not new.",
+    "C11": "A clever cue sheet, but the owner's jobs rarely need editorial music detail, and it adds card lines with no measured question behind them.",
+    "C12": "A tidy roster that cuts tokens and serves citing and casting; name binding depends on witnesses that short reels often lack.",
+    "C13": "Nearly free and fully judgeable, but it helps only a niche part of dubbing."
+  }
+}

@@ -1,85 +1,68 @@
-# Brief: rethink framesift as a daily-use video + audio "sensor" for AI agent harnesses
+# How might we extend mediasift so an agent that cannot watch or hear gets what it needs from media?
 
-## The question (the user's words, lightly edited)
-"LLMs don't sense video well (a sequence of images that connect) and the audio with it. So I
-built this to cherry-pick images for that sequence, also the audio with it. But the current stack
-is very hard to run daily or for regular use. Make a sensor for an AI harness. Or maybe my
-approach is not correct — think, then help me. We can improve, or even change everything and
-build it up again."
+## What mediasift is today
 
-How might we give a text-and-image agent (Claude Code and similar harnesses) a real sense of
-video — motion, continuity, cause and effect across frames, and the sound that goes with it —
-in a form the user will actually run every day? Is "cherry-pick frames + transcript" the right
-shape at all, or is there a better one?
+`mediasift` (renamed from framesift on 2026-10-17) is a local CLI. `mediasift see VIDEO|URL` writes a
+short timeline **card** (markdown) plus ~1 fps frame sheets, for an AI agent (Claude Code) that reads
+text and still images but cannot watch video or hear audio. The card holds: picture events (changes,
+cuts with shot letters, camera moves, on-screen text by OCR), sounds (AudioSet classes from the CED-small
+tagger, counted short sounds, hedged names), speaker letters, speech with times (local ASR on the Mac,
+or over ssh on a GPU box), and since today music mood and genre words. `look VIDEO A-B` zooms into a
+span, `fix` logs an agent's correction of a sound name, an older `index` / `find` does embedding
+search over frames and speech. A Claude Code skill and a prompt hook tell agents to run it.
 
-## Who it is for
-- The consumer: an agent harness (Claude Code today). It reads text and still images. It cannot
-  hear audio and cannot take video input. Every image costs tokens (a 768 px frame is roughly
-  1-1.5k tokens; a 12-tile contact sheet about the same). It calls CLI tools and reads files.
-  Each session already carries ~63-65k tokens of fixed overhead (instructions + tools).
-- The operator: one developer (Sam) on an Apple Silicon Mac (M1 Pro 16 GB). A home GPU box
-  (RTX 3060 12 GB, `ssh gpu-box`) exists but is not always on. Videos: screen recordings
-  (bug repros, UI walkthroughs), tutorials, lectures, podcasts (English and Vietnamese, some
-  1-2 hours long), short films/explainers, YouTube links.
+Read these (absolute paths) before you start:
+- AGENTS.md - layout and rules for changing it
+- skills/mediasift/SKILL.md - how agents use it
+- .okf/index.md and decisions/ - every design decision, measurement and rejected idea
+- .okf/decisions/music-and-voice-mood.md - today's mood work
+- ~/.cache/mediasift/see/3b5fd29ca2c9be19/card.md - a real card (Tears of Steel, 4 min film clip)
 
-## What exists today: framesift v0.2 (read these; absolute paths)
-- README.md — the idea and measurements.
-- .okf/architecture/pipeline.md — modules and data flow.
-- .okf/decisions/ — why the heuristics are what they are, with measurements (embedding-search.md has the agent QA bench results).
-- skills/framesift/SKILL.md — how an agent uses it now.
-- src/framesift/ — ~2.4k lines of Python (decode, visual, audio, segment, keyframes, render, asr, transcript, embed, index, query, meaning, cli).
-- research/261002-architecture.md — an earlier 5-lens architecture brainstorm (time-indexed library, card/find/read/look verbs, layer store). Mostly not built.
-- research/261008-model-ratio/README.md — which small models fit each slot (ASR, embeddings, OCR).
-- bench/qa/README.md and bench/qa_long/README.md — the agent QA bench.
+## Who uses it, and for what (from real logs, not guesses)
 
-In short: `framesift analyze VIDEO -o OUT [--asr] [--index]` decodes every frame at 128x72 for
-cheap pixel statistics, reads codec packet sizes, computes 16 kHz log-mel audio novelty, fuses
-them into segments, picks keyframes by drift from the last kept frame, optionally transcribes
-(faster-whisper / parakeet-mlx / mlx-whisper), and writes storyboard.md, 12-tile contact sheets,
-frames/*.jpg, manifest.json, signals.npz. Optional: `index` embeds frames + speech with
-EmbeddingGemma 2 via llama.cpp (started per command), then `find "query"` / `look --at T` return
-image grids. `meaning` calls a VLM over HTTP. `frames` and `split` extract ranges/clips.
+One person (the owner) and the agents working for them. Real use since 2026-09-17, from session logs:
+- YouTube talks: transcript, translate to Vietnamese, summarise **with timestamps**, then **link several
+  videos together** (asked many times; a sibling tool `~/workspace/tools/anydub` does download + dub).
+- A TikTok: "check the content from this, then web search to verify the information" (fact-check).
+- TikToks / Facebook reels: "listen to and watch this" (short vertical social video, Vietnamese and English).
+- Dubbing YouTube into Vietnamese where "the English is too quiet ... and the background sound is lost".
+- A Facebook reel turned into a shared script with credit to its author.
+- A screen recording of an app crash for a bug report.
+- Of 737 cached cards, ~730 are bench runs; real ones are 26 s - 2:44 phone videos, a 15 s YouTube
+  clip, a 2:40 screen video, and long talks (47 min) and podcasts (1h45).
 
-## Measured facts (from the bench and from a run today)
-- A 2:23 explainer, `analyze --asr --index`, end to end: 63 s on the M1 Pro (ASR 22 s with
-  faster-whisper small at 6.6x realtime; indexing 30 s at 9 frames/s). Output: 20 segments,
-  80 keyframes, 7 contact sheets, a 10 KB storyboard. Needs an output folder and 2-3 flags.
-- A 1h45m podcast: 8.2 min analyse+index; 207 KB storyboard.
-- Agent QA, short videos (55 questions): transcript only 49% correct; uniform contact sheets 93%;
-  framesift sheets 96%; find/look 96-100%. Total session tokens: equal between arms (~72k for a
-  one-question session) — search saved image tokens but its text output ate the savings.
-- Long videos (one-question sessions): every arm 8/8; agents GREP the storyboard rather than read
-  it; storyboard 78.7k, transcript 81.5k, find 88.0k total tokens. The visual questions were
-  guessable from context, so they did not separate the arms.
-- Never benchmarked: questions that need temporal understanding (what moved where, what happened
-  between A and B, order of UI steps, counting repetitions, cause→effect), and non-speech audio
-  (music changes, laughter, alarms, tone of voice, silence). That is exactly the gap the user names.
-- Vietnamese ASR: whisper large-v3-turbo best (2.37% WER on a TTS slice).
-- Known output flaws seen today: transcript cues repeat across adjacent segments; storyboard
-  carries stat lines ("visual 1.51 · audio 0.63") an agent cannot act on.
+## What was measured today
 
-## Constraints the user stated (global preferences)
-- Judge a design by what it costs AFTER it ships. Highest weight: infra cost ($/month, metered
-  APIs, per-turn tokens) and operational burden (what breaks, needs watching). Then maintenance
-  (every copy, knob, sync step). Build effort is the lowest weight and never a reason to skip.
-- Local first (Mac, optional home GPU). No new hosted service or always-on daemon by default.
-  A paid cloud API is allowed only if its running cost is justified against the alternative.
-- Crashing beats corrupting; never fail silently.
-- The user gives full freedom: improve, or rebuild from scratch, or change the approach entirely.
+- Music mood from CED's own AudioSet classes: right 88% when stated (score >= 0.10, 35% of clips),
+  genre 83% (>= 0.15), on 742 held-out AudioSet clips. Free: the tagger already runs.
+- Open-vocabulary music words ("epic", "heroic") from CLAP or an MTG-Jamendo head scored lower than
+  CED's plain words. No test set exists for "epic" on real film scores.
+- Speech emotion labels: emotion2vec+ 88% on RAVDESS (in its training lineage) but 45% on newer held-out
+  speech, still ~58% right when it says it is 95% sure; SenseVoice said NEUTRAL for everything; cheap
+  pitch/loudness probes were near chance across datasets. **Per-line emotion labels were rejected.**
+- The card already names laughter, shouting, crying, screaming and whispering as sounds.
 
-## Ideas already on the table (build past them or argue against them; do not just repeat)
-- From the earlier brainstorm (not built): a time-indexed library with `card / find / read / look`
-  verbs, a content-addressed layer store, an extractive overview card, write-back of what the
-  agent saw.
-- Proposed earlier, not built: OCR on screen keyframes; semantic keyframe veto for camera footage;
-  an MCP server; streaming mode.
+## Ideas already on the table (build on them or avoid them)
 
-## Rejected earlier
-- Long-running model servers (vLLM-style daemons): slow start, VRAM fights, things to watch.
-- A vector database server for a single video.
+From the owner's assistant, not yet built: (1) put vocal sounds on the speech line they overlap
+(`say [laughing] "..."`); (2) speaker-relative prosody ("louder and higher than A's usual"); (3) let
+`fix` take mood corrections so real use grows a test set; (4) a music build/peak finder; (5) an
+on-demand audio LLM on the GPU box for one span. The owner also floated a bigger name and scope
+("media-understanding"); the rename to mediasift is done.
 
-## A great outcome
-A design (possibly a rebuild) that (1) gives the agent a genuine sense of motion, sequence and
-sound per token spent — measurably better on temporal and audio questions than "keyframes +
-transcript"; (2) is something the user runs every day without thinking (one command or none,
-no flag tuning, fast enough, nothing to babysit); and (3) a cheap way to prove each claim.
+## Hard constraints (from the owner)
+
+- **Lightweight**: must not take much CPU/GPU on heavy runs. Hardware: Apple M1 Pro 16 GB (MLX speech
+  peaks at 3.3 GB already) and an RTX 3060 12 GB Ubuntu box reachable by ssh (sometimes booted into Windows).
+- **Judge designs by what they cost after they ship**: running cost ($/month, quotas, per-turn tokens)
+  and things that break or need watching weigh most; build effort weighs least.
+- The card is read by an agent that pays per token: add a line only when a measured question needs it.
+- Crash rather than corrupt: never drop speech or sound silently. Pin every model.
+- Every change is proven with a number on a bench (synthetic clips with scripted answers, real-footage
+  questions, a 200-clip sound bench, a voice bench). A feature without a judge cannot earn a card line.
+- Vietnamese and English both matter. Local-first; no paid cloud API in the default path.
+
+## What a great outcome looks like
+
+Extensions that make the owner's real jobs (verify, summarise and link with citations, re-voice,
+understand short social video, bug repro) clearly better, cheap to run, each with a way to prove it works.
