@@ -104,7 +104,8 @@ def transcribe(
         raise SystemExit(f"unknown ASR backend {name!r}")
     dt = time.perf_counter() - t0
     _log(f"ASR {name} ({used}): {len(pcm) / SR / max(dt, 1e-6):.1f}x realtime")
-    res = AsrResult([Cue(c.start, c.end, c.text) for c in cues], name, used, language, round(dt, 1))
+    res = AsrResult([Cue(c.start, c.end, c.text, list(getattr(c, "words", []) or []), getattr(c, "voice", None))
+                     for c in cues], name, used, language, round(dt, 1))
     if diarize and cues:
         _, res.voices = diarize_cues(pcm, cues)
     return res
@@ -114,7 +115,8 @@ def remote(pcm: np.ndarray, host: str, language: str | None = None, connect_s: i
     res = _sift.remote(pcm, host, language=language, connect_s=connect_s, remote_bin="mediasift")
     if res is None:
         return None
-    out = AsrResult([Cue(c.start, c.end, c.text) for c in res.cues], res.backend, res.model, res.language, res.seconds)
+    out = AsrResult([Cue(c.start, c.end, c.text, list(getattr(c, "words", []) or []), getattr(c, "voice", None))
+                     for c in res.cues], res.backend, res.model, res.language, res.seconds)
     out.voices = res.voices
     return out
 

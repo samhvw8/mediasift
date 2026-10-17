@@ -12,3 +12,4 @@
 * [Music and voice mood](music-and-voice-mood.md) - music beds carry CED's mood and genre words and a mood arc (88% right when stated, no new model); speech emotion measured at 45% held out and left out.
 * [Speech and speed](speech-and-speed.md) - parakeet / whisper, the GPU box overlap and fallback, whisper cue splitting, the Mac lag measurements.
 * [Distribution](distribution.md) - install from GitHub with uv or mise `pypi:`; the repo is a Claude Code plugin marketplace with the skill and a guarded prompt hook.
+* [Roadmap](roadmap.md) - the ordered next steps from the 2026-10-17 council, their evidence, the stress-test changes each must carry, and status. Start here.

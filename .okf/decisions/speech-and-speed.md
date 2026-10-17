@@ -5,7 +5,7 @@ description: How mediasift see transcribes (parakeet-mlx, QUAN-Transcribe for Vi
 tags: [see, asr, whisper, gpu-box, resources, lag]
 status: draft
 generated:
-  by: samhv
+  by: human:samhv
   at: "2026-10-17T13:35:00Z"
 resource: src/mediasift/asr.py
 sources:

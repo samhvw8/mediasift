@@ -1,0 +1,749 @@
+{
+  "version": 2,
+  "created": "2026-10-17 18:12:18",
+  "seed": 122111,
+  "dir": "/Users/samhv/workspace/tools/mediasift/.council/20261017-181218",
+  "members_n": 8,
+  "cross": 2,
+  "judges": 3,
+  "shortlist_n": 4,
+  "pool_max": 12,
+  "parallel": 6,
+  "preset": null,
+  "rubric": "creative",
+  "weights": [
+    [
+      "novelty",
+      30
+    ],
+    [
+      "value",
+      30
+    ],
+    [
+      "feasibility",
+      20
+    ],
+    [
+      "specificity",
+      10
+    ],
+    [
+      "emergence",
+      10
+    ]
+  ],
+  "members": {
+    "m01": {
+      "card": {
+        "lens": {
+          "id": "custom-radio-producer",
+          "family": "custom",
+          "name": "Radio producer",
+          "asks": "What does a radio producer hear in loudness, pace, pauses and the room that tells the story without the picture?",
+          "sees": "What only someone asking that question would notice.",
+          "misses": "Everything outside that question; the other members cover it.",
+          "delivers": "A direct answer to that question, with the evidence for it.",
+          "clashes": []
+        },
+        "technique": {
+          "id": "analogy-transfer",
+          "name": "Analogy transfer",
+          "how": "Find a field that solved a problem with the same shape (biology, games, logistics, cities, markets). Port its mechanism over and fix where the analogy breaks."
+        },
+        "provocation": {
+          "id": "emphasize-flaws",
+          "text": "Emphasize the flaws. What if the weakest part became the point?",
+          "source": "Eno and Schmidt, Oblique Strategies (1975)"
+        }
+      }
+    },
+    "m02": {
+      "card": {
+        "lens": {
+          "id": "custom-forensic-video-analyst",
+          "family": "custom",
+          "name": "Forensic video analyst",
+          "asks": "What would a forensic examiner check to say whether this footage is original, edited, re-voiced or staged, and when?",
+          "sees": "What only someone asking that question would notice.",
+          "misses": "Everything outside that question; the other members cover it.",
+          "delivers": "A direct answer to that question, with the evidence for it.",
+          "clashes": []
+        },
+        "technique": {
+          "id": "assumption-reversal",
+          "name": "Assumption reversal",
+          "how": "Write down the five assumptions everyone makes about this. Flip each to its opposite and build an idea that only works in the flipped world."
+        },
+        "provocation": {
+          "id": "least-welcome",
+          "text": "What is the counterview we would least want to accept? Not the easiest one to digest.",
+          "source": "\u7d93\u7406\u4eba (Manager Today) anti-sycophancy prompt"
+        }
+      }
+    },
+    "m03": {
+      "card": {
+        "lens": {
+          "id": "incumbent",
+          "family": "temporal",
+          "name": "Incumbent",
+          "asks": "What does the current way of doing it get right that a new idea will throw away?",
+          "sees": "Hidden functions of the status quo, switching costs, inertia worth respecting.",
+          "misses": "When the status quo has truly stopped working.",
+          "clashes": [
+            "first-principles",
+            "contrarian"
+          ],
+          "delivers": "What the current way quietly gets right that a new idea would throw away."
+        },
+        "technique": {
+          "id": "extreme-user",
+          "name": "Extreme users",
+          "how": "Design for the extremes: the heaviest user, the most reluctant one, the most constrained one. Ideas that serve extremes often serve everyone."
+        },
+        "provocation": {
+          "id": "flip-assumption",
+          "text": "Which single assumption, if wrong, flips the whole plan?",
+          "source": "Critical Uncertainties; Evaporating cloud"
+        }
+      }
+    },
+    "m04": {
+      "card": {
+        "lens": {
+          "id": "user-advocate",
+          "family": "stakeholder",
+          "name": "User Advocate",
+          "asks": "What does the person living with this actually struggle with, in their words?",
+          "sees": "Real pain versus imagined wants; the moment of friction.",
+          "misses": "Needs users cannot articulate yet.",
+          "clashes": [
+            "contrarian",
+            "operator"
+          ],
+          "delivers": "The user's actual pain in their own words, and the moment it happens."
+        },
+        "technique": {
+          "id": "scamper",
+          "name": "SCAMPER",
+          "how": "Run the subject through Substitute, Combine, Adapt, Modify, Put to another use, Eliminate, Reverse. One idea per verb at least; keep the two that surprise you."
+        },
+        "provocation": {
+          "id": "wrong-question",
+          "text": "What if the question itself is the wrong one? Write the better question."
+        }
+      }
+    },
+    "m05": {
+      "card": {
+        "lens": {
+          "id": "custom-foley-and-sound-designer",
+          "family": "custom",
+          "name": "Foley and sound designer",
+          "asks": "What does a sound designer hear in a scene - what each sound is made of, where it sits in space, and what is missing - that a tag list never says?",
+          "sees": "What only someone asking that question would notice.",
+          "misses": "Everything outside that question; the other members cover it.",
+          "delivers": "A direct answer to that question, with the evidence for it.",
+          "clashes": []
+        },
+        "technique": {
+          "id": "morphological",
+          "name": "Morphological box",
+          "how": "Split the problem into 3 to 5 dimensions, list 3 to 4 options per dimension, then combine one option from each into unusual configurations. Keep the strangest one that holds up."
+        },
+        "provocation": {
+          "id": "one-day",
+          "text": "What if it had to ship tomorrow with what already exists?"
+        }
+      }
+    },
+    "m06": {
+      "card": {
+        "lens": {
+          "id": "custom-ux-researcher",
+          "family": "custom",
+          "name": "UX researcher",
+          "asks": "Watching a session recording, what does a UX researcher notice about the cursor, clicks, hesitations and the state of the screen that a change detector misses?",
+          "sees": "What only someone asking that question would notice.",
+          "misses": "Everything outside that question; the other members cover it.",
+          "delivers": "A direct answer to that question, with the evidence for it.",
+          "clashes": []
+        },
+        "technique": {
+          "id": "subtraction",
+          "name": "Subtraction",
+          "how": "Remove an essential-looking component and ask what the thing becomes without it. Some of the best products are an old product minus one part."
+        },
+        "provocation": {
+          "id": "kill-shot",
+          "text": "Name the one thing that, if true, kills this.",
+          "source": "Practitioner anti-sycophancy prompts"
+        }
+      }
+    },
+    "m07": {
+      "card": {
+        "lens": {
+          "id": "skeptic",
+          "family": "challenger",
+          "name": "Evidence Skeptic",
+          "asks": "What would we have to observe to believe this, and have we observed it?",
+          "sees": "Claims resting on vibes; the cheapest experiment that would settle them.",
+          "misses": "Ideas whose evidence can only exist after they are built.",
+          "clashes": [
+            "visionary",
+            "storyteller"
+          ],
+          "delivers": "The cheapest observation or test that would settle the key claim."
+        },
+        "technique": {
+          "id": "defect-listing",
+          "name": "Defect listing",
+          "how": "List every flaw, annoyance and omission of the current thing, then fix them one by one, worst first.",
+          "source": "Defect listing (\u7f3a\u9ede\u5217\u8209\u6cd5)"
+        },
+        "provocation": {
+          "id": "last-mistakes",
+          "text": "What mistakes did you make last time?",
+          "source": "Eno and Schmidt, Oblique Strategies (1975)"
+        }
+      }
+    },
+    "m08": {
+      "card": {
+        "lens": {
+          "id": "custom-sports-match-analyst",
+          "family": "custom",
+          "name": "Sports match analyst",
+          "asks": "How does a match analyst turn a fast game into a timed, countable, checkable log of who did what to whom?",
+          "sees": "What only someone asking that question would notice.",
+          "misses": "Everything outside that question; the other members cover it.",
+          "delivers": "A direct answer to that question, with the evidence for it.",
+          "clashes": []
+        },
+        "technique": {
+          "id": "fifteen-percent",
+          "name": "15% solutions",
+          "how": "List what can be done right now, with no new resources and no one's permission. Start from the one most in reach.",
+          "source": "Liberating Structures: 15% Solutions"
+        },
+        "provocation": {
+          "id": "for-what-purpose",
+          "text": "For what purpose? Ask it three times, going up a level each time.",
+          "source": "Practitioner alternative to Five Whys (HN 19625754)"
+        }
+      }
+    }
+  },
+  "pool": [
+    {
+      "id": "C01",
+      "title": "Seams with a named cause: edit, join or recorder",
+      "pitch": "Every discontinuity in speech or picture is checked by independent witnesses that share no signal path (room-tone step and too-short gap against the speaker's own gaps, a same-shot jump cut inside a `say` line, a mains-hum phase break, container frame/packet timestamps, a status-bar clock or watermark that moves the wrong way) and printed only when two agree, with its cause: `seam 01:12.4 (edit: sound + picture, timestamps continuous)`, `seam 41:12 (join: timestamp gap + room jump)`, `gap 00:12-00:16 (recorder wrote no frames)`. One detector serves the fact-checker's cut quote (`look --say` answers 'spoken in one take?') and the owner's own crashed 2-hour demo (frozen picture while audio runs, A/V offset per join, screen and webcam files aligned by the voice both mics heard). Non-obvious because the judge is manufactured: a tamper generator cuts words, splices and re-encodes cached videos from a script, so every flag can carry its measured false-alarm rate for that kind of file, and a hum-presence census decides first whether the hum witness exists at all on phone reels.",
+      "parents": [
+        "m01.1",
+        "m02.4",
+        "m07.5",
+        "m02.1",
+        "m01.r1.1",
+        "m02.r1.1",
+        "m04.r1.1",
+        "m02.r2.1",
+        "m02.r2.3",
+        "m02.r2.6",
+        "m07.r2.3",
+        "m04.3",
+        "m07.r1.2",
+        "m06.r1.2",
+        "m06.r2.2",
+        "m04.r2.3",
+        "m05.r2.6",
+        "m05.r2.2"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m04",
+        "m05",
+        "m06",
+        "m07"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C02",
+      "title": "Layer map: recorded with the picture, laid on in the edit, or generated",
+      "pitch": "Each voice letter gets one verdict from cheap witnesses the 16 kHz mono decode currently erases or ignores: a room letter from the noise floor and reverb tail in its word gaps, whether that room resets at picture cuts or runs straight across them, whether it binds to one shot letter, its spectral ceiling and stereo width from the native-rate track, and digital-zero gaps: `voice A: room 1, in shot E, resets at cuts -> on location`; `voice B: dry room 0 across 23 cuts, ceiling 12 kHz over a 19 kHz bed -> added in the edit`. The same witnesses tell an on-screen speaker from a narrator with no face model (Vision mouth landmarks only on contested spans), and, joined with CED's un-erased 'Speech synthesizer' score, a stock-TTS roster match and a too-regular gap rhythm, mark `voice B: generated? 3 of 3 signs` only when two agree. Native-rate and stereo reads can ride `look --with band|stereo`, with one header word in `see` when layers disagree, and a scripted radio-play renders keys exact to the sample.",
+      "parents": [
+        "m01.2",
+        "m05.2",
+        "m02.5",
+        "m05.3",
+        "m02.3",
+        "m05.1",
+        "m05.5",
+        "m02.r1.2",
+        "m01.r1.4",
+        "m03.r1.2",
+        "m03.5",
+        "m02.8",
+        "m08.3",
+        "m05.r1.1",
+        "m03.r1.5",
+        "m08.r1.3",
+        "m07.3",
+        "m02.2",
+        "m02.r1.5",
+        "m05.r1.6",
+        "m07.r1.4",
+        "m01.r2.1"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m03",
+        "m05",
+        "m07",
+        "m08"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C03",
+      "title": "The dub as a forgery that must pass",
+      "pitch": "Reverse the forensic goal for the owner's re-voice job: a good Vietnamese dub is one the layer map would misjudge as recorded on location. `see ORIGINAL --mix` prints targets before the dub is made (voice 14 dB over bed, bed ducks 6 dB, room 1, 4.1 syll/s), and `see DUB --against ORIGINAL` prints only where the forgery fails, per line: `line 14: 7.2 syll/s vs original 4.1, rushed`, `voice dry over room 2 (original voice was in room 2)`, `bed resets at cut 00:41 (original carries)`, `bed 4 dB under the dub, original 15 dB ducked`. The original file is the answer key, so degrading a dub on purpose (no ducking, dry voice, bed cut, sped up) gives every test case with no human listener.",
+      "parents": [
+        "m05.6",
+        "m04.r1.3",
+        "m02.r2.2",
+        "m05.r2.3",
+        "m04.r2.5",
+        "m01.r1.4"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m04",
+        "m05"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C04",
+      "title": "The speaker's own clock and who holds the floor",
+      "pitch": "From word times and per-word RMS already computed, keep each voice's baseline (gap before a turn, syllables per second, level) and report only deviations against that speaker herself, never a feeling: `(answer after 2.6 s, filled; her usual 0.4 s)`, `(fast: 2x his pace)`, with Vietnamese measured in syllables. Speech the transcript silently dropped (CED hears speech, ASR wrote nothing) is split into fillers and breaths, step-ons mark who cut in over whom and where ASR lost words, and question-answer chains plus turnovers give `floor: A 62% (won 4 of 5 contested turns)`. The detail can live in `sensed.json` and `log --kind pace|pause|turnover` until demand is shown; judges are the 33 known QUAN filler deletions, AMI overlap labels and a radio-play bench with planted pauses.",
+      "parents": [
+        "m01.3",
+        "m04.2",
+        "m01.4",
+        "m08.2",
+        "m01.r1.2",
+        "m04.r1.2",
+        "m05.r2.4",
+        "m01.r2.4",
+        "m08.r2.5"
+      ],
+      "members": [
+        "m01",
+        "m04",
+        "m05",
+        "m08"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C05",
+      "title": "One deixis gate for eye and ear: the telestrator at the spoken word",
+      "pitch": "A pointing word ('this', 'here', '\u0111\u00e2y', 'n\u00e0y') or a listening word ('hear that', 'nghe n\u00e0y') in a `say` line opens a window anchored on the word's own time (word times kept, not folded into lines), and the one thing that points in that footage is attached as a suffix: the local motion on camera, the pointer stop, selection or drawn-in overlay on a screencast, or the next 3 s of CED scores at a lower threshold (`next: engine idling` or `next: nothing above the noise floor`). A variant opens the gate on the most stressed word against the speaker's norm, so it needs no word list where Vietnamese omits the deictic, and `look --say \"phrase\"` returns a 15 fps native-resolution strip around the gated region. Before building, re-key the one shared bench miss (q06) at 15 fps and check whether a motion event already exists there, which decides between a delivery fix and a sensing fix, and count gated phrases across cached transcripts to see if the rule earns its place.",
+      "parents": [
+        "m03.1",
+        "m06.7",
+        "m03.r1.1",
+        "m06.r1.6",
+        "m03.r2.3",
+        "m08.6",
+        "m08.r2.4",
+        "m07.6",
+        "m07.r2.5",
+        "m01.r2.5",
+        "m05.r1.5",
+        "m06.r2.4"
+      ],
+      "members": [
+        "m01",
+        "m03",
+        "m05",
+        "m06",
+        "m07",
+        "m08"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C06",
+      "title": "What the hand did: a screen-recording input ledger and the before/after diff",
+      "pitch": "On screen recordings, track the pointer the jitter filter deletes and write only its stops, dead clicks, rage clicks, typing with corrections, and per-click latency (`click \"Save\" 00:12.3: first response 0.9 s, settled 3.4 s`), with click times from the click sound, a shown click ring or the driving script; screens get letters keyed by their persistent text, with what changed between visits. The output can be a `steps.md` repro script, and `diff before.mp4 after.mp4 --steps` aligns two runs of the same flow (`step 4 waited 3.8 s -> 0.4 s; dialog gone`) so a bug fix verifies itself. The non-obvious move that removes its kill condition: the agent records its own UI work and senses it before saying done, so the driving script's event log is an exact free answer key and screen recordings become the commonest input instead of the rarest.",
+      "parents": [
+        "m06.1",
+        "m06.2",
+        "m06.3",
+        "m06.4",
+        "m06.5",
+        "m06.6",
+        "m06.r1.3",
+        "m06.r1.4",
+        "m06.r1.5",
+        "m06.r2.1",
+        "m06.r2.3",
+        "m06.r2.5",
+        "m06.r2.6",
+        "m05.r2.1",
+        "m03.r1.6",
+        "m04.r2.2"
+      ],
+      "members": [
+        "m03",
+        "m04",
+        "m05",
+        "m06"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C07",
+      "title": "Text for the agent's own eyes, and the text that never changes",
+      "pitch": "Instead of a model's reading of dense code, give the agent native-resolution crops of only the 3-5 lines around the caret (found with the blink detector the card already has: a one-cell 1 Hz blink) or the pointer stop, one per distinct text state, so the image budget scales with stops, not with how much of the screen changed, and Linux with no OCR still gets a text sense. Separately, changed-region OCR never reads text present from the first frame (a TikTok claim banner, a lower-third, a slide title), so OCR the first frame of each shot letter once and print lasting text once: `on screen 00:00-00:45: \"Theo WHO: 1/3 ...\"`. A settling count comes first: strings that sit in the cached flow-sheet tiles but never reach the card.",
+      "parents": [
+        "m03.4",
+        "m06.8",
+        "m06.r1.1",
+        "m03.r1.4",
+        "m07.2",
+        "m07.r1.5",
+        "m03.r2.4"
+      ],
+      "members": [
+        "m03",
+        "m06",
+        "m07"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C08",
+      "title": "Program log: segments, a trim budget, and a card that survives `| head`",
+      "pitch": "Long recordings get radio's hot clock: segments found by change-points in bed level, room, pace and music (intro, talk, sponsor read, frozen stretch, idle terminal), with SponsorBlock's crowd labels as a free judge, and a per-channel in-play share (`in play 58%: picture still 3:10 while voice runs`). The same log becomes the owner's trim ladder for the over-time demo (`over 120 min by 11:40; tier 1 idle gives 23:40 without touching speech`, with ffmpeg lists), slide titles go into `transcript.txt` where the heavy user greps, and the card is built to be cut from the bottom: priority tiers per line, voice letters defined at first use, and `see --lines N` or an explicit `timeline 00:00-04:10 of 12:30; rest: log --between` instead of agents silently losing the end with `| head`.",
+      "parents": [
+        "m01.6",
+        "m04.4",
+        "m01.r1.5",
+        "m04.r1.5",
+        "m08.r2.3",
+        "m03.6",
+        "m07.4",
+        "m01.r2.3",
+        "m03.r2.2"
+      ],
+      "members": [
+        "m01",
+        "m03",
+        "m04",
+        "m07",
+        "m08"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C09",
+      "title": "Check the agent's own deliverable before it says done",
+      "pitch": "Most media the owner had to check by ear was made by the agent, so its intent is an exact key: `mediasift accept FILE --job tts|dub|join|clip|summary` runs only the checks that job has failed on (heard text against labels and neighbours for the off-by-one HSK shift, syllables per second and shortest inter-syllable gap for 'rushed and stuck together', a render manifest diff for slide timing, motion feel with its cause named: content holds vs encoder-duplicated frames). For summaries, `verify` checks every `@12:30` link lands on its quote, flags quotes holding low-confidence names or numbers (once ASR confidence is shown to predict errors), and offers candidate link moments from what text cannot find: lines the room laughed or clapped at and YouTube's most-replayed heatmap. A known-bad canary in every batch makes the checker exit non-zero if it ever passes, so the judge itself crashes rather than corrupts.",
+      "parents": [
+        "m04.5",
+        "m04.1",
+        "m04.7",
+        "m01.r1.3",
+        "m07.r1.6",
+        "m07.r2.6",
+        "m02.r2.5",
+        "m04.r2.1",
+        "m04.r2.4",
+        "m04.r2.6",
+        "m04.r1.4",
+        "m07.r1.3",
+        "m07.8",
+        "m01.5",
+        "m08.r2.6"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m04",
+        "m07",
+        "m08"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C10",
+      "title": "Same tape twice: replays, copies and alignment across files",
+      "pitch": "Hash grid frames and log-mel spans already computed to find exact repeats: a loop or mirrored B-roll, slow-mo by duplicated frames, a canned laugh that is one recording, a trending sound reused across the 730-card cache, so counts read `x5 (3 distinct; 2 are replays of 00:04)` and a range when two thresholds disagree. Across files, `diff CLIP SOURCE` aligns logs into an edit list (`clip 00:00-00:14 = source 12:03-12:17 at 1.10x; voice replaced 00:06-00:11; picture mirrored`), aligning on the sound bed when crops and mirrors break picture hashes. Mains-hum ENF traces act as a shared clock (`sync A B`: same moment or not), and with room letters and bed continuity they split a compilation into phases: one incident from six angles, or six incidents.",
+      "parents": [
+        "m02.7",
+        "m05.4",
+        "m01.r1.6",
+        "m02.r1.4",
+        "m08.4",
+        "m08.r1.1",
+        "m05.r1.3",
+        "m02.r1.3",
+        "m05.r2.5",
+        "m08.r1.4",
+        "m01.r2.6",
+        "m08.r1.2"
+      ],
+      "members": [
+        "m01",
+        "m02",
+        "m05",
+        "m08"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C11",
+      "title": "Honest coverage: how it was made, and where the card was deaf",
+      "pitch": "One header line of about 30 tokens says how the video was made before any content line (container chain and creation time, generation count, share of runtime that is added layers, seams, scripted inserts), printing only the fields that fire. Next to it, a `Blind:` ledger says where the senses could not detect: speech under a bed too loud for ASR (threshold set by a measured word-error curve), content above 8 kHz the decode erased, and on fact-check runs which witnesses could run on this file, because a silent card otherwise reads as 'authentic' and every forensic witness can be beaten by an edit made to pass. Its judge writes itself by ablation (damage the span holding a keyed answer, the right answer becomes 'cannot know'), and owner corrections outside every flagged span name the next blind spot.",
+      "parents": [
+        "m02.6",
+        "m02.r1.6",
+        "m08.5",
+        "m08.r1.5",
+        "m03.2",
+        "m03.r1.3",
+        "m05.r1.4",
+        "m02.r2.4",
+        "m07.r2.2",
+        "m03.r2.6"
+      ],
+      "members": [
+        "m02",
+        "m03",
+        "m05",
+        "m07",
+        "m08"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C12",
+      "title": "Let observed failures pick the next sense, and doors that report their own use",
+      "pitch": "The usage log shows about 7 real `see` calls and zero real `look` calls (the 61 zooms were tests), so the gap list should come from a census of the owner's corrections after the agent said done, binned VAR-style into link, attribution, count and identity, and from timed SDH bracket cues as a free sound key. New senses land first in `sensed.json` behind `log` or `look --with`, each withheld family leaves one signpost line, and promotion to the card needs both a human question type that asks for it and corrections that it would have prevented, not usage counts the skill text itself drives. Agents' own `look` findings are coded back into the cache as events, a `scores.npz` sidecar keeps word times and tagger scores so every bench replays offline, every witness must ride the one existing decode, and each idea carries a premise check with its kill rule written first.",
+      "parents": [
+        "m07.7",
+        "m07.r1.1",
+        "m08.r2.1",
+        "m07.1",
+        "m03.3",
+        "m03.7",
+        "m08.7",
+        "m08.r1.6",
+        "m03.r2.1",
+        "m07.r2.4",
+        "m08.r2.2",
+        "m07.r2.1",
+        "m03.8",
+        "m03.r2.5",
+        "m04.r1.6"
+      ],
+      "members": [
+        "m03",
+        "m04",
+        "m07",
+        "m08"
+      ],
+      "orphan": false
+    },
+    {
+      "id": "C13",
+      "title": "Too clean to be a conversation: missing flaws are the evidence",
+      "pitch": "This turns the flaw around: a radio producer knows that real talk is messy. People step on each other, breathe before they answer, and share a room tone, and their turn gaps follow a natural spread with some overlaps. A dialogue stitched from separate clips, or a fake \"interview\" made from two monologues, is too clean: no step-ons in five minutes, every gap 300-600 ms, a different room per voice, and no shared bed under the turns. Join m08.2's question-and-answer chains to my step-on counter and to m03.r1.5's room witnesses, and print one footer line only when two of these agree: `conversation: 0 overlaps in 41 turns, rooms differ per voice -> likely assembled, not recorded together`. The same features also mark a call recording: a lower floor on turn gaps, half-duplex dropouts where one voice gates out when the other starts, and a 4 kHz ceiling. Judge: real podcasts and AMI meetings as \"together\", and the same speakers re-cut into alternating clips as \"assembled\".",
+      "parents": [
+        "m01.r2.2"
+      ],
+      "members": [
+        "m01"
+      ],
+      "orphan": true
+    },
+    {
+      "id": "C14",
+      "title": "The owner's noun, witnessed per shot: `see --check \"bench\"`",
+      "pitch": "The moment: 10-13, gym-log: \"K\u00e9o t\u1ea1 \u0111\u01a1n 2 tay g\u1eadp ng\u01b0\u1eddi h\u00ecnh nh\u01b0 v\u1eabn c\u1ea7n b\u00e0n, trong vid youtube h\u01b0\u1edbng d\u1eabn b\u1ea3o th\u1ebf\" (this dumbbell row still needs a bench, the YouTube tutorial says so). The agent had picked the exercise from titles; the owner had to watch. Instead of captioning everything (baseline), eliminate all but the one noun the task depends on: score each shot's first frame against the given word with a pinned on-device image classifier (Apple Vision's built-in classifier on macOS, a small image-text model elsewhere) and print `bench: seen in shots C, F (00:41, 01:12); not in A, B`. Cost is one image per shot, run only when asked, never on the card by default. Judge: a small set of exercise and UI clips with yes/no per shot; the risk to measure first is whether open-vocabulary image matching does better than it did for music (it was rejected there).",
+      "parents": [
+        "m04.6"
+      ],
+      "members": [
+        "m04"
+      ],
+      "orphan": true
+    },
+    {
+      "id": "C15",
+      "title": "Audible contact: the hit, the side it came from, and whether the sound belongs to it",
+      "pitch": "m08.1 finds \"X moved into Y, then Y changed\" in pixels. A Foley artist's first question about that moment is whether there is a sound for it, and whether that sound is the contact's own. Extend the contact event with the sound pass: a counted short sound within 150 ms of the contact, panned to the same side of the frame as the contact region (m05.5), becomes `contact at right 12.4, knock (right)`. A contact with no sound, or with a sound panned to the other side, is marked `silent` or `sound off-screen`. The silent case answers questions the card cannot answer today: \"is the sound effect real or added\", \"was this clip muted and re-scored\". Across a cut run where the bed carries (m05.3), contact sounds that stay in sync show one recorded event seen from several angles. Judge: m08.1's scripted collisions, rendered with matched, mismatched-pan and missing hit sounds as the answer key.",
+      "parents": [
+        "m05.r1.2"
+      ],
+      "members": [
+        "m05"
+      ],
+      "orphan": true
+    }
+  ],
+  "scores": {
+    "C01": {
+      "mean": 67.33,
+      "max": 70.0,
+      "spread": 5.0,
+      "judges": 3,
+      "novelty": 7.0,
+      "off_brief": false
+    },
+    "C02": {
+      "mean": 67.67,
+      "max": 68.0,
+      "spread": 1.0,
+      "judges": 3,
+      "novelty": 8.0,
+      "off_brief": false
+    },
+    "C03": {
+      "mean": 75.0,
+      "max": 81.0,
+      "spread": 13.0,
+      "judges": 3,
+      "novelty": 8.0,
+      "off_brief": false
+    },
+    "C04": {
+      "mean": 64.67,
+      "max": 66.0,
+      "spread": 3.0,
+      "judges": 3,
+      "novelty": 6.0,
+      "off_brief": false
+    },
+    "C05": {
+      "mean": 72.0,
+      "max": 74.0,
+      "spread": 4.0,
+      "judges": 3,
+      "novelty": 6.0,
+      "off_brief": false
+    },
+    "C06": {
+      "mean": 68.33,
+      "max": 70.0,
+      "spread": 4.0,
+      "judges": 3,
+      "novelty": 7.0,
+      "off_brief": false
+    },
+    "C07": {
+      "mean": 73.67,
+      "max": 74.0,
+      "spread": 1.0,
+      "judges": 3,
+      "novelty": 6.0,
+      "off_brief": false
+    },
+    "C08": {
+      "mean": 60.0,
+      "max": 60.0,
+      "spread": 0.0,
+      "judges": 3,
+      "novelty": 5.0,
+      "off_brief": false
+    },
+    "C09": {
+      "mean": 72.67,
+      "max": 74.0,
+      "spread": 3.0,
+      "judges": 3,
+      "novelty": 7.0,
+      "off_brief": false
+    },
+    "C10": {
+      "mean": 60.67,
+      "max": 63.0,
+      "spread": 5.0,
+      "judges": 3,
+      "novelty": 6.67,
+      "off_brief": false
+    },
+    "C11": {
+      "mean": 69.0,
+      "max": 71.0,
+      "spread": 4.0,
+      "judges": 3,
+      "novelty": 7.33,
+      "off_brief": false
+    },
+    "C12": {
+      "mean": 59.67,
+      "max": 61.0,
+      "spread": 4.0,
+      "judges": 3,
+      "novelty": 4.67,
+      "off_brief": false
+    },
+    "C13": {
+      "mean": 63.67,
+      "max": 69.0,
+      "spread": 9.0,
+      "judges": 3,
+      "novelty": 8.33,
+      "off_brief": false
+    },
+    "C14": {
+      "mean": 55.67,
+      "max": 56.0,
+      "spread": 1.0,
+      "judges": 3,
+      "novelty": 5.0,
+      "off_brief": false
+    },
+    "C15": {
+      "mean": 57.33,
+      "max": 59.0,
+      "spread": 3.0,
+      "judges": 3,
+      "novelty": 7.0,
+      "off_brief": false
+    }
+  },
+  "shortlist": [
+    "C03",
+    "C07",
+    "C09",
+    "C05"
+  ],
+  "ring": [
+    "m04",
+    "m07",
+    "m06",
+    "m03",
+    "m05",
+    "m08",
+    "m02",
+    "m01"
+  ],
+  "relevance": {
+    "method": "clef",
+    "model": "@cf/cloudflare/clef",
+    "minimum": 0.5,
+    "fallback": null,
+    "notes": []
+  }
+}

@@ -1,0 +1,798 @@
+[
+ {
+  "video": "2369708497189078.mp4",
+  "key": "a77493a29bd4f083",
+  "content": "camera",
+  "duration": 26.333333,
+  "frames": 26,
+  "ocr_s": 3.4,
+  "strings": 25,
+  "lasting": 0,
+  "lasting_missed": 0,
+  "missed_not_speech": 0,
+  "half_or_more_missed": 0,
+  "shots": 0,
+  "cuts": 0,
+  "examples": []
+ },
+ {
+  "video": "v14044g50000daf8n1fog65qer61ot4g.MP4",
+  "key": "3d219a48b6b4f7e3",
+  "content": "camera",
+  "duration": 77.926009,
+  "frames": 99,
+  "ocr_s": 15.6,
+  "strings": 315,
+  "lasting": 62,
+  "lasting_missed": 58,
+  "missed_not_speech": 58,
+  "half_or_more_missed": 3,
+  "shots": 0,
+  "cuts": 0,
+  "examples": [
+   {
+    "text": "\"Treo biển\" Tử Vi",
+    "from": 0.5,
+    "to": 73.4,
+    "frames": 68,
+    "share": 0.69,
+    "box": [
+     0.25,
+     0.26,
+     0.75,
+     0.3
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Quan",
+    "from": 40.0,
+    "to": 55.4,
+    "frames": 68,
+    "share": 0.69,
+    "box": [
+     0.27,
+     0.41,
+     0.31,
+     0.42
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "\"Bán thịt\" Bát Tự",
+    "from": 0.5,
+    "to": 73.4,
+    "frames": 52,
+    "share": 0.53,
+    "box": [
+     0.24,
+     0.31,
+     0.76,
+     0.36
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Kiếp",
+    "from": 40.0,
+    "to": 55.4,
+    "frames": 41,
+    "share": 0.41,
+    "box": [
+     0.78,
+     0.62,
+     0.81,
+     0.63
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "GIÁP",
+    "from": 40.0,
+    "to": 55.4,
+    "frames": 40,
+    "share": 0.4,
+    "box": [
+     0.39,
+     0.25,
+     0.46,
+     0.27
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Thiên",
+    "from": 40.0,
+    "to": 55.4,
+    "frames": 36,
+    "share": 0.36,
+    "box": [
+     0.54,
+     0.4,
+     0.59,
+     0.41
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Chính",
+    "from": 40.0,
+    "to": 55.4,
+    "frames": 34,
+    "share": 0.34,
+    "box": [
+     0.47,
+     0.4,
+     0.51,
+     0.41
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "THÁNG",
+    "from": 40.0,
+    "to": 55.4,
+    "frames": 28,
+    "share": 0.28,
+    "box": [
+     0.59,
+     0.21,
+     0.65,
+     0.22
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "NHÂM",
+    "from": 40.0,
+    "to": 55.4,
+    "frames": 24,
+    "share": 0.24,
+    "box": [
+     0.32,
+     0.48,
+     0.39,
+     0.5
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Chính Thương",
+    "from": 40.0,
+    "to": 55.4,
+    "frames": 23,
+    "share": 0.23,
+    "box": [
+     0.21,
+     0.4,
+     0.32,
+     0.41
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "- Thủy",
+    "from": 43.0,
+    "to": 55.4,
+    "frames": 23,
+    "share": 0.23,
+    "box": [
+     0.19,
+     0.51,
+     0.23,
+     0.52
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "2/9/1945 - 14:10 | Nam",
+    "from": 40.0,
+    "to": 55.4,
+    "frames": 20,
+    "share": 0.2,
+    "box": [
+     0.09,
+     0.18,
+     0.29,
+     0.19
+    ],
+    "on_card": false,
+    "is_speech": false
+   }
+  ]
+ },
+ {
+  "video": "v1c044g50000das9ovvog65jh7o1nnvg.MP4",
+  "key": "8e7985c0ada69bff",
+  "content": "camera",
+  "duration": 164.373991,
+  "frames": 193,
+  "ocr_s": 25.8,
+  "strings": 239,
+  "lasting": 24,
+  "lasting_missed": 1,
+  "missed_not_speech": 1,
+  "half_or_more_missed": 0,
+  "shots": 0,
+  "cuts": 0,
+  "examples": [
+   {
+    "text": "„waouo",
+    "from": 0.5,
+    "to": 154.9,
+    "frames": 20,
+    "share": 0.1,
+    "box": [
+     0.45,
+     0.96,
+     0.55,
+     0.98
+    ],
+    "on_card": false,
+    "is_speech": false
+   }
+  ]
+ },
+ {
+  "video": "v1c044g50000db85r0fog65j3474db60.mov",
+  "key": "0d345810e8a16f89",
+  "content": "screen",
+  "duration": 76.466992,
+  "frames": 119,
+  "ocr_s": 14.8,
+  "strings": 45,
+  "lasting": 15,
+  "lasting_missed": 9,
+  "missed_not_speech": 9,
+  "half_or_more_missed": 2,
+  "shots": 2,
+  "cuts": 2,
+  "examples": [
+   {
+    "text": "TikTOk",
+    "from": 0.0,
+    "to": 75.3,
+    "frames": 119,
+    "share": 1.0,
+    "box": [
+     0.02,
+     0.51,
+     0.14,
+     0.53
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "CŨNG TRẮNG TAY NHƯ 0%",
+    "from": 2.9,
+    "to": 71.6,
+    "frames": 75,
+    "share": 0.63,
+    "box": [
+     0.16,
+     0.76,
+     0.86,
+     0.8
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "CŨNG TRĂNG TAY NHƯ 0%",
+    "from": 0.0,
+    "to": 71.3,
+    "frames": 33,
+    "share": 0.28,
+    "box": [
+     0.16,
+     0.76,
+     0.86,
+     0.8
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "PERCOLATES",
+    "from": 16.1,
+    "to": 36.9,
+    "frames": 20,
+    "share": 0.17,
+    "box": [
+     0.62,
+     0.58,
+     0.85,
+     0.59
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "CELLS LIT",
+    "from": 16.1,
+    "to": 32.1,
+    "frames": 14,
+    "share": 0.12,
+    "box": [
+     -0.0,
+     0.58,
+     0.17,
+     0.59
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "48x48",
+    "from": 44.5,
+    "to": 50.6,
+    "frames": 9,
+    "share": 0.08,
+    "box": [
+     0.33,
+     0.62,
+     0.44,
+     0.63
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "GELLS LIT",
+    "from": 19.2,
+    "to": 36.7,
+    "frames": 5,
+    "share": 0.04,
+    "box": [
+     -0.0,
+     0.58,
+     0.17,
+     0.6
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Khai Sáng Tri Thưc",
+    "from": 7.5,
+    "to": 71.9,
+    "frames": 4,
+    "share": 0.03,
+    "box": [
+     0.21,
+     0.02,
+     0.79,
+     0.06
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "CUNG TRĂNG TAY NHƯ 0% c",
+    "from": 8.0,
+    "to": 36.7,
+    "frames": 3,
+    "share": 0.03,
+    "box": [
+     0.16,
+     0.76,
+     0.96,
+     0.81
+    ],
+    "on_card": false,
+    "is_speech": false
+   }
+  ]
+ },
+ {
+  "video": "video.mp4",
+  "key": "66f3c28341e309e0",
+  "content": "camera",
+  "duration": 15.021,
+  "frames": 15,
+  "ocr_s": 1.1,
+  "strings": 2,
+  "lasting": 1,
+  "lasting_missed": 1,
+  "missed_not_speech": 1,
+  "half_or_more_missed": 1,
+  "shots": 1,
+  "cuts": 1,
+  "examples": [
+   {
+    "text": "STUDIO",
+    "from": 0.5,
+    "to": 13.5,
+    "frames": 13,
+    "share": 0.87,
+    "box": [
+     0.78,
+     0.09,
+     0.82,
+     0.39
+    ],
+    "on_card": false,
+    "is_speech": false
+   }
+  ]
+ },
+ {
+  "video": "video.mp4",
+  "key": "2f128a2426c870cd",
+  "content": "screen",
+  "duration": 160.149333,
+  "frames": 200,
+  "ocr_s": 16.2,
+  "strings": 86,
+  "lasting": 20,
+  "lasting_missed": 15,
+  "missed_not_speech": 15,
+  "half_or_more_missed": 1,
+  "shots": 1,
+  "cuts": 1,
+  "examples": [
+   {
+    "text": "Techny Lilibili",
+    "from": 5.2,
+    "to": 159.5,
+    "frames": 117,
+    "share": 0.58,
+    "box": [
+     0.02,
+     0.03,
+     0.19,
+     0.09
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "48 × 48",
+    "from": 37.4,
+    "to": 77.1,
+    "frames": 38,
+    "share": 0.19,
+    "box": [
+     0.55,
+     0.91,
+     0.66,
+     0.95
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "200×200",
+    "from": 54.1,
+    "to": 75.5,
+    "frames": 27,
+    "share": 0.14,
+    "box": [
+     0.52,
+     0.9,
+     0.59,
+     0.93
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Techen Lilibili",
+    "from": 14.3,
+    "to": 139.6,
+    "frames": 20,
+    "share": 0.1,
+    "box": [
+     -0.0,
+     0.03,
+     0.19,
+     0.1
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "800x800",
+    "from": 56.8,
+    "to": 75.5,
+    "frames": 18,
+    "share": 0.09,
+    "box": [
+     0.64,
+     0.9,
+     0.71,
+     0.93
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Techat bili bili",
+    "from": 4.4,
+    "to": 159.9,
+    "frames": 11,
+    "share": 0.06,
+    "box": [
+     0.02,
+     0.03,
+     0.19,
+     0.1
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Techny bilibili",
+    "from": 9.7,
+    "to": 141.0,
+    "frames": 8,
+    "share": 0.04,
+    "box": [
+     0.02,
+     0.03,
+     0.19,
+     0.09
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "RUNS",
+    "from": 38.1,
+    "to": 47.2,
+    "frames": 8,
+    "share": 0.04,
+    "box": [
+     0.27,
+     0.87,
+     0.31,
+     0.9
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "GRID",
+    "from": 38.1,
+    "to": 47.2,
+    "frames": 8,
+    "share": 0.04,
+    "box": [
+     0.55,
+     0.87,
+     0.6,
+     0.9
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Techany bilibili",
+    "from": 1.6,
+    "to": 134.2,
+    "frames": 6,
+    "share": 0.03,
+    "box": [
+     0.02,
+     0.03,
+     0.19,
+     0.09
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Techna Lilibili",
+    "from": 8.6,
+    "to": 153.5,
+    "frames": 6,
+    "share": 0.03,
+    "box": [
+     0.01,
+     0.03,
+     0.19,
+     0.1
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Techany Lilibili",
+    "from": 0.7,
+    "to": 136.7,
+    "frames": 5,
+    "share": 0.03,
+    "box": [
+     0.02,
+     0.03,
+     0.19,
+     0.09
+    ],
+    "on_card": false,
+    "is_speech": false
+   }
+  ]
+ },
+ {
+  "video": "reel_en",
+  "key": "d3e95418b1a1b3a5",
+  "content": "camera",
+  "duration": 26.333333,
+  "frames": 26,
+  "ocr_s": 3.0,
+  "strings": 25,
+  "lasting": 0,
+  "lasting_missed": 0,
+  "missed_not_speech": 0,
+  "half_or_more_missed": 0,
+  "shots": 1,
+  "cuts": 2,
+  "examples": []
+ },
+ {
+  "video": "python_100s",
+  "key": "28f47f13250fa317",
+  "content": "screen",
+  "duration": 143.009533,
+  "frames": 246,
+  "ocr_s": 21.9,
+  "strings": 392,
+  "lasting": 26,
+  "lasting_missed": 7,
+  "missed_not_speech": 7,
+  "half_or_more_missed": 0,
+  "shots": 19,
+  "cuts": 30,
+  "examples": [
+   {
+    "text": "def have_fun() :",
+    "from": 94.9,
+    "to": 108.1,
+    "frames": 23,
+    "share": 0.09,
+    "box": [
+     0.1,
+     0.27,
+     0.36,
+     0.34
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "print (i)",
+    "from": 100.0,
+    "to": 108.1,
+    "frames": 15,
+    "share": 0.06,
+    "box": [
+     0.23,
+     0.42,
+     0.38,
+     0.48
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "hello.py hello.py\\ have_fun",
+    "from": 100.8,
+    "to": 108.1,
+    "frames": 13,
+    "share": 0.05,
+    "box": [
+     0.09,
+     0.04,
+     0.45,
+     0.11
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "Transparency",
+    "from": 11.0,
+    "to": 16.5,
+    "frames": 12,
+    "share": 0.05,
+    "box": [
+     0.69,
+     0.55,
+     0.79,
+     0.58
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "3. JAVA",
+    "from": 5.7,
+    "to": 10.7,
+    "frames": 11,
+    "share": 0.04,
+    "box": [
+     0.16,
+     0.51,
+     0.24,
+     0.56
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "››› import this",
+    "from": 39.8,
+    "to": 45.2,
+    "frames": 8,
+    "share": 0.03,
+    "box": [
+     0.04,
+     0.19,
+     0.31,
+     0.24
+    ],
+    "on_card": false,
+    "is_speech": false
+   },
+   {
+    "text": "EXPLORER",
+    "from": 58.4,
+    "to": 64.3,
+    "frames": 8,
+    "share": 0.03,
+    "box": [
+     0.03,
+     0.05,
+     0.13,
+     0.08
+    ],
+    "on_card": false,
+    "is_speech": false
+   }
+  ]
+ },
+ {
+  "video": "tears_of_steel",
+  "key": "3b5fd29ca2c9be19",
+  "content": "camera",
+  "duration": 240.0,
+  "frames": 274,
+  "ocr_s": 14.5,
+  "strings": 25,
+  "lasting": 0,
+  "lasting_missed": 0,
+  "missed_not_speech": 0,
+  "half_or_more_missed": 0,
+  "shots": 45,
+  "cuts": 50,
+  "examples": []
+ },
+ {
+  "video": "big_buck_bunny",
+  "key": "d88e60be78e869df",
+  "content": "camera",
+  "duration": 180.0,
+  "frames": 198,
+  "ocr_s": 9.8,
+  "strings": 3,
+  "lasting": 0,
+  "lasting_missed": 0,
+  "missed_not_speech": 0,
+  "half_or_more_missed": 0,
+  "shots": 27,
+  "cuts": 35,
+  "examples": []
+ }
+]

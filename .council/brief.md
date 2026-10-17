@@ -1,68 +1,57 @@
-# How might we extend mediasift so an agent that cannot watch or hear gets what it needs from media?
+# What could an agent that cannot watch or hear still not perceive in a video, and how might mediasift give it that sense?
 
 ## What mediasift is today
 
-`mediasift` (renamed from framesift on 2026-10-17) is a local CLI. `mediasift see VIDEO|URL` writes a
-short timeline **card** (markdown) plus ~1 fps frame sheets, for an AI agent (Claude Code) that reads
-text and still images but cannot watch video or hear audio. The card holds: picture events (changes,
-cuts with shot letters, camera moves, on-screen text by OCR), sounds (AudioSet classes from the CED-small
-tagger, counted short sounds, hedged names), speaker letters, speech with times (local ASR on the Mac,
-or over ssh on a GPU box), and since today music mood and genre words. `look VIDEO A-B` zooms into a
-span, `fix` logs an agent's correction of a sound name, an older `index` / `find` does embedding
-search over frames and speech. A Claude Code skill and a prompt hook tell agents to run it.
+`mediasift` is a local CLI. `mediasift see VIDEO|URL` writes a short timeline **card** (markdown) plus
+~1 fps frame sheets for an AI agent (Claude Code) that reads text and looks at still images, but cannot
+watch video or hear audio. The agent reads the card first, looks at frame sheets, and can zoom with
+`mediasift look VIDEO A-B` (frames over a span plus a drawing of the sound).
 
-Read these (absolute paths) before you start:
-- AGENTS.md - layout and rules for changing it
-- skills/mediasift/SKILL.md - how agents use it
-- .okf/index.md and decisions/ - every design decision, measurement and rejected idea
-- .okf/decisions/music-and-voice-mood.md - today's mood work
-- ~/.cache/mediasift/see/3b5fd29ca2c9be19/card.md - a real card (Tears of Steel, 4 min film clip)
+Senses the card has now: picture change events from a 32x18 grid of colour blocks (changes, blinks,
+motion, cuts with shot letters for repeated places, camera pans/tilts/scrolls, drawn-in overlays with
+lifetimes); on-screen text by Apple Vision OCR on changed regions; sounds as AudioSet classes from the
+CED-small tagger on 3 s windows (lasting sounds, counted short sounds with pitch words, hedged names,
+silences, bursts, music mood and genre words); sound-picture sync (a sound within 150 ms of a picture
+change); speaker letters with gender from voice embeddings; speech with times (local ASR or over ssh on
+a GPU box, or the site's subtitles). Everything the card says has been measured on a bench.
 
-## Who uses it, and for what (from real logs, not guesses)
+Read these (repo-relative to `~/workspace/tools/mediasift/`) before you start:
+- `AGENTS.md` - rules for changing it
+- `skills/mediasift/SKILL.md` - how agents use it
+- `.okf/index.md` and `.okf/decisions/` - every decision, measurement and rejected idea
+- `.okf/decisions/roadmap.md` - work already planned (do not re-propose it)
+- `~/.cache/mediasift/see/3b5fd29ca2c9be19/card.md` - a real card (Tears of Steel, 4 min)
 
-One person (the owner) and the agents working for them. Real use since 2026-09-17, from session logs:
-- YouTube talks: transcript, translate to Vietnamese, summarise **with timestamps**, then **link several
-  videos together** (asked many times; a sibling tool `~/workspace/tools/anydub` does download + dub).
-- A TikTok: "check the content from this, then web search to verify the information" (fact-check).
-- TikToks / Facebook reels: "listen to and watch this" (short vertical social video, Vietnamese and English).
-- Dubbing YouTube into Vietnamese where "the English is too quiet ... and the background sound is lost".
-- A Facebook reel turned into a shared script with credit to its author.
-- A screen recording of an app crash for a bug report.
-- Of 737 cached cards, ~730 are bench runs; real ones are 26 s - 2:44 phone videos, a 15 s YouTube
-  clip, a 2:40 screen video, and long talks (47 min) and podcasts (1h45).
+## Evidence about where the card is not enough
 
-## What was measured today
-
-- Music mood from CED's own AudioSet classes: right 88% when stated (score >= 0.10, 35% of clips),
-  genre 83% (>= 0.15), on 742 held-out AudioSet clips. Free: the tagger already runs.
-- Open-vocabulary music words ("epic", "heroic") from CLAP or an MTG-Jamendo head scored lower than
-  CED's plain words. No test set exists for "epic" on real film scores.
-- Speech emotion labels: emotion2vec+ 88% on RAVDESS (in its training lineage) but 45% on newer held-out
-  speech, still ~58% right when it says it is 95% sure; SenseVoice said NEUTRAL for everything; cheap
-  pitch/loudness probes were near chance across datasets. **Per-line emotion labels were rejected.**
-- The card already names laughter, shouting, crying, screaming and whispering as sounds.
-
-## Ideas already on the table (build on them or avoid them)
-
-From the owner's assistant, not yet built: (1) put vocal sounds on the speech line they overlap
-(`say [laughing] "..."`); (2) speaker-relative prosody ("louder and higher than A's usual"); (3) let
-`fix` take mood corrections so real use grows a test set; (4) a music build/peak finder; (5) an
-on-demand audio LLM on the GPU box for one span. The owner also floated a bigger name and scope
-("media-understanding"); the rename to mediasift is done.
+- Real use (session logs since 2026-09-17): summarise and link talks with timestamps; fact-check a
+  TikTok; "listen to and watch" Vietnamese and English reels; re-voice YouTube into Vietnamese keeping
+  the background; turn a reel into a credited script; a bug-repro screen recording.
+- When the card is not enough, the agent runs `look`. 61 recorded zooms: median span **1.4 s**
+  (brief moments); 20 of them on one fast-cut code screencast, where dense code and small text change
+  quickly.
+- The real-footage bench (6 videos, 48 questions) asks only picture-timing questions: sequence,
+  motion, deixis ("what is on screen when X is said"), count, duration. Current score 32/32 on 4
+  landscape videos, 15/16 on phone videos. The one shared miss: timing a gesture to a spoken phrase.
+  Questions about what the card cannot sense are absent from the bench, so it cannot see those gaps.
+- Already measured and rejected: per-line speech emotion labels (45% right on held-out speech),
+  open-vocabulary music words from CLAP (below the tagger's own classes), cheap pitch/loudness
+  emotion probes (near chance across datasets). Do not re-propose these unless you change what is
+  measured.
+- The audio is decoded to 16 kHz mono before any sensing.
 
 ## Hard constraints (from the owner)
 
-- **Lightweight**: must not take much CPU/GPU on heavy runs. Hardware: Apple M1 Pro 16 GB (MLX speech
-  peaks at 3.3 GB already) and an RTX 3060 12 GB Ubuntu box reachable by ssh (sometimes booted into Windows).
-- **Judge designs by what they cost after they ship**: running cost ($/month, quotas, per-turn tokens)
-  and things that break or need watching weigh most; build effort weighs least.
-- The card is read by an agent that pays per token: add a line only when a measured question needs it.
-- Crash rather than corrupt: never drop speech or sound silently. Pin every model.
-- Every change is proven with a number on a bench (synthetic clips with scripted answers, real-footage
-  questions, a 200-clip sound bench, a voice bench). A feature without a judge cannot earn a card line.
-- Vietnamese and English both matter. Local-first; no paid cloud API in the default path.
+- Lightweight: must not take much CPU/GPU on heavy runs. Apple M1 Pro 16 GB (MLX speech peaks at
+  3.3 GB) and an RTX 3060 12 GB Ubuntu box over ssh that is sometimes booted into Windows.
+- Judge designs by what they cost after they ship: running cost ($/month, quotas, per-turn tokens) and
+  things that break or need watching weigh most; build effort weighs least.
+- The card is read by an agent that pays per token: a line earns its place only when a measured
+  question needs it. Every sense needs a judge (a bench with answers) before it reaches the card.
+- Crash rather than corrupt; never drop speech or sound silently; pin every model; local-first, no paid
+  cloud API in the default path. Vietnamese and English both matter.
 
 ## What a great outcome looks like
 
-Extensions that make the owner's real jobs (verify, summarise and link with citations, re-voice,
-understand short social video, bug repro) clearly better, cheap to run, each with a way to prove it works.
+New senses, or new ways to deliver one, that let the agent answer questions about a video it cannot
+answer today, each cheap to run and each with a way to prove it works.

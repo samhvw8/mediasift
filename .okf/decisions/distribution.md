@@ -5,7 +5,7 @@ description: mediasift ships as a Python package installed from GitHub (uv or mi
 tags: [install, distribution, plugin, skill]
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-17T13:30:00Z"
+  at: "2026-10-17T16:00:00Z"
 resource: .claude-plugin/marketplace.json
 sources:
   - id: mise-pypi
@@ -31,6 +31,8 @@ mediasift is a Python package with no prebuilt binaries, so it installs from the
 
 mise's `github:` backend needs release binaries, so it does not apply to mediasift. There is no PyPI
 release; installing from the repository keeps one source of truth.
+
+**Two installs on one PATH.** A global mise entry (`"pipx:samhvw8/mediasift" = "latest"`) and a developer's editable `uv tool install -e .` can coexist. mise's shim comes first on PATH, so `mediasift` runs the last *pushed* commit while `~/.local/bin/mediasift` runs the checkout; the prompt hook in a profile may call either. Keep one, or remember the shim lags until `mise install -f` (checked 2026-10-17).
 
 # Agent skill
 

@@ -1,0 +1,36 @@
+{
+  "scores": {
+    "C01": {"novelty": 7, "value": 6, "feasibility": 6, "specificity": 8, "emergence": 8, "off_brief": false},
+    "C02": {"novelty": 8, "value": 6, "feasibility": 5, "specificity": 7, "emergence": 8, "off_brief": false},
+    "C03": {"novelty": 9, "value": 8, "feasibility": 7, "specificity": 9, "emergence": 7, "off_brief": false},
+    "C04": {"novelty": 6, "value": 6, "feasibility": 8, "specificity": 8, "emergence": 5, "off_brief": false},
+    "C05": {"novelty": 6, "value": 7, "feasibility": 9, "specificity": 9, "emergence": 6, "off_brief": false},
+    "C06": {"novelty": 7, "value": 7, "feasibility": 7, "specificity": 8, "emergence": 6, "off_brief": false},
+    "C07": {"novelty": 6, "value": 8, "feasibility": 9, "specificity": 9, "emergence": 4, "off_brief": false},
+    "C08": {"novelty": 5, "value": 6, "feasibility": 7, "specificity": 7, "emergence": 6, "off_brief": false},
+    "C09": {"novelty": 7, "value": 8, "feasibility": 7, "specificity": 8, "emergence": 6, "off_brief": false},
+    "C10": {"novelty": 7, "value": 5, "feasibility": 6, "specificity": 7, "emergence": 6, "off_brief": false},
+    "C11": {"novelty": 7, "value": 7, "feasibility": 7, "specificity": 7, "emergence": 6, "off_brief": false},
+    "C12": {"novelty": 5, "value": 6, "feasibility": 8, "specificity": 7, "emergence": 5, "off_brief": false},
+    "C13": {"novelty": 8, "value": 4, "feasibility": 6, "specificity": 8, "emergence": 6, "off_brief": false},
+    "C14": {"novelty": 5, "value": 6, "feasibility": 6, "specificity": 9, "emergence": 2, "off_brief": false},
+    "C15": {"novelty": 7, "value": 4, "feasibility": 5, "specificity": 8, "emergence": 6, "off_brief": false}
+  },
+  "notes": {
+    "C01": "Two-witness seam detector with a synthetic tamper bench gives fact-check and crashed-demo answers; hum/ENF witness is shaky on phone reels.",
+    "C02": "Fresh 'recorded vs laid on vs generated' verdict per voice, but leans on native-rate/stereo reads the 16 kHz mono pipeline does not keep.",
+    "C03": "Inverting forensics into a pass/fail spec for the owner's real Vietnamese re-voice job, with the original as a free answer key, is the sharpest idea here.",
+    "C04": "Speaker-relative pace and pause deviations reuse data already computed and avoid the rejected emotion labels; useful but incremental.",
+    "C05": "Word-anchored deixis window targets the bench's only shared miss and starts with a cheap premise check; low novelty, high payoff per cost.",
+    "C06": "Pointer/click ledger plus run-to-run diff serves bug repros, and the agent recording its own UI work makes an exact key.",
+    "C07": "Caret/pointer-stop crops fit the 20 fast-cut code zooms and first-frame OCR fixes a real blind spot for static claim banners; cheap and directly evidenced.",
+    "C08": "A card that survives truncation is a real delivery fix; segment log and trim ladder are standard radio ideas, and SponsorBlock adds a network dependency.",
+    "C09": "Checking the agent's own media deliverables against known intent targets the owner's actual pain with exact keys and a canary judge.",
+    "C10": "Repeat/copy detection and clip-to-source edit lists are solid, but few logged use cases ask for them.",
+    "C11": "A 'Blind:' ledger stops a silent card reading as 'nothing there', and an ablation judge makes it testable; the provenance header adds per-card tokens.",
+    "C12": "A sound process for choosing senses from real corrections, but it is meta-method more than a new sense.",
+    "C13": "Clever 'absence of mess' signal for assembled dialogue, but narrow demand in the logged uses.",
+    "C14": "Concrete, grounded in a real owner moment, but open-vocabulary image matching is close to the CLAP path already rejected for music.",
+    "C15": "Foley-style contact-sound binding is inventive but needs stereo and an unbuilt contact event for a niche question."
+  }
+}
