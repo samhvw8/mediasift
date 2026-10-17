@@ -26,7 +26,7 @@ You need `ffmpeg` and `ffprobe` on PATH. `mise run samples` fetches the test vid
 | `src/mediasift/sound.py` | CED-small sound tags (Core ML or sherpa-onnx), short-sound counting, voices |
 | `src/mediasift/asr.py` | speech backends behind one `transcribe()`; `pick()` chooses per machine and language; `remote()` for `--on HOST` |
 | `src/mediasift/coreml.py` | Core ML through pyobjc: compile, load, predict inside an autorelease pool |
-| `src/mediasift/ocr.py` | Apple Vision OCR (macOS only) |
+| `src/mediasift/ocr.py` | Apple Vision OCR on macOS, falling back to Indra OCR (ONNX Runtime CPU) on Linux |
 | `src/mediasift/decode.py` | every ffmpeg / ffprobe call |
 | `src/mediasift/polite.py` | `nice 10` and capped worker pools |
 | `src/mediasift/cli.py` | argument parsing for every subcommand |
@@ -50,9 +50,9 @@ You need `ffmpeg` and `ffprobe` on PATH. `mise run samples` fetches the test vid
 - **Crash rather than corrupt.** A missing model or a failed backend raises or logs one clear line
   on stderr. Never drop speech or sounds silently.
 - **Pin every model.** Downloads use a fixed revision or SHA (see `QUAN_REV` in `asr.py`,
-  `CED_REV` in `sound.py`). Models go into `~/.cache/mediasift/models/` (`MEDIASIFT_CACHE`).
+  `CED_REV` in `sound.py`, `INDRA_REV` in `ocr.py`). Models go into `~/.cache/mediasift/models/` (`MEDIASIFT_CACHE`).
 - **Keep platform guards.** MLX, Core ML and Apple Vision exist only on macOS (Apple Silicon for MLX
-  and Core ML). Linux falls back to faster-whisper, the CPU tagger and no OCR. Tests for one platform
+  and Core ML). Linux falls back to faster-whisper, the CPU tagger and Indra OCR. Tests for one platform
   skip on the other.
 - **Mind memory.** MLX speech peaks at about 3.3 GB, so it waits for the picture pass. Core ML calls
   go through `coreml.predict`, which drains an autorelease pool. Without it, a 47-minute file grew to

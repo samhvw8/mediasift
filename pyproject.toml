@@ -10,6 +10,7 @@ dependencies = [
     "pillow>=10",
     "pyobjc-framework-quartz>=12.2.2 ; sys_platform == 'darwin'",
     "pyobjc-framework-vision>=12.2.2 ; sys_platform == 'darwin'",
+    "indra-ocr>=0.3.2",
     "sherpa-onnx>=1.13.8",
     "sherpa-onnx-core>=1.13.8",
     # Speech is part of sensing: faster-whisper everywhere, MLX backends on Apple Silicon.
