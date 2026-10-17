@@ -1,4 +1,4 @@
-"""Search an indexed analysis: the agent asks, framesift answers with one grid.
+"""Search an indexed analysis: the agent asks, mediasift answers with one grid.
 
   find  rank frames by meaning against a text query (or against the frame at
         a moment, `--like T`), keep the top k that are not near-duplicates,
@@ -45,7 +45,7 @@ def load(out_dir: str) -> Index:
     out = Path(out_dir)
     f = out / "vectors.npz"
     if not f.exists():
-        raise SystemExit(f"{f} not found: run `framesift index {out}` first")
+        raise SystemExit(f"{f} not found: run `mediasift index {out}` first")
     z = np.load(f)
     return Index(out, json.loads((out / "manifest.json").read_text()), json.loads(str(z["meta"])),
                  z["frame_t"], z["frame_file"], z["frame_vec"].astype(np.float32),
@@ -60,7 +60,7 @@ def check_identity(ix: Index, ident: dict) -> None:
     for k in ("model", "dim"):
         if ix.meta.get(k) != ident.get(k):
             raise SystemExit(f"vectors.npz was built with {k}={ix.meta.get(k)!r} but the embedder has "
-                             f"{ident.get(k)!r}: re-run `framesift index {ix.out}`")
+                             f"{ident.get(k)!r}: re-run `mediasift index {ix.out}`")
 
 
 def fmt(t: float) -> str:

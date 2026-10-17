@@ -1,4 +1,4 @@
-"""Retrieval check for `framesift find`, no LLM in the loop.
+"""Retrieval check for `mediasift find`, no LLM in the loop.
 
 For every question in bench/qa/<video>/key.json whose answer is visible
 ("image" or "both"), run find with the question text and count a hit when one
@@ -22,8 +22,8 @@ from pathlib import Path
 
 import numpy as np
 
-from framesift.embed import Embedder
-from framesift.query import check_identity, frame_scores, load, select
+from mediasift.embed import Embedder
+from mediasift.query import check_identity, frame_scores, load, select
 
 KS = (1, 3, 6)
 PAD = 1.0

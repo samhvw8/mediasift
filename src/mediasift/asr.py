@@ -6,7 +6,7 @@
 | NVIDIA CUDA    | faster-whisper, batched on GPU  | (same)            | faster-whisper, batched on GPU |
 | other          | faster-whisper on CPU           | (same)            | faster-whisper on CPU          |
 
-Every backend takes the mono 16 kHz int16 buffer framesift already decoded,
+Every backend takes the mono 16 kHz int16 buffer mediasift already decoded,
 so ffmpeg stays the only decoder.
 """
 
@@ -58,7 +58,7 @@ class AsrResult:
 
 
 def _log(msg: str) -> None:
-    print(f"framesift: {msg}", file=sys.stderr)
+    print(f"mediasift: {msg}", file=sys.stderr)
 
 
 def _has(module: str) -> bool:
@@ -115,7 +115,7 @@ def pick(requested: str, language: str | None) -> str:
         if _has("mlx_whisper"):
             return "mlx-whisper"
     if not _has("faster_whisper"):
-        raise SystemExit("--asr needs a backend: `uv tool install 'framesift[asr]'` (and '[mlx]' on Apple Silicon)")
+        raise SystemExit("--asr needs a backend: `uv tool install 'mediasift[asr]'` (and '[mlx]' on Apple Silicon)")
     return "faster-whisper"
 
 
@@ -300,7 +300,7 @@ def words_to_cues(words: list[tuple[float, float, str]], max_len: float = 8.0, g
 
 def remote(pcm: np.ndarray, host: str, language: str | None = None, connect_s: int = 3) -> AsrResult | None:
     """Transcribe on another machine (a GPU box) over ssh: the audio goes as FLAC on stdin
-    (about 30 MB per hour), `framesift asr -` runs there, cues come back as JSON. Returns None
+    (about 30 MB per hour), `mediasift asr -` runs there, cues come back as JSON. Returns None
     when the host does not answer within `connect_s`, so the caller can fall back to local.
     The Mac then spends no GPU or memory on speech at all."""
     import json
@@ -314,8 +314,8 @@ def remote(pcm: np.ndarray, host: str, language: str | None = None, connect_s: i
     flac = subprocess.run(["ffmpeg", "-v", "error", "-f", "s16le", "-ar", str(SR), "-ac", "1", "-i", "-",
                            "-c:a", "flac", "-f", "flac", "-"], input=pcm.astype(np.int16).tobytes(),
                           capture_output=True, check=True).stdout
-    remote_cmd = "framesift asr -" + (f" --lang {language}" if language else "")
-    cmd = ["framesift", "asr", "-"] + (["--lang", language] if language else []) if host == "local" else \
+    remote_cmd = "mediasift asr -" + (f" --lang {language}" if language else "")
+    cmd = ["mediasift", "asr", "-"] + (["--lang", language] if language else []) if host == "local" else \
         ["ssh", "-o", "BatchMode=yes", "-o", f"ConnectTimeout={connect_s}", "-o", "ServerAliveInterval=15",
          "-o", "ServerAliveCountMax=4", host, f"bash -lc '{remote_cmd}'"]
     t0 = time.perf_counter()
@@ -337,7 +337,7 @@ def remote(pcm: np.ndarray, host: str, language: str | None = None, connect_s: i
 
 
 def serve_stdin(language: str | None) -> None:
-    """`framesift asr -`: audio in any ffmpeg-readable format on stdin, cues as JSON on stdout."""
+    """`mediasift asr -`: audio in any ffmpeg-readable format on stdin, cues as JSON on stdout."""
     import json
     import subprocess
     data = sys.stdin.buffer.read()

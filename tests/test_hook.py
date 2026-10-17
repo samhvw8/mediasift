@@ -1,7 +1,7 @@
 """The prompt hook names real media files and video URLs, and stays silent otherwise."""
 from pathlib import Path
 
-from framesift.hook import candidates
+from mediasift.hook import candidates
 
 ROOT = Path(__file__).resolve().parent.parent
 

@@ -4,7 +4,7 @@ import subprocess
 
 import pytest
 
-from framesift import decode, events
+from mediasift import decode, events
 
 
 def ff(*args):
@@ -47,7 +47,7 @@ def test_still_picture_has_no_move(clips):
 
 
 def test_card_says_which_way_the_camera_moved(clips, tmp_path):
-    from framesift import see
+    from mediasift import see
     s, _ = see.sense(clips / "pan_right.mp4", tmp_path, asr_mode="off")
     s.content = "camera"
     card = see.card(s, [], {}, "pan_right.mp4")
@@ -79,7 +79,7 @@ def test_shots_that_return_get_the_same_letter(tmp_path):
 
 
 def test_card_cut_line_carries_shot_letters(tmp_path):
-    from framesift import see
+    from mediasift import see
     for name, src in (("a", "mandelbrot=s=640x360"), ("b", "testsrc2=s=640x360")):
         ff("-f", "lavfi", "-i", src, "-frames:v", "1", str(tmp_path / f"{name}.png"))
     lst = "".join(f"file '{tmp_path / (x + '.png')}'\nduration 2\n" for x in "aba") + f"file '{tmp_path / 'a.png'}'\n"
@@ -149,7 +149,7 @@ def test_an_overlay_replaced_together_with_what_was_under_it_still_gets_a_lifeti
 
 def test_a_single_cut_back_to_the_opening_place_reads_plainly():
     """The phone reel's one cut is a punch-in on the same scene: 'CUT: new shot A' read as a contradiction."""
-    from framesift import see
+    from mediasift import see
     s = see.Sensed("x.mp4", 20.0, 1080, 1920, 30, 15, "camera")
     s.events = [events.Event(1, "cut", 4.3, 4.3, 4.2, 4.4, 4.4, events.Region(0, 0, 1, 1, 1.0))]
     s.shots = [(0.0, "A"), (4.3, "A")]

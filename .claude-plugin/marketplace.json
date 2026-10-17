@@ -1,12 +1,12 @@
 {
-  "name": "framesift",
+  "name": "mediasift",
   "owner": { "name": "samhvw8", "url": "https://github.com/samhvw8" },
-  "description": "framesift: a video and sound sensor for agents.",
+  "description": "mediasift: a video and sound sensor for agents.",
   "plugins": [
     {
-      "name": "framesift",
+      "name": "mediasift",
       "source": "./",
-      "description": "The framesift skill plus a prompt hook for videos named in a prompt. Install the framesift CLI first."
+      "description": "The mediasift skill plus a prompt hook for videos named in a prompt. Install the mediasift CLI first."
     }
   ]
 }

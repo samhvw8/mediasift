@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 from evaluate import coverage, nearest
-from framesift import decode, visual
+from mediasift import decode, visual
 
 
 def main() -> None:
@@ -29,7 +29,7 @@ def main() -> None:
         uni = [nearest(tr, (i + 0.5) * m["duration"] / n) for i in range(n)]
         segs = m["segments"]
         rows.append({
-            "video": Path(video).stem, "framesift": m.get("framesift"), "segments": len(segs),
+            "video": Path(video).stem, "mediasift": m.get("mediasift"), "segments": len(segs),
             "hard_cuts": m["stats"]["hard_cuts"], "keyframes": n,
             "keyframe_refs": sum(1 for k in kfs if "same_as" in k),
             "segments_with_image": sum(1 for s in segs if s["keyframes"]),

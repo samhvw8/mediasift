@@ -1,4 +1,4 @@
-"""`framesift see VIDEO`: one command, no flags, cached. The video becomes a card.
+"""`mediasift see VIDEO`: one command, no flags, cached. The video becomes a card.
 
 The card is a timeline of what happened in picture and sound, written for a
 reader who cannot watch or hear: events with where, how long and how many
@@ -37,7 +37,7 @@ URL = re.compile(r"^https?://")
 
 
 def log(msg: str) -> None:
-    print(f"framesift: {msg}", file=sys.stderr)
+    print(f"mediasift: {msg}", file=sys.stderr)
 
 
 def font(size: int) -> ImageFont.ImageFont:
@@ -203,7 +203,7 @@ def _speech(pcm, tags, talk: float, subs: Path | None, asr_mode: str, early) -> 
     elif asr_mode != "off" and (talk >= 2.0 or asr_mode == "on"):
         import os
         from . import asr
-        host = os.environ.get("FRAMESIFT_ON")
+        host = os.environ.get("MEDIASIFT_ON")
         try:
             r = early[2].result() if early and early[2] else asr.remote(pcm, host) if host else None
         except (RuntimeError, OSError, subprocess.TimeoutExpired) as e:
@@ -304,7 +304,7 @@ def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = Non
     # that holds little Mac memory - on a GPU box (the Mac only waits on ssh) or the Core ML backend.
     early, prep = None, None
     import os
-    host = os.environ.get("FRAMESIFT_ON")
+    host = os.environ.get("MEDIASIFT_ON")
     if info.has_audio and subs is None and asr_mode != "off":
         from concurrent.futures import ThreadPoolExecutor
         pool = ThreadPoolExecutor(1)
@@ -729,7 +729,7 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str) -> s
               *([f"- ev_NN.jpg rows show single events as [where | before | after] crops, for small detail"
                  f"{'' if s.content == 'camera' else '; each is labelled with its #id and time, and some brief ones have no line below'}."]
                 if refs else []),
-              f"- To zoom on any span: `framesift look \"{s.source}\" START-END` (frames + a strip of the sound). "
+              f"- To zoom on any span: `mediasift look \"{s.source}\" START-END` (frames + a strip of the sound). "
               "Use it for a gesture, a face or small text at one moment: flow tiles are ~1 small frame a second.",
               "- Words like 'small red area at bottom' come from pixel statistics; open an image before relying on them.", ""]
     rows: list[tuple[float, str]] = []
@@ -852,7 +852,7 @@ def see(src: str, force: bool = False, asr_mode: str = "auto") -> Path:
     flows = flow_sheets(str(path), s, g, out)
     refs = event_sheets(str(path), s, out)
     s.timings["images"] = round(time.perf_counter() - t, 1)
-    (out / "sensed.json").write_text(json.dumps({"framesift": __version__, "card": CARD_VERSION, **asdict(s)},
+    (out / "sensed.json").write_text(json.dumps({"mediasift": __version__, "card": CARD_VERSION, **asdict(s)},
                                                 indent=1, ensure_ascii=False, default=str))
     (out / "source.txt").write_text(str(path) + "\n")
     if s.speech:

@@ -1,7 +1,7 @@
 """Corrections to the card's sound names, and what they teach.
 
-An agent that checks a card line with `framesift look` and finds it wrong runs
-`framesift fix VIDEO TIME "what it is"`. Each fix goes to <cache>/feedback.jsonl with the
+An agent that checks a card line with `mediasift look` and finds it wrong runs
+`mediasift fix VIDEO TIME "what it is"`. Each fix goes to <cache>/feedback.jsonl with the
 tagger label the card showed there. A label corrected the same way at least MIN_FIXES times,
 by at least AGREE of its fixes, becomes a learned name: the card then shows both
 ("throat clearing (usually: cough)"), never silently replacing what the tagger heard.

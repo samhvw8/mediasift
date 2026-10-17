@@ -18,9 +18,9 @@ cosine 0.9999; frame vectors 0.97 because the image resize differs, with the
 same retrieval (hit@3 0.87 on 46 visual questions). Image budget 70 tokens:
 the 280-token default is ~6x slower for a 0.955 pairwise-similarity match.
 
-FRAMESIFT_LLAMA_SERVER  local llama-server binary (default: the llama.cpp that framesift's
+MEDIASIFT_LLAMA_SERVER  local llama-server binary (default: the llama.cpp that mediasift's
                         mise.toml pins, found from any folder; then `llama-server` on PATH)
-FRAMESIFT_REMOTE_LLAMA_SERVER  the binary on an --on host (default: llama-server)
+MEDIASIFT_REMOTE_LLAMA_SERVER  the binary on an --on host (default: llama-server)
 """
 
 from __future__ import annotations
@@ -48,12 +48,12 @@ IMAGE_TOKENS = 70        # vision soft tokens per image: 70 | 140 | 280 | 560 | 
 QUERY = "task: search result | query: {}"
 DOCUMENT = "title: none | text: {}"
 CTX = 8192               # one batch; non-causal embedding needs each input inside one ubatch
-START_TIMEOUT_S = float(os.environ.get("FRAMESIFT_EMBED_START_TIMEOUT", "900"))  # first start downloads
+START_TIMEOUT_S = float(os.environ.get("MEDIASIFT_EMBED_START_TIMEOUT", "900"))  # first start downloads
 MIME = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp"}
 
 
 def log(msg: str) -> None:
-    print(f"framesift: {msg}", file=sys.stderr)
+    print(f"mediasift: {msg}", file=sys.stderr)
 
 
 def _llama_build(v: dict) -> int:
@@ -62,11 +62,11 @@ def _llama_build(v: dict) -> int:
 
 
 def local_binary() -> str:
-    """llama.cpp is pinned in framesift's own mise.toml, not installed globally,
+    """llama.cpp is pinned in mediasift's own mise.toml, not installed globally,
     so its mise shim works only inside the repo. Ask mise for the install
     itself, which works from any folder."""
-    if os.environ.get("FRAMESIFT_LLAMA_SERVER"):
-        return os.environ["FRAMESIFT_LLAMA_SERVER"]
+    if os.environ.get("MEDIASIFT_LLAMA_SERVER"):
+        return os.environ["MEDIASIFT_LLAMA_SERVER"]
     try:
         r = subprocess.run(["mise", "ls", "--installed", "--json", "github:ggml-org/llama.cpp"],
                            capture_output=True, text=True, timeout=10)
@@ -80,8 +80,8 @@ def local_binary() -> str:
     found = shutil.which("llama-server")
     if found and "/mise/shims/" not in found:  # a shim outside the repo has no version to run
         return found
-    raise SystemExit("framesift needs llama.cpp's llama-server for index/find: run `mise install` in the "
-                     "framesift repo (it pins llama.cpp), or set FRAMESIFT_LLAMA_SERVER")
+    raise SystemExit("mediasift needs llama.cpp's llama-server for index/find: run `mise install` in the "
+                     "mediasift repo (it pins llama.cpp), or set MEDIASIFT_LLAMA_SERVER")
 
 
 class _UnixHTTP(http.client.HTTPConnection):
@@ -106,7 +106,7 @@ class Embedder:
 
     def __init__(self, vision: bool, host: str | None = None):
         self.vision, self.host = vision, host
-        self.local_sock = str(Path(tempfile.gettempdir()) / f"framesift-eg2-{uuid.uuid4().hex[:12]}.sock")
+        self.local_sock = str(Path(tempfile.gettempdir()) / f"mediasift-eg2-{uuid.uuid4().hex[:12]}.sock")
         self.proc: subprocess.Popen | None = None
         self._identity: dict | None = None
 
@@ -134,7 +134,7 @@ class Embedder:
         if self.host:
             remote_sock = f"/tmp/{Path(self.local_sock).name}"
             self.logf = remote_sock[:-5] + ".log"
-            binary = os.environ.get("FRAMESIFT_REMOTE_LLAMA_SERVER", "llama-server")
+            binary = os.environ.get("MEDIASIFT_REMOTE_LLAMA_SERVER", "llama-server")
             cmd = ["ssh", "-o", "BatchMode=yes", "-o", "ExitOnForwardFailure=yes", "-o", "StreamLocalBindUnlink=yes",
                    "-o", "LogLevel=ERROR",
                    "-L", f"{self.local_sock}:{remote_sock}", self.host, self._script(binary, remote_sock, self.logf)]

@@ -5,8 +5,8 @@ import subprocess
 import numpy as np
 import pytest
 
-from framesift import decode, see
-from framesift.transcript import Cue
+from mediasift import decode, see
+from mediasift.transcript import Cue
 
 
 def ff(*args):
@@ -84,7 +84,7 @@ def test_camera_crops_are_all_referenced(portrait, tmp_path):
 
 def _sensed(d):
     import json
-    from framesift import events as ev
+    from mediasift import events as ev
     js = json.loads((d / "sensed.json").read_text())
     s = see.Sensed(**{k: js[k] for k in see.Sensed.__dataclass_fields__})
     s.events = [ev.Event(**{**e, "region": ev.Region(**e["region"])}) for e in js["events"]]
@@ -117,7 +117,7 @@ def test_one_voice_is_said_once_not_on_every_line(portrait):
 
 def test_platform_watermark_is_named_once_not_per_jump(portrait):
     """A TikTok watermark jumps corners; each jump read as new on-screen text on the real reels."""
-    from framesift import events as ev
+    from mediasift import events as ev
     s = _sensed(portrait)
     s.content = "camera"
     r = ev.Region(0.6, 0.8, 0.9, 0.9, 0.02)
@@ -134,7 +134,7 @@ def test_remote_asr_overlaps_the_picture_pass(tmp_path, monkeypatch):
     """The box does the speech work; the Mac only waits on ssh, so that wait runs beside the
     picture pass instead of after it (11.5 s of a 29 s card on a real 2:44 reel)."""
     import time
-    from framesift import asr
+    from mediasift import asr
     ff("-f", "lavfi", "-i", "testsrc2=s=320x180:d=4:r=15", "-f", "lavfi", "-i", "sine=f=300:d=4",
        "-shortest", "-pix_fmt", "yuv420p", str(tmp_path / "a.mp4"))
     marks = {}
@@ -152,7 +152,7 @@ def test_remote_asr_overlaps_the_picture_pass(tmp_path, monkeypatch):
         return r
     monkeypatch.setattr(asr, "remote", fake_remote)
     monkeypatch.setattr(see, "_visual", timed_visual)
-    monkeypatch.setenv("FRAMESIFT_ON", "fakehost")
+    monkeypatch.setenv("MEDIASIFT_ON", "fakehost")
     s, _ = see.sense(tmp_path / "a.mp4", tmp_path, asr_mode="on")
     assert [c["text"] for c in s.speech] == ["hello"]
     assert marks["asr_start"] < marks["visual_end"], "speech waited for the picture pass"
@@ -161,7 +161,7 @@ def test_remote_asr_overlaps_the_picture_pass(tmp_path, monkeypatch):
 def test_a_failing_box_falls_back_to_local_speech(tmp_path, monkeypatch):
     """Real case: ComfyUI held 10.6 of 12 GB on the GPU box, whisper hit CUDA out of memory,
     and the whole card crashed. A busy box must cost speed, not the card."""
-    from framesift import asr
+    from mediasift import asr
     ff("-f", "lavfi", "-i", "testsrc2=s=320x180:d=4:r=15", "-f", "lavfi", "-i", "sine=f=300:d=4",
        "-shortest", "-pix_fmt", "yuv420p", str(tmp_path / "a.mp4"))
 
@@ -170,7 +170,7 @@ def test_a_failing_box_falls_back_to_local_speech(tmp_path, monkeypatch):
 
     monkeypatch.setattr(asr, "remote", busy_box)
     monkeypatch.setattr(asr, "transcribe", lambda pcm, *a, **k: asr.AsrResult([Cue(0.5, 2.0, "local")], "local", "m", "en", 0.1))
-    monkeypatch.setenv("FRAMESIFT_ON", "fakehost")
+    monkeypatch.setenv("MEDIASIFT_ON", "fakehost")
     s, _ = see.sense(tmp_path / "a.mp4", tmp_path, asr_mode="on")
     assert [c["text"] for c in s.speech] == ["local"]
 
@@ -179,7 +179,7 @@ def test_core_ml_speech_runs_beside_the_picture_pass(tmp_path, monkeypatch):
     """Without a box, Vietnamese speech on Core ML (GPU, ~2 GB) starts during the picture pass:
     the 47 min talk went 120 s -> 79 s. MLX backends (3.3 GB) still wait, so memory does not stack."""
     import time
-    from framesift import asr
+    from mediasift import asr
     ff("-f", "lavfi", "-i", "testsrc2=s=320x180:d=4:r=15", "-f", "lavfi", "-i", "sine=f=300:d=4",
        "-shortest", "-pix_fmt", "yuv420p", str(tmp_path / "a.mp4"))
     marks = {}
@@ -195,7 +195,7 @@ def test_core_ml_speech_runs_beside_the_picture_pass(tmp_path, monkeypatch):
         time.sleep(3.0)
         marks["visual_end"] = time.perf_counter()
         return r
-    monkeypatch.delenv("FRAMESIFT_ON", raising=False)
+    monkeypatch.delenv("MEDIASIFT_ON", raising=False)
     monkeypatch.setattr(asr, "detect_language", lambda pcm: "vi")
     monkeypatch.setattr(asr, "pick", lambda req, lang: "quan-coreml" if lang == "vi" else "mlx-whisper")
     monkeypatch.setattr(asr, "transcribe", fake_transcribe)

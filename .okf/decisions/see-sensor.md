@@ -1,13 +1,13 @@
 ---
 type: Decision
-title: framesift see - a sensor card instead of a storyboard
+title: mediasift see - a sensor card instead of a storyboard
 description: Why v0.3 replaced change-pruned keyframes with one cached command that writes a timeline card (picture events, camera moves, shots, named and counted sounds, speakers, speech, on-screen text) plus ~1 fps frame sheets; the parts, the first measurements, and where each part's detail lives.
 tags: [see, sensor, decision]
 status: draft
 generated:
   by: claude-code/opus-5.5
   at: "2026-10-10T21:00:00Z"
-resource: src/framesift/see.py
+resource: src/mediasift/see.py
 sources:
   - id: council
     resource: .council/20261010-074112
@@ -30,8 +30,8 @@ awkward daily: an output folder, 2-3 flags, 63 s for a 2:23 video, and work that
 
 # Decision
 
-`framesift see VIDEO|URL` (also `framesift VIDEO`): no flags, cached by file content under
-`~/.cache/framesift/see/<key>/`, prints `card.md`. Frames carry the sequence (~1 fps sheets, the
+`mediasift see VIDEO|URL` (also `mediasift VIDEO`): no flags, cached by file content under
+`~/.cache/mediasift/see/<key>/`, prints `card.md`. Frames carry the sequence (~1 fps sheets, the
 strongest baseline); the card carries what frames cannot: brief events, exact counts, which way the
 camera went, which shots repeat, sound, sync, who speaks, small text. The shape came out of a
 five-lens council; every part was then kept or cut by measurement.[^council]
@@ -51,7 +51,7 @@ five-lens council; every part was then kept or cut by measurement.[^council]
 
 # First measurements
 
-| round | B: uniform 1 fps + transcript | C: framesift see |
+| round | B: uniform 1 fps + transcript | C: mediasift see |
 |---|---|---|
 | synthetic r1 (first build) | 22/26, 11 images | 24/26, 7 images |
 | synthetic r2 | - | 26/26, 7 images |

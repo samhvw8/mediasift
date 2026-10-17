@@ -1,20 +1,20 @@
 ---
 type: Decision
 title: Speech and speed - transcription, the GPU box, and keeping the Mac responsive
-description: How framesift see transcribes (parakeet-mlx, QUAN-Transcribe for Vietnamese, or whisper, on the Mac or a GPU box over ssh), how whisper words become cues, how the box's wait overlaps the local passes and falls back when the box is busy, and the resource measurements behind "the Mac must not lag".
+description: How mediasift see transcribes (parakeet-mlx, QUAN-Transcribe for Vietnamese, or whisper, on the Mac or a GPU box over ssh), how whisper words become cues, how the box's wait overlaps the local passes and falls back when the box is busy, and the resource measurements behind "the Mac must not lag".
 tags: [see, asr, whisper, gpu-box, resources, lag]
 status: draft
 generated:
   by: claude-code/opus-5.5
   at: "2026-10-16T12:00:00Z"
-resource: src/framesift/asr.py
+resource: src/mediasift/asr.py
 sources:
   - id: lagprobe
     resource: bench/lagprobe.py
     title: Timer-lateness probe - "does the Mac feel slow while this runs"
   - id: box
     resource: ~/workspace/infra/.okf/servers/me-ubuntu-home.md
-    title: gpu-box (RTX 3060) - framesift installed as an editable uv tool
+    title: gpu-box (RTX 3060) - mediasift installed as an editable uv tool
   - id: quan
     resource: https://huggingface.co/qnguyen3/QUAN-Transcribe-1.0-CoreML
     title: QUAN-Transcribe-1.0 Core ML (Vietnamese CTC on the EmbeddingGemma 2 audio encoder)
@@ -24,8 +24,8 @@ sources:
 
 Auto-picked: parakeet-mlx on Apple Silicon for its 25 languages (MLX buffer cache capped at 0),
 Vietnamese through QUAN-Transcribe on Core ML (below), otherwise whisper (mlx-whisper, faster-whisper on
-CUDA or CPU). With `--on HOST` or `FRAMESIFT_ON`,
-the audio goes as FLAC over ssh to `framesift asr -` on that host[^box], which returns JSON cues and
+CUDA or CPU). With `--on HOST` or `MEDIASIFT_ON`,
+the audio goes as FLAC over ssh to `mediasift asr -` on that host[^box], which returns JSON cues and
 speaker letters; 1h45m podcast: box transcription 99 s (64x realtime), transfer 2 s. The first box run
 of that podcast cost the Mac 390 s of CPU against 785 s all-local, and none of its GPU.
 
@@ -81,7 +81,7 @@ Speech on the box is the exception: the Mac only waits on ssh.
 
 | finding | measurement[^lagprobe] | action |
 |---|---|---|
-| CPU scheduling is not what lags the desktop | a normal-priority 5 ms timer stayed as punctual as idle during a full-speed run (p99 2.6 ms) | plain `nice 10`, pools capped at 4 (`FRAMESIFT_FULL_SPEED=1` skips both) |
+| CPU scheduling is not what lags the desktop | a normal-priority 5 ms timer stayed as punctual as idle during a full-speed run (p99 2.6 ms) | plain `nice 10`, pools capped at 4 (`MEDIASIFT_FULL_SPEED=1` skips both) |
 | macOS background QoS band | 5x slower (48 s → 256 s), no gain | not used |
 | MLX buffer cache | 5.5 GB kept after a 2-min transcription, on a Mac deep in swap | `mx.set_cache_limit(0)`: same speed, swap churn per run 3.9 GB → 125 MB |
 | GPU | 74-96% busy during MLX speech | offload with `--on HOST` |
@@ -167,4 +167,4 @@ Card times (before 2026-10-16; see above for the Core ML numbers): 32 s UI clip 
 
 [^box]: The box's install and service notes live in the infra bundle, not here.
 [^quan]: `qnguyen3/QUAN-Transcribe-1.0-CoreML` pinned at revision `13c3a2c` in `asr.py`; author's Vietnamese benchmark (avg WER 6.87% vs turbo 17.66%, the turbo average inflated by one set at 59.6%) on the model card of `qnguyen3/QUAN-Transcribe-1.0`. Gemma Terms of Use.
-[^lagprobe]: `uv run python bench/lagprobe.py [--csv FILE] -- framesift see VIDEO --force`; samples (CPU, footprint, swap, GPU) and stamped logs in `bench/results/res/`.
+[^lagprobe]: `uv run python bench/lagprobe.py [--csv FILE] -- mediasift see VIDEO --force`; samples (CPU, footprint, swap, GPU) and stamped logs in `bench/results/res/`.

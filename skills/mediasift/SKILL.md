@@ -1,21 +1,21 @@
 ---
-name: framesift
+name: mediasift
 description: 'Sense a video or audio file (or a web video URL) you cannot watch or hear. One command turns it into a card - a timeline of what changed on screen, which sounds happened and how many times, speech with times, and text that appeared - plus frame sheets to look at and a zoom command for any span. Use when the task involves a video, screen recording or audio file: a bug-repro recording, a UI walkthrough, a tutorial, a lecture, a meeting or podcast, a YouTube link, "what happens in this video", "when does X happen", "what did the error say", "how many times", "what was on screen when they said ...".'
 ---
 
-# framesift
+# mediasift
 
-You cannot watch video or hear audio. framesift does both for you, cheaply, and writes down what it
+You cannot watch video or hear audio. mediasift does both for you, cheaply, and writes down what it
 sensed so you can reason over time instead of guessing from a few stills.
 
-## 0. If `framesift` is not installed
+## 0. If `mediasift` is not installed
 
-Check with `command -v framesift`. If it is missing, tell the user and suggest one of these. Do not
+Check with `command -v mediasift`. If it is missing, tell the user and suggest one of these. Do not
 install it yourself without asking: it pulls about 1 GB of Python packages.
 
 ```bash
-uv tool install git+https://github.com/samhvw8/framesift      # with uv
-mise use -g pypi:samhvw8/framesift                            # with mise (pipx: works too)
+uv tool install git+https://github.com/samhvw8/mediasift      # with uv
+mise use -g pypi:samhvw8/mediasift                            # with mise (pipx: works too)
 ```
 
 It also needs `ffmpeg` on PATH (`brew install ffmpeg`, `apt install ffmpeg` or `mise use -g ffmpeg`),
@@ -25,7 +25,7 @@ more for the speech model of the language it hears.
 ## 1. Sense it (one command)
 
 ```bash
-framesift see VIDEO_OR_URL          # prints the card; first run 10 s - 1 min per few minutes of video, then cached
+mediasift see VIDEO_OR_URL          # prints the card; first run 10 s - 1 min per few minutes of video, then cached
 ```
 
 No flags needed. It reads every frame (15 fps on short videos), tags the soundtrack, counts short
@@ -56,7 +56,7 @@ Region words (colour, position, size) come from pixel statistics: open an image 
 - **Event sheets** (`ev_NN.jpg`, referenced in `pic` lines): `[where | before | after]` crops of one
   event, for small text and UI detail.
 - **Zoom**: for a gesture, a face or small text at one moment, do not guess from a flow tile (about one
-  small frame a second): `framesift look VIDEO 11.5-13` gives 8 frames over that span plus a strip of the sound
+  small frame a second): `mediasift look VIDEO 11.5-13` gives 8 frames over that span plus a strip of the sound
   under them (loudness, short sounds in orange, tags, speech). `-n 2` for a before/after pair,
   `-n 1` for one moment at full width.
 
@@ -68,10 +68,10 @@ it, answer from what you have and say what you could not confirm.
 Sound names come from a tagger and are sometimes wrong (a cough heard as "throat clearing"). When
 the user or a frame you looked at shows what a sound really was, record it:
 
-    framesift fix VIDEO 21.0 "cough"
+    mediasift fix VIDEO 21.0 "cough"
 
 Only when you know, never as a guess. Repeated agreeing fixes teach later cards
-("throat clearing (usually: cough)"); `framesift feedback` lists them.
+("throat clearing (usually: cough)"); `mediasift feedback` lists them.
 
 ## Long videos
 
@@ -82,7 +82,7 @@ Picture lines are capped; quieter stretches appear as `+N smaller changes` with 
 
 ## Other commands (unchanged from earlier versions)
 
-`framesift frames VIDEO --start A --end B --fps 2 -o DIR` (raw frames), `framesift analyze` (segments
+`mediasift frames VIDEO --start A --end B --fps 2 -o DIR` (raw frames), `mediasift analyze` (segments
 and keyframes, the old storyboard), `index` / `find` (search frames by meaning, needs llama.cpp),
 `split` (cut clips).
 

@@ -1,11 +1,11 @@
 """Real-footage round of the sense bench: temporal questions written from dense frames.
 
     uv run python bench/sense/real.py oracle [NAMES]    # 2 fps oracle sheets + transcript, writer briefs
-    uv run python bench/sense/real.py arms ROUND        # arm folders (B uniform 1 fps, C framesift see) + briefs
+    uv run python bench/sense/real.py arms ROUND        # arm folders (B uniform 1 fps, C mediasift see) + briefs
 
 Synthetic clips have exact answers but were designed by the same hand as the
 sensor. This round uses real videos and a writer agent that sees only a dense
-oracle (every 0.5 s) and the transcript, never framesift output. No agent can
+oracle (every 0.5 s) and the transcript, never mediasift output. No agent can
 hear, so audio truth is limited to speech timing; non-speech sound stays in the
 synthetic round.
 """
@@ -51,7 +51,7 @@ MATERIAL = {
     "B": "the folder {dir}: transcript.txt (timed speech) and contact sheets sheet_*.jpg, each holding 12 frames "
          "sampled every 1 s, labelled with their time.",
     "C": "the folder {dir}: card.md (read it first) and the images it names (plus transcript.txt when present). "
-         "You may also run `framesift look {video} <start>-<end>` to see any time span of the video; "
+         "You may also run `mediasift look {video} <start>-<end>` to see any time span of the video; "
          "it prints the path of an image to read.",
 }
 
@@ -79,7 +79,7 @@ def sheets(video: Path, out: Path, fps: float, tile_w: int) -> int:
 
 
 def see_dir(video: Path) -> Path:
-    r = subprocess.run([str(Path.home() / ".local/bin/framesift"), "see", str(video)], capture_output=True, text=True,
+    r = subprocess.run([str(Path.home() / ".local/bin/mediasift"), "see", str(video)], capture_output=True, text=True,
                        check=True)
     return Path(r.stdout.strip().splitlines()[-1].split(" in ", 1)[1].rstrip(")"))
 

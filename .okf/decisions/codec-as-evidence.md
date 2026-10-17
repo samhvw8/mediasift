@@ -7,7 +7,7 @@ status: stable
 generated:
   by: claude-code/opus-5.5
   at: "2026-09-30T10:15:00Z"
-resource: src/framesift/segment.py
+resource: src/mediasift/segment.py
 ---
 
 # Context

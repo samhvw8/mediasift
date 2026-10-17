@@ -10,7 +10,7 @@ footprint), the system's swap use, free-memory level and GPU busy %. With --csv
 the samples are written there, and the command's stderr is kept, each line
 stamped with seconds since the start. macOS only (ps, sysctl, ioreg).
 
-    uv run python bench/lagprobe.py [--csv FILE] -- framesift see VIDEO --force
+    uv run python bench/lagprobe.py [--csv FILE] -- mediasift see VIDEO --force
 """
 import ctypes
 import re

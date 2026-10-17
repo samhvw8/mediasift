@@ -3,9 +3,9 @@
     uv run python bench/sense/prep.py ROUND ARMS     # e.g. r1 ABC
 
 Arms (each a folder the answerer may read, nothing else):
-  A  framesift v0.2: storyboard.md + contact sheets + frames/ (bench/sense/runs/v02/<clip>)
+  A  mediasift v0.2: storyboard.md + contact sheets + frames/ (bench/sense/runs/v02/<clip>)
   B  prior-art shape: uniform 1 fps contact sheets (12 per image, time-labelled) + transcript.txt
-  C  framesift see: card.md + its images, and `framesift look` on the clip (bench/sense/runs/see/<clip>)
+  C  mediasift see: card.md + its images, and `mediasift look` on the clip (bench/sense/runs/see/<clip>)
 
 Writes bench/sense/<ROUND>/<clip>/questions.json (no answers), arm folders under
 bench/sense/<ROUND>/<clip>/<arm>/, and briefs under bench/sense/<ROUND>/prompts/.
@@ -29,7 +29,7 @@ MATERIAL = {
     "B": "the folder {dir}: transcript.txt (timed speech) and contact sheets sheet_*.jpg, each holding 12 frames "
          "sampled every 1 s, labelled with their time.",
     "C": "the folder {dir}: card.md (read it first) and the images it names. You may also run the command "
-         "`framesift look {video} <start>-<end>` (and other `framesift look` options listed in card.md) "
+         "`mediasift look {video} <start>-<end>` (and other `mediasift look` options listed in card.md) "
          "to see any time span of the video; it prints the path of an image to read.",
 }
 

@@ -5,7 +5,7 @@ Runs on an existing analysis (manifest.json + frames/), so it never re-decodes:
 1. describe  every unique keyframe with a vision-language model, given the
              speech around it: what is shown, text on screen, people.
 2. chapters  topic segmentation of the transcript (TextTiling on sentence
-             embeddings), snapped to framesift segment boundaries.
+             embeddings), snapped to mediasift segment boundaries.
 3. summarize each chapter (title, summary, key points, entities) and the
              whole video, from its speech plus its keyframe descriptions.
 
@@ -30,7 +30,7 @@ import numpy as np
 
 
 def log(msg: str) -> None:
-    print(f"framesift: {msg}", file=sys.stderr)
+    print(f"mediasift: {msg}", file=sys.stderr)
 
 
 @dataclass
@@ -172,14 +172,14 @@ def embedder(model: str):
     try:
         from fastembed import TextEmbedding
     except ImportError as e:
-        raise SystemExit("chapters need fastembed: `uv tool install 'framesift[meaning]'`") from e
+        raise SystemExit("chapters need fastembed: `uv tool install 'mediasift[meaning]'`") from e
     return TextEmbedding(model)
 
 
 def chapters(m: dict, emb, min_len: float = 90.0, max_len: float = 600.0, window: float = 60.0) -> list[tuple[float, float]]:
     """TextTiling on sentence embeddings: slide over the transcript comparing
     the previous `window` seconds with the next; topic shifts are similarity
-    valleys. Boundaries snap to framesift segment starts so chapters never cut
+    valleys. Boundaries snap to mediasift segment starts so chapters never cut
     a shot or a sentence in half."""
     cues = m.get("transcript", [])
     dur = m["duration"]

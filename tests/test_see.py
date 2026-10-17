@@ -13,7 +13,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "bench" / "sense"))
 import make_synth  # noqa: E402
 
-from framesift import audio, decode, events, sound  # noqa: E402
+from mediasift import audio, decode, events, sound  # noqa: E402
 
 
 @pytest.fixture(scope="module")
@@ -144,7 +144,7 @@ def test_a_sound_under_music_is_named_at_a_lower_score():
 def test_low_score_names_are_hedged_on_the_card():
     """Under a real song, names scored below 0.3 were wrong more often than right (23 right,
     30 wrong): the card must say 'maybe', not state them."""
-    from framesift import see
+    from mediasift import see
     weak = sound.SoundEvent(10.0, 12.0, "Thunder", "bed", score=0.24)
     sure = sound.SoundEvent(20.0, 22.0, "Siren", "bed", score=0.7)
     assert "[maybe thunder]" in see._sound_line(weak)[1]

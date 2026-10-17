@@ -2,8 +2,8 @@
 
   oracle/   dense labelled frame sheets + full timed transcript (question writer only)
   A/        transcript only
-  B/        transcript + N uniformly spaced frames (N = framesift's image count)
-  C/        framesift storyboard.md + contact sheets + frames
+  B/        transcript + N uniformly spaced frames (N = mediasift's image count)
+  C/        mediasift storyboard.md + contact sheets + frames
   D/        C + meaning.md
 
 Usage: python bench/prep_qa.py EVAL_DIR RUNS_DIR video.mp4[::oracle_seconds[::oracle_step]] ...

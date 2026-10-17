@@ -1,14 +1,14 @@
-"""Corrections from agents (`framesift fix`) teach the card what a tagger label usually is."""
+"""Corrections from agents (`mediasift fix`) teach the card what a tagger label usually is."""
 import json
 
 import pytest
 
-from framesift import feedback, see
+from mediasift import feedback, see
 
 
 @pytest.fixture(autouse=True)
 def _own_log(tmp_path, monkeypatch):
-    monkeypatch.setenv("FRAMESIFT_CACHE", str(tmp_path / "cache"))
+    monkeypatch.setenv("MEDIASIFT_CACHE", str(tmp_path / "cache"))
     feedback.learned.cache_clear()
     yield
     feedback.learned.cache_clear()

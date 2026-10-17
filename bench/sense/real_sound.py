@@ -154,11 +154,11 @@ def build(pick: str, bed: str, snr: float) -> list[tuple[Path, list[dict]]]:
 
 
 def sensed(mp4: Path) -> list[dict]:
-    r = subprocess.run([str(Path.home() / ".local/bin/framesift"), "see", str(mp4), "--force"], capture_output=True,
+    r = subprocess.run([str(Path.home() / ".local/bin/mediasift"), "see", str(mp4), "--force"], capture_output=True,
                        text=True, check=True)
     d = Path(r.stdout.strip().splitlines()[-1].split(" in ", 1)[1].rstrip(")"))
     sys.path.insert(0, str(ROOT / "src"))
-    from framesift.see import _snd_name
+    from mediasift.see import _snd_name
     out = []
     for s in json.loads((d / "sensed.json").read_text())["sounds"]:
         if s["kind"] == "silence":

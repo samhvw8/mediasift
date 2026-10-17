@@ -1,11 +1,11 @@
-# framesift
+# mediasift
 
 A video and sound sensor for agents. Claude Code and similar harnesses read text and still images;
-they cannot hear and cannot take video. `framesift see` watches and listens for them, cheaply and
+they cannot hear and cannot take video. `mediasift see` watches and listens for them, cheaply and
 locally, and writes down what happened over time.
 
 ```
-framesift see bug-repro.mov          # or a YouTube URL; no flags; cached by file content
+mediasift see bug-repro.mov          # or a YouTube URL; no flags; cached by file content
 ```
 
 ```
@@ -28,7 +28,7 @@ framesift see bug-repro.mov          # or a YouTube URL; no flags; cached by fil
 | **speech** | only when the tagger hears speech. Apple Silicon: parakeet-mlx / mlx-whisper, and [QUAN-Transcribe](https://huggingface.co/qnguyen3/QUAN-Transcribe-1.0-CoreML) (Core ML) for Vietnamese. Elsewhere: faster-whisper. Site subtitles for URLs. `--on HOST` runs it (and the voice grouping) on a GPU box over ssh | 20-30x realtime on an M1 Pro (Vietnamese: 156x); 58x via an RTX 3060 |
 | **voices** | TitaNet-small speaker embeddings group lines into voice A, B, ... | 1.00 on real two- and three-speaker dialogues |
 | **on-screen text** | Apple Vision OCR on the changed regions only; captions that repeat the speech are dropped | ~0.1 s a region |
-| **frames to look at** | flow sheets at about one frame per second (12 per image, every shot's first frame; screen recordings skip still frames), before/after crops of events, and `framesift look VIDEO 11-14` for any span with a sound strip under it | images only when opened |
+| **frames to look at** | flow sheets at about one frame per second (12 per image, every shot's first frame; screen recordings skip still frames), before/after crops of events, and `mediasift look VIDEO 11-14` for any span with a sound strip under it | images only when opened |
 
 ## Does it work? The sense bench
 
@@ -36,7 +36,7 @@ Questions with known answers, answered by Sonnet sub-agents who only get one arm
 graded blind (`bench/sense/`). **B** is the shape other "Claude watches video" tools use: uniform
 1 fps contact sheets plus a transcript.
 
-| | B: uniform 1 fps + transcript | framesift v0.2 storyboard | **framesift see** |
+| | B: uniform 1 fps + transcript | mediasift v0.2 storyboard | **mediasift see** |
 |---|---|---|---|
 | synthetic: brief events, counts, sync, non-speech sound, screen text (26) | 22/26 | 14/26 | **26/26** (7 images) |
 | real footage: order, motion, counts, duration, speech + picture (32) | 32/32 | - | 31/32 |
@@ -59,43 +59,43 @@ Details and every rejected variant: [.okf/decisions/see-sensor.md](.okf/decision
 
 Measured on a 16 GB M1 Pro (`bench/lagprobe.py`): the lag people feel came from memory, not CPU.
 MLX kept a 5.5 GB buffer cache after transcribing, on a Mac already in swap; capping it costs no
-speed and cut swap churn per run from 3.9 GB to 125 MB. framesift runs at `nice 10` with capped
+speed and cut swap churn per run from 3.9 GB to 125 MB. mediasift runs at `nice 10` with capped
 worker pools. The sound pass and Core ML speech run beside the picture pass (peak 2.2 GB on a
 47-minute file); the MLX speech models (3.3 GB peak) still wait for the picture pass. macOS's
 background QoS band was tried and rejected: 5x slower for no measured gain. Speech is the heaviest
-part on long files; `see --on gpu-box` (or `FRAMESIFT_ON=...`) sends the audio as FLAC to
-`framesift asr -` on a GPU box and falls back to local when the box does not answer in 3 s.
+part on long files; `see --on gpu-box` (or `MEDIASIFT_ON=...`) sends the audio as FLAC to
+`mediasift asr -` on a GPU box and falls back to local when the box does not answer in 3 s.
 
-Every `see` and `look` call is logged locally to `~/.cache/framesift/usage.jsonl`: which spans agents
+Every `see` and `look` call is logged locally to `~/.cache/mediasift/usage.jsonl`: which spans agents
 had to zoom into shows where the card falls short, the data for the next round of tuning.
 
 ## Install
 
 You need `ffmpeg` and `ffprobe` on your `PATH`, and `yt-dlp` if you want to read web URLs.
-framesift itself is a Python package (3.11 or later). Pick one way to install it:
+mediasift itself is a Python package (3.11 or later). Pick one way to install it:
 
 | with | command |
 |---|---|
-| [uv](https://docs.astral.sh/uv/) | `uv tool install git+https://github.com/samhvw8/framesift` |
-| [mise](https://mise.jdx.dev/) | `mise use -g pypi:samhvw8/framesift` (`pipx:samhvw8/framesift` is the same) |
-| a clone, to change the code | `git clone https://github.com/samhvw8/framesift && cd framesift && uv tool install -e .` |
+| [uv](https://docs.astral.sh/uv/) | `uv tool install git+https://github.com/samhvw8/mediasift` |
+| [mise](https://mise.jdx.dev/) | `mise use -g pypi:samhvw8/mediasift` (`pipx:samhvw8/mediasift` is the same) |
+| a clone, to change the code | `git clone https://github.com/samhvw8/mediasift && cd mediasift && uv tool install -e .` |
 
 mise can install the other tools too:
 
 ```bash
-mise use -g pypi:samhvw8/framesift ffmpeg yt-dlp     # everything framesift needs, through mise
+mise use -g pypi:samhvw8/mediasift ffmpeg yt-dlp     # everything mediasift needs, through mise
 brew install ffmpeg yt-dlp                           # or with Homebrew (macOS)
 sudo apt install ffmpeg && pipx install yt-dlp       # or on Debian / Ubuntu
 ```
 
-mise's `github:` backend installs prebuilt release binaries, and framesift has none, so use
-`pypi:`. To update later, run `uv tool upgrade framesift`, or `mise install -f pypi:samhvw8/framesift`
-(`mise up` does not see new commits, because framesift has no GitHub releases).
+mise's `github:` backend installs prebuilt release binaries, and mediasift has none, so use
+`pypi:`. To update later, run `uv tool upgrade mediasift`, or `mise install -f pypi:samhvw8/mediasift`
+(`mise up` does not see new commits, because mediasift has no GitHub releases).
 
 Check the install:
 
 ```bash
-framesift see https://www.youtube.com/watch?v=aqz-KE-bpKQ   # first run downloads the models
+mediasift see https://www.youtube.com/watch?v=aqz-KE-bpKQ   # first run downloads the models
 ```
 
 What you get depends on the machine:
@@ -106,7 +106,7 @@ What you get depends on the machine:
 | sound tagger | Core ML on the GPU after `mise run ced-coreml`, else the CPU | CPU |
 | on-screen text | Apple Vision OCR | none |
 
-Models download on first use into `~/.cache/framesift/models/` and the Hugging Face cache. The
+Models download on first use into `~/.cache/mediasift/models/` and the Hugging Face cache. The
 Vietnamese model (665 MB) downloads only when a file has Vietnamese speech.
 
 ### Optional: the Core ML sound tagger (Apple Silicon)
@@ -118,25 +118,25 @@ mise run ced-coreml
 ```
 
 This builds the tagger once (41 MB) in a throwaway Python 3.13 environment with PyTorch and
-coremltools. It makes tagging about 4.5x faster. Without it, framesift says so on stderr and uses
+coremltools. It makes tagging about 4.5x faster. Without it, mediasift says so on stderr and uses
 the CPU tagger.
 
 ### Optional: speech on a GPU box
 
-1. Install framesift on the box the same way.
+1. Install mediasift on the box the same way.
 2. Make sure `ssh HOST true` works without a password prompt.
-3. Run `framesift see VIDEO --on HOST`, or set `FRAMESIFT_ON=HOST`.
+3. Run `mediasift see VIDEO --on HOST`, or set `MEDIASIFT_ON=HOST`.
 
-If the box does not answer in 3 s, framesift transcribes locally.
+If the box does not answer in 3 s, mediasift transcribes locally.
 
 ## Use
 
 ```bash
-framesift see VIDEO_OR_URL                # card on stdout; files in ~/.cache/framesift/see/<key>/
-framesift look VIDEO 11.5-13 [-n 8]       # frames over a span + a sound strip
-framesift fix VIDEO 21.0 "cough"          # a sound name was wrong; 3 agreeing fixes teach later cards
-framesift feedback                        # recorded fixes and the names they taught
-framesift asr - < audio.flac              # speech only: timed cues as JSON
+mediasift see VIDEO_OR_URL                # card on stdout; files in ~/.cache/mediasift/see/<key>/
+mediasift look VIDEO 11.5-13 [-n 8]       # frames over a span + a sound strip
+mediasift fix VIDEO 21.0 "cough"          # a sound name was wrong; 3 agreeing fixes teach later cards
+mediasift feedback                        # recorded fixes and the names they taught
+mediasift asr - < audio.flac              # speech only: timed cues as JSON
 ```
 
 Useful `see` flags: `--asr on|off` forces speech on or off, `--force` ignores the cache, and `--now`
@@ -144,33 +144,33 @@ skips the polite settings (`nice 10`, capped worker pools).
 
 ### With an agent
 
-The repository ships an agent skill, [`skills/framesift/SKILL.md`](skills/framesift/SKILL.md). It
-tells the agent when to run `framesift see`, how to read the card, and when to `look` closer.
+The repository ships an agent skill, [`skills/mediasift/SKILL.md`](skills/mediasift/SKILL.md). It
+tells the agent when to run `mediasift see`, how to read the card, and when to `look` closer.
 Install the CLI first, then add the skill in one of these ways:
 
 | agent | how |
 |---|---|
-| Claude Code, as a plugin (skill + prompt hook) | `/plugin install framesift --marketplace samhvw8/framesift` |
-| Claude Code, older versions | `/plugin marketplace add samhvw8/framesift`, then `/plugin install framesift@framesift` |
-| Claude Code, Codex, Cursor, OpenCode and others | `npx skills add samhvw8/framesift` |
-| any agent, by hand | copy or link `skills/framesift/` into the agent's skills folder, for example `ln -s "$PWD/skills/framesift" ~/.claude/skills/framesift` |
+| Claude Code, as a plugin (skill + prompt hook) | `/plugin install mediasift --marketplace samhvw8/mediasift` |
+| Claude Code, older versions | `/plugin marketplace add samhvw8/mediasift`, then `/plugin install mediasift@mediasift` |
+| Claude Code, Codex, Cursor, OpenCode and others | `npx skills add samhvw8/mediasift` |
+| any agent, by hand | copy or link `skills/mediasift/` into the agent's skills folder, for example `ln -s "$PWD/skills/mediasift" ~/.claude/skills/mediasift` |
 
-The plugin also adds a `UserPromptSubmit` hook (`framesift hook`, about 80 ms). When a prompt names
-a video file or a video URL, it tells the agent to run `framesift see` on it. It stays silent when
-`framesift` is not installed. Without the plugin, add it to `~/.claude/settings.json` yourself:
+The plugin also adds a `UserPromptSubmit` hook (`mediasift hook`, about 80 ms). When a prompt names
+a video file or a video URL, it tells the agent to run `mediasift see` on it. It stays silent when
+`mediasift` is not installed. Without the plugin, add it to `~/.claude/settings.json` yourself:
 
 ```json
-{"hooks": {"UserPromptSubmit": [{"hooks": [{"type": "command", "command": "framesift hook"}]}]}}
+{"hooks": {"UserPromptSubmit": [{"hooks": [{"type": "command", "command": "mediasift hook"}]}]}}
 ```
 
 ### Environment variables
 
 | variable | effect |
 |---|---|
-| `FRAMESIFT_ON` | default GPU host for speech (same as `--on`) |
-| `FRAMESIFT_CACHE` | cache folder (default `~/.cache/framesift`) |
-| `FRAMESIFT_FULL_SPEED=1` | same as `--now` |
-| `FRAMESIFT_LLAMA_SERVER` | `llama-server` binary for `index` / `find` |
+| `MEDIASIFT_ON` | default GPU host for speech (same as `--on`) |
+| `MEDIASIFT_CACHE` | cache folder (default `~/.cache/mediasift`) |
+| `MEDIASIFT_FULL_SPEED=1` | same as `--now` |
+| `MEDIASIFT_LLAMA_SERVER` | `llama-server` binary for `index` / `find` |
 
 ### Development
 
@@ -195,7 +195,7 @@ bundle.
   one mouse click and one alarm clock were not. Doubtful names are hedged.
 - Voice letters (A, B) come from a speaker-embedding model (TitaNet-small, 40 MB): right on every
   real LibriSpeech dialogue in the bench; they are groupings, not names.
-- OCR needs macOS (Apple Vision). `--on HOST` needs framesift installed on the host.
+- OCR needs macOS (Apple Vision). `--on HOST` needs mediasift installed on the host.
 - Long files (over 20 minutes): speech is summarised per minute in the card, full text in
   `transcript.txt`; on-device speech recognition dominates the time (~4.5 min per hour of audio
   with whisper; Vietnamese with QUAN takes about 30 s per hour).
@@ -204,7 +204,7 @@ bundle.
 
 ## v0.2: segments, keyframes, search (still available)
 
-`framesift analyze VIDEO -o OUT [--asr] [--index]`, `find`, `look OUT --at T`, `frames`, `split`
+`mediasift analyze VIDEO -o OUT [--asr] [--index]`, `find`, `look OUT --at T`, `frames`, `split`
 work as before. Their design and measurements:
 
 ### The idea, expanded
@@ -221,7 +221,7 @@ The codec source was the surprise. The encoder already did motion estimation on
 every frame. **Bits spent on a P-frame measure how much changed**, and an
 **I-frame off the regular GOP cadence** means the encoder decided the next frame
 could not be predicted: a scene cut, detected by x264's `scenecut` for free.
-framesift reads both from `ffprobe` packets and uses them as independent evidence
+mediasift reads both from `ffprobe` packets and uses them as independent evidence
 (`codec_scenecut`, `activity`). `--fast` decodes *only* I-frames for a quick map of
 long files.
 
@@ -250,12 +250,12 @@ so an agent can weigh it.
 
 Keyframes use drift from the last kept frame, not from the previous frame. A slow
 pan or a slide that gains one bullet at a time never crosses a frame-to-frame
-threshold, but it does accumulate. When drift crosses the threshold, framesift waits
+threshold, but it does accumulate. When drift crosses the threshold, mediasift waits
 for the most stable, sharpest frame in the next 0.6 s (no mid-transition blur) and
 keeps it. Two details from testing on real footage:
 
 - **Localized change.** A new chat message covers 10% of the screen. A whole-frame
-  mean dilutes that to noise, so framesift also measures the *fraction of blocks
+  mean dilutes that to noise, so mediasift also measures the *fraction of blocks
   that changed*, after a ±1-block motion search (a tiny codec-style search, so
   camera shake does not count as new content).
 - **Screen vs camera** is auto-detected. Screen content repeats itself exactly
@@ -283,16 +283,16 @@ codec's own scene cuts as an independent reference.
 
 ### Search: pull pictures per question
 
-With llama.cpp's `llama-server` (pinned in `mise.toml`), `framesift index OUT` embeds the keyframes,
+With llama.cpp's `llama-server` (pinned in `mise.toml`), `mediasift index OUT` embeds the keyframes,
 a 1 fps probe and the speech with [EmbeddingGemma 2](https://huggingface.co/google/embeddinggemma-2)
 (local, Apache 2.0, the `ggml-org/embeddinggemma-2-GGUF` Q8_0 build) into one vector space. An agent then reads the storyboard
 text and asks for pictures only when it needs them:
 
 ```bash
-framesift find OUT "chart ranking programming languages"   # 6 distinct moments as one grid + the speech there
-framesift find OUT --like 84.5                               # moments that look like 84.5 s
-framesift look OUT --at 80                                   # one moment at full width, to read small text
-framesift index OUT --on gpu-box                             # embed on another machine over ssh
+mediasift find OUT "chart ranking programming languages"   # 6 distinct moments as one grid + the speech there
+mediasift find OUT --like 84.5                               # moments that look like 84.5 s
+mediasift look OUT --at 80                                   # one moment at full width, to read small text
+mediasift index OUT --on gpu-box                             # embed on another machine over ssh
 ```
 
 A frame scores by its similarity to the query plus half the similarity of the

@@ -1,13 +1,13 @@
 ---
 type: Decision
-title: ASR consumes framesift's decoded PCM
+title: ASR consumes mediasift's decoded PCM
 description: faster-whisper gets the 16 kHz float32 buffer ffmpeg already produced instead of opening the file itself.
 tags: [asr, dependencies]
 status: stable
 generated:
   by: claude-code/opus-5.5
   at: "2026-09-30T10:15:00Z"
-resource: src/framesift/transcript.py
+resource: src/mediasift/transcript.py
 ---
 
 # Decision

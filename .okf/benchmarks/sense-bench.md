@@ -1,7 +1,7 @@
 ---
 type: Benchmark
-title: The sense bench - how framesift see is measured
-description: The four benches that decide every change to framesift see - synthetic clips with scripted answers, real-footage questions written from dense frames (6 videos), sound naming on 200 held-out ESC-50 clips in silence, speech and music, and voice letters on real dialogues - how to run each, the current scores, and the history of rounds.
+title: The sense bench - how mediasift see is measured
+description: The four benches that decide every change to mediasift see - synthetic clips with scripted answers, real-footage questions written from dense frames (6 videos), sound naming on 200 held-out ESC-50 clips in silence, speech and music, and voice letters on real dialogues - how to run each, the current scores, and the history of rounds.
 tags: [bench, evaluation, see, sound, voices]
 status: draft
 generated:
@@ -28,17 +28,17 @@ sources:
 | bench | what it tests | how it is scored | run |
 |---|---|---|---|
 | synthetic | 26 questions on 5 clips (UI flow, motion, counting, audio scene, pointing): counts, brief events, sync, sound, order | the script is the key; Sonnet answerers, a blind Sonnet grader | `uv run python bench/sense/prep.py rN C`, then the briefs in `rN/prompts/`; `report.py rN` |
-| real footage | 48 questions on 6 videos: 4 landscape (Big Buck Bunny, Tears of Steel, a Fireship explainer, a CS50 lecture) + 2 portrait phone videos (`reel_en`, `tiktok_vi`) | a writer agent sees only 2 fps oracle sheets + transcript and writes the key; arm B = uniform 1 fps sheets + transcript, arm C = framesift; a blind grader | `real.py oracle [names]`, `real.py arms rN`; `report.py real/rN` |
+| real footage | 48 questions on 6 videos: 4 landscape (Big Buck Bunny, Tears of Steel, a Fireship explainer, a CS50 lecture) + 2 portrait phone videos (`reel_en`, `tiktok_vi`) | a writer agent sees only 2 fps oracle sheets + transcript and writes the key; arm B = uniform 1 fps sheets + transcript, arm C = mediasift; a blind grader | `real.py oracle [names]`, `real.py arms rN`; `report.py real/rN` |
 | sound naming | ESC-50 clips spliced at known times over a still picture; 40 clips (folds 1-2) or 200 held out (all 50 classes, folds 3-5); beds: none, LibriSpeech speech, synthetic chords, a real CC BY song | a clip counts as named when a sound line over it carries an accepted word; stray lines are lines over no clip; no LLM | `real_sound.py [--set full] [--bed speech\|music\|song] [--snr 6]` |
 | voices | 8 LibriSpeech dialogues, 2-3 real speakers, 12 turns | pairwise agreement of speaker letters, voices found | `voices.py` |
 
 No agent can hear, so real-footage questions test sight and speech only: there the bar is parity
-with arm B, and framesift's gains are the senses B lacks. Run-to-run noise on real footage is 1-3
+with arm B, and mediasift's gains are the senses B lacks. Run-to-run noise on real footage is 1-3
 questions in 32: compare repeat runs before calling a change.
 
 # Current scores (measured on card see-10; see-11 changed only speaker letters on long talks)
 
-| bench | arm B: images + transcript | framesift |
+| bench | arm B: images + transcript | mediasift |
 |---|---|---|
 | synthetic | 22/26, 11 images (r1) | **26/26, 7 images** (r16) |
 | real, 4 landscape videos | 31/32, 58 images | **32/32, 55 images** (r15, one run) |

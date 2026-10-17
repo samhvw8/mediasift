@@ -1,12 +1,12 @@
-"""Benchmark record: run framesift on a set of videos and measure what it buys.
+"""Benchmark record: run mediasift on a set of videos and measure what it buys.
 
 For each video:
 - timings per stage, segment / keyframe / transcript counts;
 - coverage: of the video's distinct moments (one frame per second), the share
   that some chosen image represents (content distance below the drift
-  threshold framesift itself uses), for framesift and for uniform sampling
+  threshold mediasift itself uses), for mediasift and for uniform sampling
   with the *same number of images*;
-- agent cost: image tokens for framesift's frames and contact sheets versus
+- agent cost: image tokens for mediasift's frames and contact sheets versus
   1 fps sampling (Claude vision: about width*height/750 tokens per image).
 
 Usage: python bench/evaluate.py OUT.json video[::srt] ... [--asr]
@@ -23,8 +23,8 @@ from pathlib import Path
 
 import numpy as np
 
-from framesift import __version__, visual
-from framesift.pipeline import Params, analyze
+from mediasift import __version__, visual
+from mediasift.pipeline import Params, analyze
 
 
 def tokens(w: int, h: int) -> int:
@@ -84,10 +84,10 @@ def run(video: str, srt: str | None, asr: bool, out_root: Path) -> dict:
         "segments_with_image": sum(1 for s in segs if s["keyframes"]),
         "segments_with_text": sum(1 for s in segs if s["transcript"]),
         "transcript_cues": m["stats"]["transcript_cues"],
-        "coverage_framesift": round(coverage(tr, uniq, thr, aw), 3),
+        "coverage_mediasift": round(coverage(tr, uniq, thr, aw), 3),
         "coverage_uniform_same_n": round(coverage(tr, uni, thr, aw), 3),
-        "tokens_framesift_frames": n * tokens(w, h),
-        "tokens_framesift_sheets": sheet_tokens,
+        "tokens_mediasift_frames": n * tokens(w, h),
+        "tokens_mediasift_sheets": sheet_tokens,
         "tokens_uniform_1fps": fps1 * tokens(w, h),
         "frames_uniform_1fps": fps1,
     }
@@ -107,7 +107,7 @@ def main() -> None:
                          capture_output=True, text=True).stdout.strip() if sys.platform == "linux" else ""
     cpu = subprocess.run(["sh", "-c", "lscpu | grep 'Model name' | sed 's/.*: *//' || sysctl -n machdep.cpu.brand_string"],
                          capture_output=True, text=True).stdout.strip()
-    out.write_text(json.dumps({"framesift": __version__, "host": platform.node(), "cpu": cpu, "gpu": gpu,
+    out.write_text(json.dumps({"mediasift": __version__, "host": platform.node(), "cpu": cpu, "gpu": gpu,
                                "at": time.strftime("%Y-%m-%d %H:%M"), "rows": rows}, indent=2))
     print(out)
 

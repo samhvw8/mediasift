@@ -26,7 +26,7 @@ class FfmpegError(RuntimeError):
 def require_ffmpeg() -> None:
     missing = [b for b in ("ffmpeg", "ffprobe") if shutil.which(b) is None]
     if missing:
-        raise FfmpegError(f"framesift needs {' and '.join(missing)} on PATH")
+        raise FfmpegError(f"mediasift needs {' and '.join(missing)} on PATH")
 
 
 def _run(cmd: list[str]) -> str:

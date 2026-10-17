@@ -10,7 +10,7 @@ Measured on an M1 Pro 16 GB (bench/lagprobe.py, 2:23 video with speech):
 
 So: a plain `nice` (the scheduler prefers the user's apps under contention,
 without pinning work to the efficiency cores) and capped worker pools.
-`FRAMESIFT_FULL_SPEED=1` skips both.
+`MEDIASIFT_FULL_SPEED=1` skips both.
 """
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ _on = False
 def enter() -> bool:
     """Call once, before starting work. Returns True when the polite settings are on."""
     global _on
-    if os.environ.get("FRAMESIFT_FULL_SPEED") == "1" or _on:
+    if os.environ.get("MEDIASIFT_FULL_SPEED") == "1" or _on:
         return _on
     if hasattr(os, "nice"):
         os.nice(10)

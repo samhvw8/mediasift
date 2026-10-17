@@ -2,7 +2,7 @@
 
   A  transcript only                      (text ceiling)
   B  transcript + uniform contact sheets  (same image count as C)
-  C  storyboard + framesift contact sheets (today's default)
+  C  storyboard + mediasift contact sheets (today's default)
   F  storyboard + `find` / `look` grids on demand
 
 Reads bench/qa/<video>/key.json, answers/<video>.<arm>.json and

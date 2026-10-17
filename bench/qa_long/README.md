@@ -37,4 +37,4 @@ Vietnamese ASR (plan step 2), 15-min slice of `altman_vi` against the exact
 script (`research/261008-vi-asr-eval/results.md`): whisper large-v3-turbo
 2.37% WER (the same on the Mac via mlx-whisper), ChunkFormer 2.61%,
 Zipformer 2.57%, PhoWhisper 3.98%, Parakeet-CTC-vi 5.27% (370x realtime).
-TTS audio, so absolute numbers are optimistic; framesift's default stays.
+TTS audio, so absolute numbers are optimistic; mediasift's default stays.

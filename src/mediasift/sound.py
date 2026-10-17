@@ -50,12 +50,12 @@ VAGUE = {"Sound effect", "Inside, small room", "Inside, large room or hall", "Ou
 
 
 def _log(msg: str) -> None:
-    print(f"framesift: {msg}", file=sys.stderr)
+    print(f"mediasift: {msg}", file=sys.stderr)
 
 
 def cache_root() -> Path:
-    base = os.environ.get("FRAMESIFT_CACHE") or os.path.join(
-        os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache")), "framesift")
+    base = os.environ.get("MEDIASIFT_CACHE") or os.path.join(
+        os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache")), "mediasift")
     return Path(base)
 
 

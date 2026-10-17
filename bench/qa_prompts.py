@@ -16,7 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 QA = ROOT / "qa"
 RUNS = ROOT / "results" / "runs_v03"
-FS = ROOT.parent / ".venv" / "bin" / "framesift"
+FS = ROOT.parent / ".venv" / "bin" / "mediasift"
 VIDEOS = ["python_100s", "cs50_lecture", "tears_of_steel", "big_buck_bunny"]
 
 MATERIAL = {

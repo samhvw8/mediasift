@@ -6,7 +6,7 @@ coremltools has no Python 3.14 build, so this runs in its own throwaway environm
     uv run --no-project --python 3.13 --with torch==2.7.0 --with torchaudio==2.7.0 \
         --with coremltools==9.0 --with transformers==4.46.3 python scripts/ced_coreml.py OUT_DIR
 
-framesift reads the result from <cache>/models/ced-small-coreml-<rev>/ (sound.CED_COREML) and falls back to the
+mediasift reads the result from <cache>/models/ced-small-coreml-<rev>/ (sound.CED_COREML) and falls back to the
 sherpa-onnx tagger on the CPU when it is missing. The mel front-end stays in numpy (sound.log_mel): frame power
 overflows fp16.
 """

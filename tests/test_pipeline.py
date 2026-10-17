@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from framesift.pipeline import Params, analyze
+from mediasift.pipeline import Params, analyze
 from make_fixture import make
 
 EXPECTED = [4.0, 8.0, 12.0, 16.0]
@@ -62,20 +62,20 @@ def test_outputs_written(result):
 
 
 def test_transcript_attaches_by_midpoint(tmp_path):
-    from framesift.transcript import assign, load
+    from mediasift.transcript import assign, load
     srt = tmp_path / "t.srt"
     srt.write_text("1\n00:00:01,000 --> 00:00:02,000\nhello\n\n2\n00:00:05,500 --> 00:00:06,000\nworld\n")
     assert assign(load(str(srt)), [(0, 4), (4, 8)]) == ["hello", "world"]
 
 
 def test_words_group_into_sentence_cues():
-    from framesift.asr import words_to_cues
+    from mediasift.asr import words_to_cues
     w = [(0.0, 0.3, " Hello"), (0.3, 0.6, " there."), (0.7, 1.0, " Next"), (2.0, 2.3, " after"), (2.3, 2.6, " pause")]
     assert [c.text for c in words_to_cues(w)] == ["Hello there.", "Next", "after pause"]
 
 
 def test_cue_spanning_a_short_segment_reaches_it():
-    from framesift.transcript import Cue, assign
+    from mediasift.transcript import Cue, assign
     assert assign([Cue(1.0, 9.0, "long cue")], [(0, 6), (6, 8), (8, 20)]) == ["long cue", "long cue", ""]
 
 
@@ -90,7 +90,7 @@ def _timed(text: str, step: float = 0.35, pauses: dict | None = None):
 
 def test_long_cue_splits_at_a_comma_not_mid_phrase():
     """faster-whisper on the GPU box: an 8 s cap cut 'like web...' | 'apps with the Django framework'."""
-    from framesift.asr import words_to_cues
+    from mediasift.asr import words_to_cues
     w = _timed("It's commonly used to build server-side applications, like web apps with the Django "
                "framework, and is the language of choice for big data analysis and machine learning.")
     texts = [c.text for c in words_to_cues(w)]
@@ -100,7 +100,7 @@ def test_long_cue_splits_at_a_comma_not_mid_phrase():
 
 def test_long_unpunctuated_cue_splits_at_its_widest_pause():
     """Vietnamese from whisper often has no commas: split where the speaker breathed."""
-    from framesift.asr import words_to_cues
+    from mediasift.asr import words_to_cues
     text = "thì cái lưu ý đấy là một khi mà các bạn đã làm to ấy thì kiểu gì các bạn cũng sẽ phải hợp tác đúng không"
     w = _timed(text, pauses={15: 0.4})           # a 0.4 s breath before 'thì kiểu gì'
     texts = [c.text for c in words_to_cues(w)]
@@ -109,7 +109,7 @@ def test_long_unpunctuated_cue_splits_at_its_widest_pause():
 
 def test_ellipsis_mid_sentence_is_not_a_sentence_end():
     """whisper wrote 'like web...' then 'apps with the Django framework' with no pause between."""
-    from framesift.asr import words_to_cues
+    from mediasift.asr import words_to_cues
     w = _timed("used to build apps, like web... apps with the Django framework.")
     assert [c.text for c in words_to_cues(w)] == ["used to build apps, like web... apps with the Django framework."]
     w = _timed("so I was thinking... anyway the next part.", pauses={4: 0.8})
@@ -119,7 +119,7 @@ def test_ellipsis_mid_sentence_is_not_a_sentence_end():
 def test_no_fragments_when_pauses_are_uniform():
     """Real whisper Vietnamese: uniform word gaps, no commas, a capital where a sentence starts.
     The widest-gap rule cut 'Thì cái lời khuyên không' | 'nên hợp tác nó không đúng cho' | 'lắm Mình ...'."""
-    from framesift.asr import words_to_cues
+    from mediasift.asr import words_to_cues
     text = ("Thì cái lời khuyên không nên hợp tác nó không đúng cho lắm Mình nghĩ rằng là cái mình nên "
             "hướng tới đây là làm sao để hợp tác")
     cues = words_to_cues(_timed(text, step=0.3))
@@ -131,7 +131,7 @@ def test_ctc_frames_become_timed_words():
     """QUAN-Transcribe emits one CTC unit per 40 ms frame: '▁' starts a word, repeats extend it,
     blanks (0) end nothing, and a unit after a blank that repeats the previous one is a new token."""
     import numpy as np
-    from framesift.asr import ctc_words
+    from mediasift.asr import ctc_words
     pieces = ["<blank>", "<unk>", "▁xin", "▁chào", "▁b", "ạn"]
     best = np.array([0, 2, 2, 0, 3, 0, 0, 0, 0, 4, 5, 5, 0, 1, 0])
     words = ctc_words(best, pieces, offset=10.0)
@@ -144,7 +144,7 @@ def test_ctc_frames_become_timed_words():
 
 def test_quiet_split_keeps_every_sample_and_its_offset():
     import numpy as np
-    from framesift.asr import split_quiet
+    from mediasift.asr import split_quiet
     rng = np.random.default_rng(0)
     x = rng.normal(0, 0.3, 16000 * 75).astype(np.float32)
     x[16000 * 27:16000 * 27 + 1600] = 0.0            # a quiet 0.1 s at 27 s
@@ -157,7 +157,7 @@ def test_quiet_split_keeps_every_sample_and_its_offset():
 
 
 def test_vietnamese_on_apple_silicon_picks_quan(monkeypatch):
-    from framesift import asr
+    from mediasift import asr
     monkeypatch.setattr(asr, "apple_silicon", lambda: True)
     monkeypatch.setattr(asr, "quan_available", lambda: True)
     monkeypatch.setattr(asr, "_has", lambda m: True)
@@ -174,7 +174,7 @@ def test_ced_log_mel_matches_torchaudio():
     (MelSpectrogram center/reflect, AmplitudeToDB top_db=120), fixture made with torchaudio 2.7."""
     import numpy as np
     from pathlib import Path
-    from framesift import sound
+    from mediasift import sound
     f = np.load(Path(__file__).parent / "fixtures" / "ced_logmel.npz")
     got = sound.log_mel(f["wave"][None])[0]
     assert got.shape == f["logmel"].shape == (64, 301)
@@ -185,7 +185,7 @@ def test_core_ml_tags_keep_window_order_and_top_k(monkeypatch):
     """Batches of 64 windows: each row must land on its own window, the last batch padded, and only
     each window's top-k classes kept (what the sherpa tagger returns, and what the rules were tuned on)."""
     import numpy as np
-    from framesift import coreml, sound
+    from mediasift import coreml, sound
 
     def fake_predict(model, inputs, outputs):
         mel = inputs["mel"]
@@ -211,7 +211,7 @@ def test_shared_stft_gives_the_per_window_features():
     """Overlapping 3 s windows share frames: one STFT over the file plus each window's 4 reflect-padded
     edge frames must give exactly what log_mel computes window by window."""
     import numpy as np
-    from framesift import sound
+    from mediasift import sound
     y = np.random.default_rng(3).normal(0, 0.1, sound.SR * 20).astype(np.float32)
     y[sound.SR * 5:sound.SR * 6] = 0.0                    # silence: the per-window top_db floor
     for hop in (0.5, 1.0):

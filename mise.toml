@@ -12,15 +12,15 @@ run = "uv run pytest -q"
 
 [tasks.demo]
 description = "Analyze the synthetic fixture video end to end"
-run = "uv run python tests/make_fixture.py /tmp/framesift-fixture.mp4 && uv run framesift analyze /tmp/framesift-fixture.mp4 -o /tmp/framesift-demo"
+run = "uv run python tests/make_fixture.py /tmp/mediasift-fixture.mp4 && uv run mediasift analyze /tmp/mediasift-fixture.mp4 -o /tmp/mediasift-demo"
 
 [tasks.samples]
 description = "Fetch the test corpus into samples/ (gitignored)"
 run = "./samples/fetch.sh"
 
 [tasks.ced-coreml]
-description = "Build the Core ML sound tagger once (CED-small on the GPU, 4.5x the CPU tagger); framesift falls back to the CPU without it"
+description = "Build the Core ML sound tagger once (CED-small on the GPU, 4.5x the CPU tagger); mediasift falls back to the CPU without it"
 run = """
 uv run --no-project --python 3.13 --with torch==2.7.0 --with torchaudio==2.7.0 --with coremltools==9.0 \
-  --with transformers==4.46.3 python scripts/ced_coreml.py "$(uv run python -c 'from framesift.sound import ced_coreml_package as p; print(p().parent)')"
+  --with transformers==4.46.3 python scripts/ced_coreml.py "$(uv run python -c 'from mediasift.sound import ced_coreml_package as p; print(p().parent)')"
 """

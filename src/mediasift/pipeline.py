@@ -47,7 +47,7 @@ class Result:
 
 
 def log(msg: str) -> None:
-    print(f"framesift: {msg}", file=sys.stderr)
+    print(f"mediasift: {msg}", file=sys.stderr)
 
 
 def fmt_ts(t: float) -> str:
@@ -202,7 +202,7 @@ def analyze(path: str, out_dir: str, p: Params) -> Result:
                          "reasons": sorted(reasons), **st, "camera_switches": n_sw, "keyframes": kf_out, "transcript": texts[i]})
 
     manifest = {
-        "framesift": __version__,
+        "mediasift": __version__,
         "source": str(Path(path).resolve()),
         "duration": round(info.duration, 2),
         "media": {"width": info.width, "height": info.height, "fps": round(info.fps, 3),

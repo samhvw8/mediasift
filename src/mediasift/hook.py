@@ -1,11 +1,11 @@
-"""`framesift hook`: a Claude Code UserPromptSubmit hook that points the agent at a video.
+"""`mediasift hook`: a Claude Code UserPromptSubmit hook that points the agent at a video.
 
 When the prompt names an existing video/audio file or a video URL, it adds one line of context
-("run `framesift see PATH`", and whether a card is already cached). It never senses anything
+("run `mediasift see PATH`", and whether a card is already cached). It never senses anything
 itself: hooks have a short timeout and run on every prompt. Prompts without a video cost nothing.
 
 settings.json:
-  {"hooks": {"UserPromptSubmit": [{"hooks": [{"type": "command", "command": "framesift hook"}]}]}}
+  {"hooks": {"UserPromptSubmit": [{"hooks": [{"type": "command", "command": "mediasift hook"}]}]}}
 """
 from __future__ import annotations
 
@@ -52,7 +52,7 @@ def context(items: list[str]) -> str:
             if card.exists():
                 cached = f" (already sensed: card at {card})"
         lines.append(f"Video/audio in the prompt: {it}. You cannot watch or hear it; run "
-                     f"`framesift see {shlex.quote(it)}` and read the card first{cached}.")
+                     f"`mediasift see {shlex.quote(it)}` and read the card first{cached}.")
     return "\n".join(lines)
 
 

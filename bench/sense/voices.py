@@ -93,7 +93,7 @@ def campp(model: str):
 
 def main() -> None:
     sys.path.insert(0, str(ROOT / "src"))
-    from framesift import audio, sound
+    from mediasift import audio, sound
     rng = random.Random(11)
     methods = {"titanet (shipped)": lambda pcm, spans: sound.voices(pcm, spans)}
     if len(sys.argv) > 1:

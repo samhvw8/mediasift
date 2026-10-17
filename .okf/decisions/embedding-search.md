@@ -7,7 +7,7 @@ status: draft
 generated:
   by: claude-code/opus-5.5
   at: "2026-10-08T16:00:00Z"
-resource: src/framesift/query.py
+resource: src/mediasift/query.py
 sources:
   - id: eg2-card
     resource: https://huggingface.co/google/embeddinggemma-2
@@ -27,9 +27,9 @@ sources:
 
 # Decision
 
-`framesift index OUT` embeds keyframes, a 1 fps probe (at most 600) and ~8 s
+`mediasift index OUT` embeds keyframes, a 1 fps probe (at most 600) and ~8 s
 speech windows with EmbeddingGemma 2 (text + vision towers, Apache 2.0) into
-`vectors.npz`. `framesift find OUT "<what is visible>"` returns the top 6
+`vectors.npz`. `mediasift find OUT "<what is visible>"` returns the top 6
 distinct moments as one grid plus the speech there; `look --at T,...` returns
 exact moments. The agent reads the storyboard text first and pulls pictures
 on demand instead of reading every sheet.
@@ -62,13 +62,13 @@ removed torch (~2 GB) and the daemon:
 | llama.cpp vs PyTorch, same input | speech/queries cosine ≥ 0.9997; frames median 0.96-0.99 (image resize differs, not quantization) |
 | Metal vs CUDA index of the same video | frames median 0.9997 (min 0.9964), speech ≥ 0.9996 |
 
-How it runs (`embed.py`): llama.cpp is pinned in framesift's own `mise.toml`, not installed
-globally, so framesift asks `mise ls --installed` for that install and runs it from any folder
-(`FRAMESIFT_LLAMA_SERVER` overrides). Each command starts `llama-server` on a private Unix
-socket under a small `sh` wrapper that waits on its stdin. When framesift is
+How it runs (`embed.py`): llama.cpp is pinned in mediasift's own `mise.toml`, not installed
+globally, so mediasift asks `mise ls --installed` for that install and runs it from any folder
+(`MEDIASIFT_LLAMA_SERVER` overrides). Each command starts `llama-server` on a private Unix
+socket under a small `sh` wrapper that waits on its stdin. When mediasift is
 done, or dies (tested with `kill -9`), stdin closes and the wrapper removes the
 socket and kills the server; when the server fails to start, the wrapper exits
-too and framesift prints the log tail at once instead of waiting. Over ssh the
+too and mediasift prints the log tail at once instead of waiting. Over ssh the
 same wrapper runs on the host and the socket is forwarded (`ssh -L`), so no
 server is left on either machine. The wrapper uses no signal traps because the
 box's login shell (zsh) skips EXIT traps when killed. Starts try `--offline`
@@ -102,7 +102,7 @@ questions after two key corrections.
 |---|---|---|
 | A transcript only | 49% | 0 |
 | B uniform sheets | 93% | 25.5k |
-| C framesift sheets (2 rounds) | 96%, 96% | 37.0k, 28.4k |
+| C mediasift sheets (2 rounds) | 96%, 96% | 37.0k, 28.4k |
 | F find/look (4 rounds) | 98%, 98%, 96%, 100% | 24.7k, 49.8k, 43.8k, 37.7k |
 
 With 14 questions in one session, C reads its sheets once and spreads the

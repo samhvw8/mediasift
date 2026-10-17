@@ -1,4 +1,4 @@
-"""`framesift index OUT`: embed an analysis so an agent can search it.
+"""`mediasift index OUT`: embed an analysis so an agent can search it.
 
 Builds OUT/vectors.npz (and OUT/index/ probe images):
   frames  every keyframe plus a uniform probe every PROBE_STEP seconds (at
@@ -28,7 +28,7 @@ WINDOW_S = 8.0       # speech window length
 
 def log(msg: str) -> None:
     import sys
-    print(f"framesift: {msg}", file=sys.stderr)
+    print(f"mediasift: {msg}", file=sys.stderr)
 
 
 def speech_windows(cues: list, window: float = WINDOW_S) -> list[tuple[float, float, str]]:
@@ -96,7 +96,7 @@ def build(out_dir: str, emb) -> Path:
     else:
         log("index: no transcript, speech search disabled (run analyze with --asr or --transcript)")
 
-    meta = {**ident, "framesift": __version__, "probe_step": step, "window_s": WINDOW_S,
+    meta = {**ident, "mediasift": __version__, "probe_step": step, "window_s": WINDOW_S,
             "seconds": round(time.perf_counter() - t0, 1)}
     np.savez_compressed(
         out / "vectors.npz",

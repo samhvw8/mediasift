@@ -1,7 +1,7 @@
 # Agent QA bench
 
 Does an agent understand a video better per image token with `find`/`look`
-than with contact sheets? framesift has no LLM, so the harness's own
+than with contact sheets? mediasift has no LLM, so the harness's own
 sub-agents write, answer and grade the questions, in separate contexts.
 
 | role | sees | writes |
@@ -11,9 +11,9 @@ sub-agents write, answer and grade the questions, in separate contexts.
 | grader (one per video) | `key.json` + the answer files | `answers_<round>/<video>.grades.json` |
 
 Arms: **A** transcript only · **B** transcript + uniform sheets (same image
-count as C) · **C** storyboard + framesift sheets · **F** storyboard +
-`find`/`look` (no sheets). The writer never sees framesift output, so the
-questions do not favour what framesift chose.
+count as C) · **C** storyboard + mediasift sheets · **F** storyboard +
+`find`/`look` (no sheets). The writer never sees mediasift output, so the
+questions do not favour what mediasift chose.
 
 ```bash
 uv run python bench/prep_qa.py bench/qa bench/results/runs_v03 samples/*.mp4   # oracle + arm folders

@@ -418,67 +418,6 @@ wheels = [
 ]
 
 [[package]]
-name = "framesift"
-version = "0.3.0"
-source = { editable = "." }
-dependencies = [
-    { name = "faster-whisper" },
-    { name = "huggingface-hub" },
-    { name = "mlx-whisper", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
-    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
-    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-    { name = "parakeet-mlx", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
-    { name = "pillow" },
-    { name = "pyobjc-framework-coreml", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
-    { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin'" },
-    { name = "pyobjc-framework-vision", marker = "sys_platform == 'darwin'" },
-    { name = "sherpa-onnx" },
-    { name = "sherpa-onnx-core" },
-]
-
-[package.optional-dependencies]
-asr = [
-    { name = "faster-whisper" },
-]
-meaning = [
-    { name = "fastembed" },
-]
-mlx = [
-    { name = "faster-whisper" },
-    { name = "mlx-whisper", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
-    { name = "parakeet-mlx", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pytest" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "fastembed", marker = "extra == 'meaning'", specifier = ">=0.5" },
-    { name = "faster-whisper", specifier = ">=1.0" },
-    { name = "faster-whisper", marker = "extra == 'asr'", specifier = ">=1.0" },
-    { name = "faster-whisper", marker = "extra == 'mlx'", specifier = ">=1.0" },
-    { name = "huggingface-hub", specifier = ">=0.23" },
-    { name = "mlx-whisper", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'", specifier = ">=0.4" },
-    { name = "mlx-whisper", marker = "platform_machine == 'arm64' and sys_platform == 'darwin' and extra == 'mlx'", specifier = ">=0.4" },
-    { name = "numpy", specifier = ">=2.0" },
-    { name = "parakeet-mlx", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'", specifier = ">=0.5" },
-    { name = "parakeet-mlx", marker = "platform_machine == 'arm64' and sys_platform == 'darwin' and extra == 'mlx'", specifier = ">=0.5" },
-    { name = "pillow", specifier = ">=10" },
-    { name = "pyobjc-framework-coreml", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'", specifier = ">=12.2.2" },
-    { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin'", specifier = ">=12.2.2" },
-    { name = "pyobjc-framework-vision", marker = "sys_platform == 'darwin'", specifier = ">=12.2.2" },
-    { name = "sherpa-onnx", specifier = ">=1.13.8" },
-    { name = "sherpa-onnx-core", specifier = ">=1.13.8" },
-]
-provides-extras = ["asr", "meaning", "mlx"]
-
-[package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=8" }]
-
-[[package]]
 name = "fsspec"
 version = "2026.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -736,6 +675,67 @@ sdist = { url = "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec9
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8", size = 9979, upload-time = "2022-08-14T12:40:09.779Z" },
 ]
+
+[[package]]
+name = "mediasift"
+version = "0.3.0"
+source = { editable = "." }
+dependencies = [
+    { name = "faster-whisper" },
+    { name = "huggingface-hub" },
+    { name = "mlx-whisper", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "parakeet-mlx", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
+    { name = "pillow" },
+    { name = "pyobjc-framework-coreml", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
+    { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin'" },
+    { name = "pyobjc-framework-vision", marker = "sys_platform == 'darwin'" },
+    { name = "sherpa-onnx" },
+    { name = "sherpa-onnx-core" },
+]
+
+[package.optional-dependencies]
+asr = [
+    { name = "faster-whisper" },
+]
+meaning = [
+    { name = "fastembed" },
+]
+mlx = [
+    { name = "faster-whisper" },
+    { name = "mlx-whisper", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
+    { name = "parakeet-mlx", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fastembed", marker = "extra == 'meaning'", specifier = ">=0.5" },
+    { name = "faster-whisper", specifier = ">=1.0" },
+    { name = "faster-whisper", marker = "extra == 'asr'", specifier = ">=1.0" },
+    { name = "faster-whisper", marker = "extra == 'mlx'", specifier = ">=1.0" },
+    { name = "huggingface-hub", specifier = ">=0.23" },
+    { name = "mlx-whisper", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'", specifier = ">=0.4" },
+    { name = "mlx-whisper", marker = "platform_machine == 'arm64' and sys_platform == 'darwin' and extra == 'mlx'", specifier = ">=0.4" },
+    { name = "numpy", specifier = ">=2.0" },
+    { name = "parakeet-mlx", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'", specifier = ">=0.5" },
+    { name = "parakeet-mlx", marker = "platform_machine == 'arm64' and sys_platform == 'darwin' and extra == 'mlx'", specifier = ">=0.5" },
+    { name = "pillow", specifier = ">=10" },
+    { name = "pyobjc-framework-coreml", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'", specifier = ">=12.2.2" },
+    { name = "pyobjc-framework-quartz", marker = "sys_platform == 'darwin'", specifier = ">=12.2.2" },
+    { name = "pyobjc-framework-vision", marker = "sys_platform == 'darwin'", specifier = ">=12.2.2" },
+    { name = "sherpa-onnx", specifier = ">=1.13.8" },
+    { name = "sherpa-onnx-core", specifier = ">=1.13.8" },
+]
+provides-extras = ["asr", "meaning", "mlx"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8" }]
 
 [[package]]
 name = "mlx"

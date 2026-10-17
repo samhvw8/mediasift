@@ -8,8 +8,8 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from framesift import index, query
-from framesift.pipeline import Params, analyze
+from mediasift import index, query
+from mediasift.pipeline import Params, analyze
 from make_fixture import make
 
 COLOURS = {"red": [1, 0, 0], "green": [0, 1, 0], "blue": [0, 0, 1]}

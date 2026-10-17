@@ -13,9 +13,9 @@ from .pipeline import Params, analyze, fmt_ts, log
 def _see(a: argparse.Namespace) -> None:
     from .see import see
     if a.now:
-        os.environ["FRAMESIFT_FULL_SPEED"] = "1"
+        os.environ["MEDIASIFT_FULL_SPEED"] = "1"
     if a.on:
-        os.environ["FRAMESIFT_ON"] = a.on
+        os.environ["MEDIASIFT_ON"] = a.on
     out = see(a.video, force=a.force, asr_mode=a.asr)
     sys.stdout.write((out / "card.md").read_text())
     print(f"\n(card and images in {out})")
@@ -31,7 +31,7 @@ def _fix(a: argparse.Namespace) -> None:
     from .see import out_dir
     d = out_dir(Path(a.video).expanduser().resolve())
     if not (d / "sensed.json").exists():
-        sys.exit(f"no card for {a.video} yet: run `framesift see` first")
+        sys.exit(f"no card for {a.video} yet: run `mediasift see` first")
     r = record(d, a.time, a.label)
     print(f"recorded: at {r['at']} s the card said {r['was'] or 'nothing'!r}, it is {r['says']!r}")
 
@@ -49,7 +49,7 @@ def _hook(a: argparse.Namespace) -> None:
 def _asr(a: argparse.Namespace) -> None:
     from .asr import serve_stdin
     if a.audio != "-":
-        sys.exit("only `framesift asr -` (audio on stdin) is supported")
+        sys.exit("only `mediasift asr -` (audio on stdin) is supported")
     serve_stdin(a.lang)
 
 
@@ -57,7 +57,7 @@ def _analyze(a: argparse.Namespace) -> None:
     p = Params(fps=a.fps, fast=a.fast, min_seg=a.min_seg, max_seg=a.max_seg, sensitivity=a.sensitivity,
                cut_threshold=a.cut_threshold, drift=a.drift, content=a.content, max_frames=a.max_frames, width=a.width,
                sheets=not a.no_sheets, transcript=a.transcript, asr=a.asr, asr_backend=a.asr_backend, asr_model=a.asr_model, lang=a.lang)
-    out = a.out or str(Path(a.video).with_suffix("")) + ".framesift"
+    out = a.out or str(Path(a.video).with_suffix("")) + ".mediasift"
     r = analyze(a.video, out, p)
     s = r.manifest["stats"]
     t = r.timings
@@ -92,7 +92,7 @@ def _find(a: argparse.Namespace) -> None:
 def _look(a: argparse.Namespace) -> None:
     if a.span or not a.at:
         if not a.span:
-            sys.exit("give a span: framesift look VIDEO START-END")
+            sys.exit("give a span: mediasift look VIDEO START-END")
         a.video = a.out
         return _look_span(a)
     from .query import load, look, render_look
@@ -139,7 +139,7 @@ def _meaning(a: argparse.Namespace) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    ap = argparse.ArgumentParser(prog="framesift", description="Change-driven video segmentation for agents.")
+    ap = argparse.ArgumentParser(prog="mediasift", description="Change-driven video segmentation for agents.")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     se = sub.add_parser("see", help="sense a video or URL: a timeline card of picture, sound and speech (cached)")
@@ -149,7 +149,7 @@ def main(argv: list[str] | None = None) -> None:
     se.add_argument("--force", action="store_true", help="recompute even if cached")
     se.add_argument("--now", action="store_true", help="skip the polite settings (nice 10, capped worker pools)")
     se.add_argument("--on", metavar="HOST", help="transcribe on this ssh host (a GPU box) when it answers within 3 s; "
-                    "default: $FRAMESIFT_ON")
+                    "default: $MEDIASIFT_ON")
     se.set_defaults(fn=_see)
 
     fx = sub.add_parser("fix", help="record that a sound line was wrong (after checking it with `look`); "
@@ -165,7 +165,7 @@ def main(argv: list[str] | None = None) -> None:
     hk = sub.add_parser("hook", help="Claude Code UserPromptSubmit hook: points the agent at videos named in a prompt")
     hk.set_defaults(fn=_hook)
 
-    sa = sub.add_parser("asr", help="speech to timed cues: `framesift asr -` reads audio on stdin, prints JSON "
+    sa = sub.add_parser("asr", help="speech to timed cues: `mediasift asr -` reads audio on stdin, prints JSON "
                                     "(what `see --on HOST` runs on the host)")
     sa.add_argument("audio", help="- for stdin")
     sa.add_argument("--lang", help="ISO 639-1 (default: detect)")
@@ -173,7 +173,7 @@ def main(argv: list[str] | None = None) -> None:
 
     an = sub.add_parser("analyze", help="segment a video and pick keyframes")
     an.add_argument("video")
-    an.add_argument("-o", "--out", help="output dir (default: <video>.framesift/)")
+    an.add_argument("-o", "--out", help="output dir (default: <video>.mediasift/)")
     an.add_argument("--fps", type=float, default=5.0, help="analysis rate of tiny frames (default 5)")
     an.add_argument("--fast", action="store_true", help="decode codec I-frames only; much faster on long videos")
     an.add_argument("--min-seg", type=float, default=2.0, help="shortest segment, seconds (default 2)")
@@ -242,21 +242,21 @@ def main(argv: list[str] | None = None) -> None:
 
     me = sub.add_parser("meaning", help="describe keyframes, find topic chapters and summarize (needs a VLM server)")
     me.add_argument("out", help="an analyze output dir (has manifest.json)")
-    me.add_argument("--vlm-url", default=os.environ.get("FRAMESIFT_VLM_URL", "http://localhost:8011/v1"),
+    me.add_argument("--vlm-url", default=os.environ.get("MEDIASIFT_VLM_URL", "http://localhost:8011/v1"),
                     help="OpenAI-compatible endpoint (vLLM, llama.cpp, LM Studio, MLX-VLM)")
-    me.add_argument("--vlm-model", default=os.environ.get("FRAMESIFT_VLM_MODEL", "qwen3.5-4b"))
+    me.add_argument("--vlm-model", default=os.environ.get("MEDIASIFT_VLM_MODEL", "qwen3.5-4b"))
     me.add_argument("--lang", default="English", help="language for descriptions and summaries")
     me.add_argument("--workers", type=int, default=8, help="concurrent requests (the server batches them)")
     me.set_defaults(fn=_meaning)
 
     argv = list(sys.argv[1:] if argv is None else argv)
     if argv and argv[0] not in sub.choices and not argv[0].startswith("-"):
-        argv = ["see", *argv]           # `framesift VIDEO` is `framesift see VIDEO`
+        argv = ["see", *argv]           # `mediasift VIDEO` is `mediasift see VIDEO`
     a = ap.parse_args(argv)
     try:
         a.fn(a)
     except decode.FfmpegError as e:
-        sys.exit(f"framesift: {e}")
+        sys.exit(f"mediasift: {e}")
 
 
 if __name__ == "__main__":

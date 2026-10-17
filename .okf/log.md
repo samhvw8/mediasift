@@ -1,5 +1,8 @@
 # Update Log
 
+## 2026-10-17
+* **Renamed**: framesift is now **mediasift** — package `src/mediasift`, CLI `mediasift`, skill `skills/mediasift`, env `MEDIASIFT_ON` / `MEDIASIFT_CACHE`, cache `~/.cache/mediasift`, repo `samhvw8/mediasift` (GitHub redirects the old URL). The name now covers audio-only files as well as video. Older entries below keep the old name; bench prompts, results, council notes and research under the old name are records and were not rewritten.
+
 ## 2026-10-16
 * **Added**: [distribution](decisions/distribution.md) — install from GitHub via uv or mise `pypi:`; Claude Code plugin + marketplace (skill and guarded hook); AGENTS.md for coding agents.
 * **Updated**: [speech and speed](decisions/speech-and-speed.md) — audio and speech run beside the picture pass; CED on Core ML; 47 min talk 120 -> 70 s, reel 31 -> 20 s; rejected loop-filter skip, parakeet-vi ONNX; KenLM and FluidAudio blocked by the toolchain.

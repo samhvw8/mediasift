@@ -1,13 +1,13 @@
 ---
 type: Decision
 title: Sound sensing - naming, counting and hedging sounds, and who speaks
-description: Why framesift see tags sound with CED-small on 3 s windows, how short sounds are counted without counting syllables or a song's drums, when names are hedged, how speakers get letters, and how agent corrections teach names - with every tagger and rule that was tried and dropped.
+description: Why mediasift see tags sound with CED-small on 3 s windows, how short sounds are counted without counting syllables or a song's drums, when names are hedged, how speakers get letters, and how agent corrections teach names - with every tagger and rule that was tried and dropped.
 tags: [see, sound, audio, tagger, voices, feedback]
 status: draft
 generated:
   by: claude-code/opus-5.5
   at: "2026-10-16T12:00:00Z"
-resource: src/framesift/sound.py
+resource: src/mediasift/sound.py
 sources:
   - id: ced
     resource: https://github.com/RicherMans/CED
@@ -39,7 +39,7 @@ Every tagger sherpa-onnx ships was compared; CED-small wins or ties at the lowes
 
 **Core ML tagger (2026-10-16).** The same CED-small weights (mispeech/ced-small, pinned), converted once by
 `mise run ced-coreml` (`scripts/ced_coreml.py`, Python 3.13: coremltools has no 3.14 build) and run through
-pyobjc; without the package framesift says so and uses sherpa-onnx on the CPU. The mel front-end stays in numpy
+pyobjc; without the package mediasift says so and uses sherpa-onnx on the CPU. The mel front-end stays in numpy
 (frame power overflows fp16) and is computed once per batch span: overlapping windows share frames 2-298, only
 the 4 reflect-padded edge frames are per window (`sound.window_log_mels`, exact to 0.001 dB; 3.5-4x less FFT).
 Each window keeps its top 12 classes and names only classes some window kept, as sherpa returns them. Bench on
@@ -81,10 +81,10 @@ polite Mac): same embeddings, 3.4x faster on the GPU box.
 
 # Corrections teach names
 
-`framesift fix VIDEO TIME "label"` logs what the card said there and what it was
+`mediasift fix VIDEO TIME "label"` logs what the card said there and what it was
 (`<cache>/feedback.jsonl`); the skill tells agents to run it only when a frame or the user shows the
 truth. A label fixed the same way at least 3 times, by at least 75% of its fixes, shows on later
-cards as `throat clearing (usually: cough)`; the tagger's word stays. `framesift feedback` lists
+cards as `throat clearing (usually: cough)`; the tagger's word stays. `mediasift feedback` lists
 fixes. Runs: one local JSONL file.
 
 # Tried and dropped
@@ -103,4 +103,4 @@ Remaining misses are CED's own confusions (wind as "ocean", a washing machine as
 opening as "slap", a bell alarm as "jackhammer"): a better tagger or confirmed fixes, not card rules.
 Bench method and every run: [the sense bench](/benchmarks/sense-bench.md).
 
-[^ced]: CED small, int8, pinned by SHA-256 in `sound.py`; fetched once to `~/.cache/framesift/models`.
+[^ced]: CED small, int8, pinned by SHA-256 in `sound.py`; fetched once to `~/.cache/mediasift/models`.

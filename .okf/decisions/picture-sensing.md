@@ -1,13 +1,13 @@
 ---
 type: Decision
 title: Picture sensing - what the card says about the picture, and why
-description: How framesift see turns frames into card lines and images - flow-sheet tiles, event crops, camera moves, shot letters, drawn-in overlays, watermarks - with the real-file failure that prompted each rule and the measurement that kept it.
+description: How mediasift see turns frames into card lines and images - flow-sheet tiles, event crops, camera moves, shot letters, drawn-in overlays, watermarks - with the real-file failure that prompted each rule and the measurement that kept it.
 tags: [see, picture, events, camera, shots, ocr]
 status: draft
 generated:
   by: claude-code/opus-5.5
   at: "2026-10-10T21:00:00Z"
-resource: src/framesift/events.py
+resource: src/mediasift/events.py
 sources:
   - id: sense-real
     resource: bench/sense/real.py
@@ -23,7 +23,7 @@ Every frame (15 fps; 5 / 2 fps for files over 10 / 40 min) is read at 256x144 as
 colour blocks plus the largest local brightness change per block. Space-time connected regions of
 change become `change`, `blink` (changed and back), `motion` (with a path), `animating`, `scene`
 or `cut`. A change that a later event undoes reports how long it lasted. Why the frames are uniform
-on camera footage and change-weighted on screens: [framesift see](/decisions/see-sensor.md).
+on camera footage and change-weighted on screens: [mediasift see](/decisions/see-sensor.md).
 
 # Rules, each from a measured failure
 
@@ -49,4 +49,4 @@ on camera footage and change-weighted on screens: [framesift see](/decisions/see
 - **OCR speed-ups**: see [speech and speed](/decisions/speech-and-speed.md).
 
 [^sense-real]: Rounds under bench/sense/real/r7-r18; method and current scores in [the sense bench](/benchmarks/sense-bench.md).
-[^real-use]: Cards for the phone videos in ~/.cache/framesift/see; the videos are now bench items `reel_en` and `tiktok_vi`.
+[^real-use]: Cards for the phone videos in ~/.cache/mediasift/see; the videos are now bench items `reel_en` and `tiktok_vi`.
