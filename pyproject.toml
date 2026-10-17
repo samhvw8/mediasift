@@ -5,6 +5,7 @@ description = "A video and sound sensor for agents: one command turns a video in
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "siftasr @ git+https://github.com/samhvw8/siftasr",
     "numpy>=2.0",
     "pillow>=10",
     "pyobjc-framework-quartz>=12.2.2 ; sys_platform == 'darwin'",
@@ -43,5 +44,8 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/mediasift"]
 
+
+[tool.hatch.metadata]
+allow-direct-references = true
 [tool.pytest.ini_options]
 pythonpath = ["tests", "src"]

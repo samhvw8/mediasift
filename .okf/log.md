@@ -1,6 +1,7 @@
 # Update Log
 
 ## 2026-10-17
+* **Updated**: [speech and speed](decisions/speech-and-speed.md) — extracted ASR routing (`en`/`vi`/`zh`/Whisper with confidence-gated `< 0.7` LID), `pyobjc` Core ML runner, and TitaNet speaker attribution into the shared `siftasr` library (`~/workspace/libs/siftasr`), shared with `anydub`.
 * **Fixed**: [URL fetch](decisions/see-sensor.md) — 5 of 7 real fetches died on HTTP 429 for YouTube's auto-translated captions; `--ignore-errors`, original-language captions only, JS runtimes passed. Captions now follow the video's language: an auto-dubbed English talk had been given German `de-DE-orig`.
 * **Updated**: [the sense bench](benchmarks/sense-bench.md) (see-12: sound bench rechecked, question benches not rerun), [pipeline](architecture/pipeline.md) (music words in the sound row), [distribution](decisions/distribution.md) (uv and mise installs rechecked under the new name).
 * **Renamed**: framesift is now **mediasift** — package `src/mediasift`, CLI `mediasift`, skill `skills/mediasift`, env `MEDIASIFT_ON` / `MEDIASIFT_CACHE`, cache `~/.cache/mediasift`, repo `samhvw8/mediasift` (GitHub redirects the old URL). The name now covers audio-only files as well as video. Older entries below keep the old name; bench prompts, results, council notes and research under the old name are records and were not rewritten.

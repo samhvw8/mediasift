@@ -1,102 +1,58 @@
-"""Speech recognition behind one interface, picked per machine and per language.
+"""Speech recognition behind one interface, backed by `siftasr` and picked per machine and per language.
 
-| machine        | language covered by Parakeet v3 | Vietnamese        | anything else                  |
-|----------------|---------------------------------|-------------------|--------------------------------|
-| Apple Silicon  | parakeet-mlx                    | quan-coreml       | mlx-whisper                    |
-| NVIDIA CUDA    | faster-whisper, batched on GPU  | (same)            | faster-whisper, batched on GPU |
-| other          | faster-whisper on CPU           | (same)            | faster-whisper on CPU          |
-
-Every backend takes the mono 16 kHz int16 buffer mediasift already decoded,
-so ffmpeg stays the only decoder.
+| machine        | en (+ 24 EU languages) | Vietnamese (vi) | Chinese (zh / yue)         | anything else / low LID prob   |
+|----------------|------------------------|-----------------|----------------------------|--------------------------------|
+| Apple Silicon  | parakeet-mlx           | quan-coreml     | qwen3-mlx (or mlx-whisper) | mlx-whisper                    |
+| NVIDIA CUDA    | faster-whisper (batch) | (same)          | (same)                     | faster-whisper, batched on GPU |
+| other          | faster-whisper on CPU  | (same)          | (same)                     | faster-whisper on CPU          |
 """
 
 from __future__ import annotations
 
-import os
-import platform
+import json
+import subprocess
 import sys
-import tempfile
 import time
-import wave
-from dataclasses import dataclass
 
 import numpy as np
+from pathlib import Path
+
+try:
+    from siftasr import asr as _sift
+except ModuleNotFoundError:
+    _sift_src = Path(__file__).resolve().parents[4] / "libs" / "siftasr" / "src"
+    if _sift_src.is_dir():
+        sys.path.insert(0, str(_sift_src))
+    from siftasr import asr as _sift
 
 from .transcript import Cue
 
-SR = 16000
+SR = _sift.SR
+PARAKEET_LANGS = _sift.PARAKEET_LANGS
+ZH_LANGS = _sift.ZH_LANGS
+DEFAULT_MODEL = _sift.DEFAULT_MODEL
+QUAN_REPO = _sift.QUAN_REPO
+QUAN_REV = _sift.QUAN_REV
+QUAN_PKG = _sift.QUAN_PKG
+QUAN_FN = _sift.QUAN_FN
+FRAME_S = _sift.FRAME_S
 
-# Parakeet TDT 0.6B v3: 25 European languages (NVIDIA model card).
-PARAKEET_LANGS = {"bg", "hr", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "hu", "it", "lv", "lt",
-                  "mt", "pl", "pt", "ro", "sk", "sl", "es", "sv", "ru", "uk"}
-
-DEFAULT_MODEL = {
-    "parakeet-mlx": "mlx-community/parakeet-tdt-0.6b-v3",
-    "mlx-whisper": "mlx-community/whisper-large-v3-turbo",
-    "faster-whisper-cuda": "large-v3-turbo",
-    "faster-whisper-cpu": "small",
-}
-
-# QUAN-Transcribe 1.0 (EmbeddingGemma 2 audio encoder + CTC reader), Vietnamese only, as Core ML.
-# On a 47 min Vietnamese talk (M1 Pro): 156x realtime vs mlx-whisper turbo 22x; on real speech about as
-# accurate, worse on English loanwords and fillers; lowercase, no punctuation, numbers as words.
-QUAN_REPO = "qnguyen3/QUAN-Transcribe-1.0-CoreML"
-QUAN_REV = "13c3a2cf974c251668c1481713d35669aa2fb3e1"
-QUAN_PKG = "QuanTranscribe-fp16.mlpackage"
-QUAN_FN = "len_30s"          # one input length for every piece: one model load, 0.16 s per piece
-FRAME_S = 0.04               # one CTC frame
-
-
-@dataclass
-class AsrResult:
-    cues: list[Cue]
-    backend: str
-    model: str
-    language: str | None
-    seconds: float
-    voices: list | None = None        # speaker letters per cue, when the transcriber computed them
+AsrResult = _sift.AsrResult
+Word = _sift.Word
+_has = _sift._has
+apple_silicon = _sift.apple_silicon
+cuda_available = _sift.cuda_available
+_float = _sift._float
+detect_language_info = _sift.detect_language_info
+detect_language = _sift.detect_language
+split_quiet = _sift.split_quiet
+ctc_words = _sift.ctc_words
+words_to_cues = _sift.words_to_cues
+diarize_cues = _sift.diarize_cues
 
 
 def _log(msg: str) -> None:
     print(f"mediasift: {msg}", file=sys.stderr)
-
-
-def _has(module: str) -> bool:
-    try:
-        __import__(module)
-        return True
-    except ImportError:
-        return False
-
-
-def apple_silicon() -> bool:
-    return sys.platform == "darwin" and platform.machine() == "arm64"
-
-
-def cuda_available() -> bool:
-    try:
-        import ctranslate2
-        return ctranslate2.get_cuda_device_count() > 0
-    except Exception:
-        return False
-
-
-def _float(pcm: np.ndarray) -> np.ndarray:
-    return pcm.astype(np.float32) / 32768.0 if pcm.dtype.kind == "i" else pcm.astype(np.float32)
-
-
-def detect_language(pcm: np.ndarray) -> str | None:
-    """Whisper-tiny on 30 s taken a fifth of the way in (past intros and
-    music beds). Cheap on any machine; returns an ISO 639-1 code."""
-    if not _has("faster_whisper"):
-        return None
-    from faster_whisper import WhisperModel
-    start = int(len(pcm) * 0.2)
-    clip = _float(pcm[start:start + 30 * SR])
-    if len(clip) < SR:
-        clip = _float(pcm[:30 * SR])
-    _, info = WhisperModel("tiny", device="cpu", compute_type="int8").transcribe(clip, beam_size=1)
-    return info.language
 
 
 def quan_available() -> bool:
@@ -108,10 +64,12 @@ def pick(requested: str, language: str | None) -> str:
     if requested != "auto":
         return requested
     if apple_silicon():
-        if language in PARAKEET_LANGS and _has("parakeet_mlx"):
-            return "parakeet-mlx"
         if language == "vi" and quan_available():
             return "quan-coreml"
+        if language in ZH_LANGS and _has("mlx_qwen3_asr"):
+            return "qwen3-mlx"
+        if language in PARAKEET_LANGS and _has("parakeet_mlx"):
+            return "parakeet-mlx"
         if _has("mlx_whisper"):
             return "mlx-whisper"
     if not _has("faster_whisper"):
@@ -119,233 +77,72 @@ def pick(requested: str, language: str | None) -> str:
     return "faster-whisper"
 
 
-def transcribe(pcm: np.ndarray, backend: str = "auto", model: str | None = None,
-               language: str | None = None) -> AsrResult:
+def transcribe(
+    pcm: np.ndarray,
+    backend: str = "auto",
+    model: str | None = None,
+    language: str | None = None,
+    *,
+    diarize: bool = False,
+) -> AsrResult:
     if language is None and backend in ("auto", "mlx-whisper", "faster-whisper"):
         language = detect_language(pcm)
         _log(f"detected language: {language}")
     name = pick(backend, language)
     t0 = time.perf_counter()
     if name == "parakeet-mlx":
-        cues, used = _parakeet_mlx(pcm, model or DEFAULT_MODEL[name])
+        cues, used = _sift._parakeet_mlx(pcm, model or DEFAULT_MODEL[name])
+    elif name == "qwen3-mlx":
+        cues, used = _sift._qwen3_mlx(pcm, model or DEFAULT_MODEL[name], language)
     elif name == "mlx-whisper":
-        cues, used = _mlx_whisper(pcm, model or DEFAULT_MODEL[name], language)
+        cues, used = _sift._mlx_whisper(pcm, model or DEFAULT_MODEL[name], language)
     elif name == "faster-whisper":
-        cues, used = _faster_whisper(pcm, model, language)
+        cues, used = _sift._faster_whisper(pcm, model, language)
     elif name == "quan-coreml":
-        cues, used = _quan_coreml(pcm)
+        cues, used = _sift._quan_coreml(pcm)
     else:
         raise SystemExit(f"unknown ASR backend {name!r}")
     dt = time.perf_counter() - t0
     _log(f"ASR {name} ({used}): {len(pcm) / SR / max(dt, 1e-6):.1f}x realtime")
-    return AsrResult(cues, name, used, language, round(dt, 1))
-
-
-def _mlx_lean() -> None:
-    """MLX keeps freed GPU buffers in a cache: 5.5 GB after a 2-minute file on an M1 Pro,
-    on top of a 3.1 GB peak, which pushed a 16 GB Mac into swap. No cache costs no speed."""
-    import mlx.core as mx
-    mx.set_cache_limit(0)
-
-
-def _parakeet_mlx(pcm: np.ndarray, model: str) -> tuple[list[Cue], str]:
-    _mlx_lean()
-    from parakeet_mlx import from_pretrained
-    m = from_pretrained(os.path.expanduser(model))
-    with tempfile.NamedTemporaryFile(suffix=".wav") as f:
-        with wave.open(f.name, "wb") as w:
-            w.setnchannels(1)
-            w.setsampwidth(2)
-            w.setframerate(SR)
-            w.writeframes(pcm.astype(np.int16).tobytes())
-        # Chunked so memory stays flat on hour-long files; the library merges overlaps.
-        r = m.transcribe(f.name, chunk_duration=120.0, overlap_duration=15.0)
-    return [Cue(float(s.start), float(s.end), s.text.strip()) for s in r.sentences if s.text.strip()], model
-
-
-def _mlx_whisper(pcm: np.ndarray, model: str, language: str | None) -> tuple[list[Cue], str]:
-    _mlx_lean()
-    import mlx_whisper
-    # condition_on_previous_text=False avoids the known repeated-sentence loops on long audio.
-    r = mlx_whisper.transcribe(_float(pcm), path_or_hf_repo=model, language=language,
-                               condition_on_previous_text=False)
-    return [Cue(float(s["start"]), float(s["end"]), s["text"].strip()) for s in r["segments"] if s["text"].strip()], model
-
-
-def _faster_whisper(pcm: np.ndarray, model: str | None, language: str | None) -> tuple[list[Cue], str]:
-    from faster_whisper import BatchedInferencePipeline, WhisperModel
-    audio = _float(pcm)
-    if cuda_available():
-        # Batched decoding (~53x realtime on an RTX 3060 with turbo) returns
-        # ~30 s chunks; word timestamps are free and give sentence-sized cues.
-        name = model or DEFAULT_MODEL["faster-whisper-cuda"]
-        wm = WhisperModel(name, device="cuda", compute_type="float16")
-        segs, _ = BatchedInferencePipeline(model=wm).transcribe(audio, batch_size=16, language=language,
-                                                                word_timestamps=True)
-        return words_to_cues([(w.start, w.end, w.word) for s in segs for w in (s.words or [])]), name
-    name = model or DEFAULT_MODEL["faster-whisper-cpu"]
-    wm = WhisperModel(name, device="cpu", compute_type="int8")
-    # Word timestamps: segment times alone gave one cue spanning 4-29 s across a long silence.
-    segs, _ = wm.transcribe(audio, vad_filter=True, language=language, word_timestamps=True)
-    return words_to_cues([(w.start, w.end, w.word) for s in segs for w in (s.words or [])]), name
-
-
-def split_quiet(x: np.ndarray, chunk_s: float, search_s: float = 5.0) -> list[tuple[int, np.ndarray]]:
-    """(offset, piece) slices of at most chunk_s that cover x, each cut at the quietest 50 ms
-    in the last search_s before the limit (QUAN's own splitter, keeping offsets for timing)."""
-    n, win = int(chunk_s * SR), int(0.05 * SR)
-    search = min(int(search_s * SR), n - win)
-    out, start = [], 0
-    while len(x) - start > n:
-        lo = start + n - search
-        energy = np.convolve(x[lo:start + n].astype(np.float64) ** 2, np.ones(win), mode="valid")
-        cut = lo + int(np.argmin(energy)) + win // 2
-        out.append((start, x[start:cut]))
-        start = cut
-    out.append((start, x[start:]))
-    return out
-
-
-def ctc_words(best: np.ndarray, pieces: list[str], offset: float = 0.0) -> list[tuple[float, float, str]]:
-    """Greedy CTC path (one unit per 40 ms frame) -> timed words. Unit 0 is blank, 1 unknown;
-    a piece starting with '▁' starts a word; a word ends one frame after its last emitting frame."""
-    words: list[list] = []
-    prev = 0
-    for t, u in enumerate(best.tolist()):
-        if u >= 2:
-            at = offset + t * FRAME_S
-            if u != prev:
-                p = pieces[u]
-                if p.startswith("▁") or not words:
-                    words.append([at, at + FRAME_S, " " + p.lstrip("▁")])
-                else:
-                    words[-1][2] += p
-            words[-1][1] = at + FRAME_S
-        prev = u
-    return [(round(a, 2), round(b, 2), w) for a, b, w in words if w.strip()]
-
-
-def _quan_model():
-    """Fetch the pinned Core ML package once (665 MB), compile it once, load the 30 s function."""
-    import json
-    from . import coreml
-    from .sound import cache_root
-    d = cache_root() / "models" / f"quan-coreml-{QUAN_REV[:8]}"
-    if not (d / QUAN_PKG / "Manifest.json").exists():
-        from huggingface_hub import snapshot_download
-        _log(f"downloading the Vietnamese speech model (665 MB, once) from {QUAN_REPO}")
-        # local_dir gives real files: the Core ML compiler rejects the HF cache's symlinks.
-        snapshot_download(QUAN_REPO, revision=QUAN_REV, local_dir=d,
-                          allow_patterns=["config.json", "units.json", f"{QUAN_PKG}/*", f"{QUAN_PKG}/**"])
-    pieces = json.loads((d / "units.json").read_text(encoding="utf-8"))["pieces"]
-    return coreml.load(d / QUAN_PKG, QUAN_FN), pieces
-
-
-def _quan_coreml(pcm: np.ndarray) -> tuple[list[Cue], str]:
-    """One forward pass per <= 30 s piece, no decoder loop. Line times come from the CTC frames."""
-    from . import coreml
-    m, pieces = _quan_model()
-    n = 30 * SR
-    words: list[tuple[float, float, str]] = []
-    for off, piece in split_quiet(_float(pcm), 30.0):
-        if len(piece) < SR // 10:
-            continue
-        x = np.zeros((1, n), np.float32)
-        x[0, :len(piece)] = piece
-        lp, mask = coreml.predict(m, {"audio": x, "length": np.array([len(piece)], np.int32),
-                                      "streaming": np.zeros(1, np.float32),
-                                      "left_chunks": np.array([1e4], np.float32)}, ["log_probs", "frame_mask"])
-        words += ctc_words(lp[0, :int(mask.sum())].argmax(-1), pieces, off / SR)
-    return words_to_cues(words), f"{QUAN_REPO}@{QUAN_REV[:7]}"
-
-
-def words_to_cues(words: list[tuple[float, float, str]], max_len: float = 8.0, gap: float = 0.6) -> list[Cue]:
-    """Group timed words into sentence-sized cues: break after . ? !, at a
-    pause longer than `gap`, or before a cue passes `max_len` seconds. A cue that grows too
-    long splits at its last comma, else at its widest pause: a plain cut at the cap split
-    phrases mid-way ('like web...' | 'apps with the Django framework')."""
-    cues: list[Cue] = []
-    cur: list[tuple[float, float, str]] = []
-
-    def emit(ws):
-        cues.append(Cue(float(ws[0][0]), float(ws[-1][1]), "".join(x[2] for x in ws).strip()))
-
-    for w in words:
-        if cur and w[0] - cur[-1][1] > gap:
-            emit(cur)
-            cur = []
-        elif cur and w[1] - cur[0][0] > max_len:
-            # Split points, best first, keeping the first part >= 3 s (no fragments): the last comma; a
-            # real pause; a capital where whisper started a sentence without a period ('lắm Mình nghĩ');
-            # else the cap. Uniform word gaps made 'widest pause' a random cut (Vietnamese reel).
-            ok = [i for i in range(len(cur) - 1) if cur[i][1] - cur[0][0] >= 3.0]
-            gap_after = lambda i: cur[i + 1][0] - cur[i][1]
-            commas = [i for i in ok if cur[i][2].strip().endswith((",", ";", ":", "，", "、"))]
-            pauses = [i for i in ok if gap_after(i) >= 0.15]
-            caps = [i for i in ok if cur[i + 1][2].strip()[:1].isupper()]
-            k = (commas[-1] if commas else max(pauses, key=gap_after) if pauses
-                 else caps[-1] if caps else len(cur) - 1)
-            emit(cur[:k + 1])
-            cur = cur[k + 1:]
-        cur.append(w)
-        end = w[2].strip()
-        # '...' is a hesitation, not a full stop: a real trailing-off still splits on the pause after it.
-        if end.endswith((".", "?", "!", "。", "？", "！")) and not end.endswith(("...", "…")):
-            emit(cur)
-            cur = []
-    if cur:
-        emit(cur)
-    return [c for c in cues if c.text]
-
-
-def remote(pcm: np.ndarray, host: str, language: str | None = None, connect_s: int = 3) -> AsrResult | None:
-    """Transcribe on another machine (a GPU box) over ssh: the audio goes as FLAC on stdin
-    (about 30 MB per hour), `mediasift asr -` runs there, cues come back as JSON. Returns None
-    when the host does not answer within `connect_s`, so the caller can fall back to local.
-    The Mac then spends no GPU or memory on speech at all."""
-    import json
-    import subprocess
-    if host != "local":   # "local" runs the same protocol without ssh (tests)
-        ok = subprocess.run(["ssh", "-o", "BatchMode=yes", "-o", f"ConnectTimeout={connect_s}", host, "true"],
-                            capture_output=True).returncode == 0
-        if not ok:
-            _log(f"{host} did not answer in {connect_s}s: transcribing here")
-            return None
-    flac = subprocess.run(["ffmpeg", "-v", "error", "-f", "s16le", "-ar", str(SR), "-ac", "1", "-i", "-",
-                           "-c:a", "flac", "-f", "flac", "-"], input=pcm.astype(np.int16).tobytes(),
-                          capture_output=True, check=True).stdout
-    remote_cmd = "mediasift asr -" + (f" --lang {language}" if language else "")
-    cmd = ["mediasift", "asr", "-"] + (["--lang", language] if language else []) if host == "local" else \
-        ["ssh", "-o", "BatchMode=yes", "-o", f"ConnectTimeout={connect_s}", "-o", "ServerAliveInterval=15",
-         "-o", "ServerAliveCountMax=4", host, f"bash -lc '{remote_cmd}'"]
-    t0 = time.perf_counter()
-    # A stalled box must not hang `see`: allow 10x realtime plus model load, then give up loudly.
-    r = subprocess.run(cmd, input=flac, capture_output=True, timeout=120 + len(pcm) / SR / 10)
-    if r.returncode != 0:
-        raise RuntimeError(f"ASR on {host} failed ({r.returncode}): {r.stderr.decode(errors='replace')[-1500:]}")
-    out_lines = r.stdout.decode(errors="replace").strip().splitlines()
-    if not out_lines:
-        raise RuntimeError(f"ASR on {host} printed nothing: {r.stderr.decode(errors='replace')[-800:]}")
-    js = json.loads(out_lines[-1])        # a login shell may print a banner before the JSON
-    cues = [Cue(float(a), float(b), t) for a, b, t in js["cues"]]
-    remote_voices = js.get("voices")
-    dt = time.perf_counter() - t0
-    _log(f"ASR on {host}: {js['backend']} ({js['model']}), {len(pcm) / SR / max(dt, 1e-6):.1f}x realtime incl. transfer")
-    res = AsrResult(cues, f"{js['backend']}@{host}", js["model"], js.get("language"), round(dt, 1))
-    res.voices = remote_voices if remote_voices and len(remote_voices) == len(cues) else None
+    res = AsrResult([Cue(c.start, c.end, c.text) for c in cues], name, used, language, round(dt, 1))
+    if diarize and cues:
+        _, res.voices = diarize_cues(pcm, cues)
     return res
 
 
+def remote(pcm: np.ndarray, host: str, language: str | None = None, connect_s: int = 3) -> AsrResult | None:
+    res = _sift.remote(pcm, host, language=language, connect_s=connect_s, remote_bin="mediasift")
+    if res is None:
+        return None
+    out = AsrResult([Cue(c.start, c.end, c.text) for c in res.cues], res.backend, res.model, res.language, res.seconds)
+    out.voices = res.voices
+    return out
+
+
 def serve_stdin(language: str | None) -> None:
-    """`mediasift asr -`: audio in any ffmpeg-readable format on stdin, cues as JSON on stdout."""
-    import json
-    import subprocess
     data = sys.stdin.buffer.read()
-    pcm = np.frombuffer(subprocess.run(["ffmpeg", "-v", "error", "-i", "-", "-f", "s16le", "-ac", "1", "-ar", str(SR), "-"],
-                                       input=data, capture_output=True, check=True).stdout, np.int16)
+    pcm = np.frombuffer(
+        subprocess.run(
+            ["ffmpeg", "-v", "error", "-i", "-", "-f", "s16le", "-ac", "1", "-ar", str(SR), "-"],
+            input=data,
+            capture_output=True,
+            check=True,
+        ).stdout,
+        np.int16,
+    )
     r = transcribe(pcm, "auto", None, language)
-    from .sound import voices          # the host has the audio already: group speakers here too
+    from .sound import voices
     who = voices(pcm, [(c.start, c.end) for c in r.cues])
-    print(json.dumps({"cues": [[round(c.start, 2), round(c.end, 2), c.text] for c in r.cues], "voices": who,
-                      "backend": r.backend, "model": r.model, "language": r.language, "seconds": r.seconds},
-                     ensure_ascii=False))
+    print(
+        json.dumps(
+            {
+                "cues": [[round(c.start, 2), round(c.end, 2), c.text] for c in r.cues],
+                "voices": who,
+                "backend": r.backend,
+                "model": r.model,
+                "language": r.language,
+                "seconds": r.seconds,
+            },
+            ensure_ascii=False,
+        )
+    )

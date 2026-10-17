@@ -553,62 +553,16 @@ def bursts(rms_db: np.ndarray, times: np.ndarray, start: float, end: float, gap:
 
 
 def voices(pcm: np.ndarray, spans: list[tuple[float, float]], thr: float = 0.6) -> list[str | None]:
-    """Group speech lines by speaker: a TitaNet-small embedding per line (NeMo, via sherpa-onnx),
-    clustered greedily against running centroids; 'A', 'B', ... in order of first appearance.
-    Real-speech bench (LibriSpeech dialogues, bench/sense/voices.py): 1.00 pairwise agreement and
-    the right number of voices in 8/8 dialogues; a mean-spectrum heuristic scored 0.73, and the
-    CAM++ exports could not tell speakers apart under this sherpa-onnx. Lines under 0.8 s get None."""
-    import os
-    from concurrent.futures import ThreadPoolExecutor
-    import sherpa_onnx
-    # Lines in parallel, one thread each: the same embeddings 3x faster than one 4-thread call at
-    # a time (300 lines, GPU box: 11.0 s -> 3.2 s; a 1h45m podcast has ~1,900 lines). Capped when polite.
-    ex = sherpa_onnx.SpeakerEmbeddingExtractor(sherpa_onnx.SpeakerEmbeddingExtractorConfig(
-        model=str(speaker_model()), num_threads=1))
-
-    def embed(span) -> np.ndarray | None:
-        seg = pcm[int(span[0] * SR):int(span[1] * SR)]
-        if len(seg) < 0.8 * SR:
-            return None
-        st = ex.create_stream()
-        st.accept_waveform(SR, seg.astype(np.float32) / 32768.0 if seg.dtype.kind == "i" else seg.astype(np.float32))
-        st.input_finished()
-        v = np.array(ex.compute(st), np.float32)
-        return v / (np.linalg.norm(v) + 1e-9)
-
-    with ThreadPoolExecutor(polite.threads(min(16, os.cpu_count() or 4))) as pool:
-        embs: list[np.ndarray | None] = list(pool.map(embed, spans))
-    if sum(v is not None for v in embs) < 2:
-        return [None] * len(spans)
-    sums: list[np.ndarray] = []
-    out: list[str | None] = []
-    for v in embs:
-        if v is None:
-            out.append(None)
-            continue
-        d = [1 - float(v @ (c / np.linalg.norm(c))) for c in sums]
-        j = int(np.argmin(d)) if d else -1
-        if j >= 0 and d[j] < thr:
-            sums[j] = sums[j] + v
-        else:
-            sums.append(v.copy())
-            j = len(sums) - 1
-        out.append(j)
-    counts = [out.count(k) for k in range(len(sums))]
-    if sum(counts) >= 20:
-        # A one-line "speaker" in a long talk is a noisy fragment ("So this"): fold it into the
-        # nearest voice that holds at least three lines.
-        major = [k for k, c in enumerate(counts) if c >= 3]
-        if major:
-            for i, (k, v) in enumerate(zip(out, embs)):
-                if k is not None and counts[k] == 1:
-                    out[i] = max(major, key=lambda m: float(v @ (sums[m] / np.linalg.norm(sums[m]))))
-    order: dict[int, str] = {}
-    for k in out:
-        if k is not None and k not in order:
-            order[k] = chr(ord("A") + min(len(order), 25))
-    named = [order[k] if k is not None else None for k in out]
-    return named if len(order) > 1 else [None] * len(spans)
+    """Group speech lines by speaker via `siftasr.speakers` (TitaNet-small embeddings clustered greedily)."""
+    try:
+        from siftasr import speakers as _spk
+    except ModuleNotFoundError:
+        _sift_src = Path(__file__).resolve().parents[4] / "libs" / "siftasr" / "src"
+        if _sift_src.is_dir():
+            import sys
+            sys.path.insert(0, str(_sift_src))
+        from siftasr import speakers as _spk
+    return _spk.voices(pcm, spans, thr=thr, max_workers=polite.threads(min(16, os.cpu_count() or 4)))
 
 def quality(pcm: np.ndarray, t: float, dur: float = 0.3) -> str:
     """Words for how a short sound sounds, from its spectrum and decay: pitch register

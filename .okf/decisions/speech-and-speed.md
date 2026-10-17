@@ -5,8 +5,8 @@ description: How mediasift see transcribes (parakeet-mlx, QUAN-Transcribe for Vi
 tags: [see, asr, whisper, gpu-box, resources, lag]
 status: draft
 generated:
-  by: claude-code/opus-5.5
-  at: "2026-10-16T12:00:00Z"
+  by: samhv
+  at: "2026-10-17T13:35:00Z"
 resource: src/mediasift/asr.py
 sources:
   - id: lagprobe
@@ -22,9 +22,9 @@ sources:
 
 # Transcription
 
-Auto-picked: parakeet-mlx on Apple Silicon for its 25 languages (MLX buffer cache capped at 0),
-Vietnamese through QUAN-Transcribe on Core ML (below), otherwise whisper (mlx-whisper, faster-whisper on
-CUDA or CPU). With `--on HOST` or `MEDIASIFT_ON`,
+Auto-picked via the shared `siftasr` library (`~/workspace/libs/siftasr`): parakeet-mlx on Apple Silicon for its 25 languages (MLX buffer cache capped at 0),
+Vietnamese through QUAN-Transcribe on Core ML (below), Chinese/Cantonese through `qwen3-mlx` when installed, and whisper (`mlx-whisper`, `faster-whisper` on
+CUDA or CPU) for everything else or when language-detection probability is `< 0.7`. With `--on HOST` or `MEDIASIFT_ON`,
 the audio goes as FLAC over ssh to `mediasift asr -` on that host[^box], which returns JSON cues and
 speaker letters; 1h45m podcast: box transcription 99 s (64x realtime), transfer 2 s. The first box run
 of that podcast cost the Mac 390 s of CPU against 785 s all-local, and none of its GPU.
