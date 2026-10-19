@@ -6,7 +6,7 @@ tags: [roadmap, plan, council, integrity, captions, library]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-17T16:00:00Z"
+  at: "2026-10-18T16:15:00Z"
 sources:
   - id: council
     resource: .council/20261017-140250
@@ -14,6 +14,9 @@ sources:
   - id: usage
     resource: process:usage-log-review-2026-10-17
     title: Review of the local usage log and session prompts - of 737 cached cards about 7 were real use (phone reels, a YouTube clip, a screen video, long talks)
+  - id: see14-artifact
+    resource: https://mediasift-see-14.art.3cxo.work/
+    title: Interactive see-14 Before & After visual proof and 18-clip Hugging Face / MotionBench report (local copy at bench/sense/real/r20/see_14_before_after.html)
 ---
 
 # Why this order
@@ -34,6 +37,8 @@ rules: running cost and breakage first, build effort last.
 | 6 | The cache as a citable library (`grep`, `quote`, `align`) | a real clip (`tDmjz6HB-yw`) cut from a 47 min talk drops the interviewer's question | measure against `rg` over existing transcripts; count how often multi-video jobs recur; index lazily, never inside `see`; voxtract's `ID@start-end` handles | open, gated |
 | 7 | Word-timestamp deixis zoom (`mediasift look VIDEO --say "phrase"`, council C05) | deixis bench questions ("when he says X, what is his hand doing?") inside multi-clause lines (`reel_en` `q02`, `q04`, `q06`; `tiktok_vi`) | keep `siftasr` word timestamps (`speech[i].words`, SentencePiece subwords merged); match exact or accent-stripped Vietnamese or fuzzy 1-word ASR diffs; interpolate cue span when `words` is absent; list closest 3 lines on miss; highlight matched words in yellow on the sound strip (capped at 8 word labels) | **done** |
 | 8 | Adaptive & preset sensing modes (`--mode {auto,adaptive,probe,podcast,music,reel,screen,full}`, `--with` / `--without`) and incremental `sensed.json` cache upgrades | `altman_vi.mp4` spent 88% of wall time (`61.4s / 69.9s`) and 45% of card lines on picture/OCR/image work on a talking-head interview; `cs50_lecture.mp4` spent 42% of wall time on unused visual/OCR passes | keep `--mode auto` (`full`) as default so existing bench contracts stay 100% compatible; `probe` runs S2T + 32x18 grid + sound tags + 1 keyframe sheet and reports `detected: <kind>`; `adaptive` classifies from the lightweight signal and runs only relevant heavy passes; incremental `--with` upgrades run only missing passes on cached `sensed.json` | **done** |
+| 9 | Codec-aligned motion-compensated P-frame residuals, stratified intra-bucket peak snapping (`flow_sheets` & `look`), `look` active-region Codec Canvas 2x zoom row (`_active_crop_row`), and compressed-domain `decode.packet_activity` (`see-14`)[^see14-artifact] | `reel_en` `q06` (`0.25 s` raised fist at `9.28 s`) fell between uniform clock midpoints in r19; stationary camera with central actor motion triggered false camera tilts while fast pans wrapped `0.5 s` FFT phase (`1/3` recall on `zai-org/MotionBench`) | outer 25% border-strip consensus shift `(dx, dy)` warps `prev` when median peak >= `0.16` (**3/3** MotionBench pan recall, **0/3** still FP, **-40.2%** pan background noise); `[0.18, 0.82]` interior peak window + `0.6 s` cut guard (**1.79x** mean peak activity gain across 18 HF clips); 4-tile 2x `ACT CROP` row in `look` (**16/16** on `real/r20`) | **done** ([picture sensing](/decisions/picture-sensing.md)) |
+| 10 | Active-viewport layout classification (`events.detect_layout`), matte-trimmed border shift (`events._border_shift`), and persistent full-frame banner/headline OCR (`see.scan_persistent_text`, `see-15`)[^see14-artifact] | `_ocr_events` only inspects `before`/`after` crops of changed regions, missing persistent headlines present from `t = 0.0 s` on **9 of 10** real TikTok, YouTube Shorts, and Instagram Reels clips (`10%` recall); static letterbox/pillarbox mattes pinned 2 of 5 border strips to `0.0` | `detect_layout` checks both low temporal delta (`< 0.008`) and spatial bar uniformity (`std < 0.035`) + 1-column seam sharpness for `split-vertical` (**11/11** across 30 clips); `scan_persistent_text` samples up to 6 settled full frames, normalizes Vietnamese `đ`/`Đ` + NFD accents, drops speech-redundant captions, and surfaces `Lasting text` by `top`/`middle`/`bottom` zone (**10/10** recall) | **done** ([picture sensing](/decisions/picture-sensing.md)) |
 
 Lower in the pool, kept for later: a self-checking dub (card of the dub vs the source; the judges split
 most on it), a "futz" tag for phone or radio voices, a claims ledger (which witnesses back each number),
@@ -41,3 +46,4 @@ one voice roster across a video.
 
 [^usage]: The usage log in the cache, the cached cards' `source.txt`, and the owner's prompts that named a video file or link.
 [^council]: `harvest` in the run folder lists the develop and stress file per concept.
+[^see14-artifact]: Published at `https://mediasift-see-14.art.3cxo.work/` and committed locally at `bench/sense/real/r20/see_14_before_after.html`.

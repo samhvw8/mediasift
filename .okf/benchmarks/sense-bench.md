@@ -6,7 +6,7 @@ tags: [bench, evaluation, see, sound, voices]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-17T13:30:00Z"
+  at: "2026-10-18T16:15:00Z"
 resource: bench/sense
 sources:
   - id: synth
@@ -30,6 +30,9 @@ sources:
   - id: modes
     resource: bench/sense/mode_bench.py
     title: Adaptive, probe, and preset sensing modes + incremental cache upgrade bench
+  - id: codec_motion
+    resource: bench/sense/codec_motion_bench.py
+    title: Codec-aligned motion-compensated P-frame residuals & intra-bucket peak snapping bench (HF MotionBench / TempCompass / Reels; visual artifact at https://mediasift-see-14.art.3cxo.work/)
 ---
 # The benches
 
@@ -43,6 +46,7 @@ sources:
 | harmony & rhythm | 18 chords/modes (`major`/`minor`/`drone`), 10 harmonic shifts, 10 BPMs, 8 speech/ambient false-BPM controls, 6 cut-sync cases | deterministic script judge | `uv run python bench/sense/harmony_rhythm.py` |
 | segment emotion | 12 RAVDESS actors (48 segments) + 4 calm multi-turn controls + 1 real VN narration clip | macro F1 across `calm`/`heated`/`animated`/`subdued` + 0 false flags | `uv run python bench/sense/segment_emotion.py` |
 | sensing modes | `resolve_passes` (10 cases), `classify_signal` (6 real videos), `probe` vs `full`, `podcast` vs `full`, and incremental `+ocr` upgrade | deterministic script judge | `uv run python bench/sense/mode_bench.py` |
+| codec motion, layout & persistent text | 30 real clips across 8 HF datasets (`MotionBench`, `TempCompass`, `reels-clips`, `ig-reels`, `funa21/tiktok-data`, `Shofo/shofo-tiktok-general-small`, `videoSALMONN2`, `nyu-visionx/vstat`, `facebook/show3d-dataset`) + `reel_en` / `tiktok_vi` gesture apexes + layout (11 cases) + persistent headline OCR (10 cases) + `decode.packet_activity` | deterministic script judge | `uv run python bench/sense/codec_motion_bench.py` |
 No agent can hear, so real-footage questions test sight and speech only: there the bar is parity
 with arm B, and mediasift's gains are the senses B lacks. Run-to-run noise on real footage is 1-3
 questions in 32: compare repeat runs before calling a change.
@@ -53,13 +57,14 @@ questions in 32: compare repeat runs before calling a change.
 |---|---|---|
 | synthetic | 22/26, 11 images (r1) | **26/26, 7 images** (r16) |
 | real, 4 landscape videos | 31/32, 58 images | **32/32, 55 images** (r15, one run) |
-| real, 2 phone videos | 13/16 (r19) | **15/16** (r17-r19; `tiktok_vi` 8/8, `reel_en` 7/8) |
+| real, 2 phone videos | 14/16 (r20) | **16/16** (r20, `see-14`: `reel_en` **8/8**, `tiktok_vi` **8/8**) |
 | sound, 200 held-out clips | 0 by construction | Core ML tagger (2026-10-16): silence 163, under speech 144, synthetic music 143, real song 138 (82 / 72 / 72 / 69%), stray 17 / 21 / 7 / 32; sherpa on the same code 164 / 139 / 138 / 134, stray 11 / 20 / 6 / 35; see-13 real song unchanged (138, stray 32) |
 | sound, 40 clips | 0 | 36/40 (5 stray; sherpa 3) |
 | voices | 0 | 1.00 agreement, 8/8 voice counts |
 | harmony & rhythm | 0 | **18/18** mode, **10/10** shift, **10/10** BPM, **0/8** false BPM, **6/6** cut sync |
 | segment emotion | 0 | **79.8% macro F1** (speaker-normalized prosody + CED vocal bursts + pauses vs 14.2% unnormalized), **0/5** false flags |
 | sensing modes | - | **10/10** pass resolution, **6/6** adaptive signal classification, **67% faster** `probe` on `python_100s`, **66% faster** & **61% fewer lines** `podcast` on `cs50_lecture` |
+| codec motion, layout & persistent text | - | **3/3** MotionBench pan recall, **0/3** still FP, **40.2%** pan residual reduction, **1.47x** intra-bucket peak gain (30 clips), **2/2** gesture apex hits, **11/11** layout classification, **10/10** persistent headline OCR recall (vs 1/10 change-only) |
 
 # History of real-footage rounds
 
@@ -76,6 +81,7 @@ questions in 32: compare repeat runs before calling a change.
 | r15 | 31/32 | 32/32 | drawn-in overlays, change colours |
 | r17-r18 | phones 15/16 | 14 → 15/16 | zoom hint, single-cut wording |
 | r19 | phones 13/16 | **15/16** | `look --say "phrase"`, harmony/rhythm, speaker-normalized emotion (`see-13`) |
+| r20 | phones 14/16 | **16/16** | motion-compensated P-frame residuals, intra-bucket peak snapping (`flow_sheets` & `look`), and `look` Codec Canvas active-region zoom row (`see-14`) |
 
 Lessons from the rounds: a cleanup that removes images an agent can see is a behaviour change and
 must be measured like one (r7); a bench that counts only "named" and "stray" hides confident wrong

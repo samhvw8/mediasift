@@ -6,7 +6,7 @@ tags: [pipeline, architecture]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-17T13:30:00Z"
+  at: "2026-10-18T16:15:00Z"
 resource: src/mediasift/see.py
 ---
 
@@ -17,13 +17,13 @@ One cached command; why each part exists: [mediasift see](/decisions/see-sensor.
 | stage | module | output |
 |---|---|---|
 | cache key | `see.content_key` | size + first/last MiB + card version → `~/.cache/mediasift/see/<key>/`; URLs via yt-dlp into `cache/url/` (site subtitles in the video's own language replace ASR; a subtitle failure never costs the video, see [URL fetch](/decisions/see-sensor.md)) |
-| picture | `events.build_grid`, `events.detect`, `events.cuts` | 256x144 frames at 15/5/2 fps → 32x18 colour blocks + largest local change → cuts, then space-time regions of change classified change / blink / motion / animating / scene, with lifetimes (undone or wiped away); global shift per frame → camera pans / tilts (screen: scrolls); a letter per shot, repeated when a place returns (`events.shot_letters`) |
+| picture | `events.build_grid`, `events.detect`, `events.cuts`, `events.camera_moves`, `events.detect_layout` | 256x144 frames at 15/5/2 fps; active-viewport matte-trimmed outer 25% border-strip consensus shift `(dx, dy)` warps `prev` before computing 32x18 colour blocks + largest local change → motion-compensated residuals, cuts, space-time regions (`change` / `blink` / `motion` / `animating` / `scene`) with lifetimes, rolling-median camera pans / tilts (screen: scrolls), shot letters (`events.shot_letters`), and viewport layout (`letterbox` / `pillarbox` / `split-vertical` / `static-slide`) |
 | sound | `sound.tag`, `sound.hits`, `sound.beds`, `sound.silences`, `sound.bursts`, `sound.quality`, `sound.voices` | CED-small on 3 s windows (Core ML on the GPU in batches of 64 when `mise run ced-coreml` built it, else sherpa-onnx on the CPU; numpy mel with frames shared across overlapping windows), spans trimmed to audible audio; counted short sounds with pitch words (syllables and a song's drums excluded); lasting sounds, "maybe X" below 0.3; silences; TitaNet voice letters; music beds carry CED's own mood and genre words when sure, and a mood arc when long ([music and voice mood](/decisions/music-and-voice-mood.md)) |
 | speech | `asr.transcribe` / `asr.remote` | parakeet-mlx (cache capped), QUAN-Transcribe on Core ML for Vietnamese (CTC frames give word times), or whisper (words grouped into cues split at commas, pauses or sentence capitals); `--on HOST` sends FLAC over ssh to `mediasift asr -`, overlapped with the picture and OCR passes, falling back to the Mac if the box fails |
-| text | `ocr.read` | Apple Vision on macOS, falling back to Indra OCR (`datalab-to/indra-ocr` ONNX Runtime CPU) on Linux (`MEDIASIFT_OCR=indra`), on changed regions only; captions that repeat speech dropped; platform watermarks named once (`see.strip_watermarks`) |
-| images | `see.flow_sheets`, `see.event_sheets`, `decode.frames_at` | ~1 fps flow sheets (uniform on camera, change-weighted on screens), before/after crops; one decode pass or parallel seeks on long files |
-| card | `see.card` | `card.md` timeline (`pic` / `snd` / `say`), budgets per section; `sensed.json`; `transcript.txt`; `usage.jsonl` log of calls |
-| zoom | `see.look` | frames over a span + a sound strip on the same axis |
+| text | `ocr.read`, `see.scan_persistent_text` | Apple Vision on macOS, falling back to Indra OCR (`datalab-to/indra-ocr` ONNX Runtime CPU) on Linux (`MEDIASIFT_OCR=indra`), on changed regions (`_ocr_events`) plus settled full-frame anchors for persistent banners/headlines (`scan_persistent_text`); captions that repeat speech dropped; platform watermarks named once (`see.strip_watermarks`) |
+| images | `see.flow_sheets`, `see.event_sheets`, `events.select_bucket_peaks`, `decode.frames_at` | ~1 fps flow sheets (stratified intra-bucket residual peak snapping on camera, change-weighted on screens), before/after crops; one decode pass or parallel seeks on long files |
+| card | `see.card` | `card.md` timeline (`pic` / `snd` / `say`) + `Layout:` and `Lasting text (persistent banner/overlay):` lines, budgets per section; `sensed.json` (with `frame_peaks`, `layout`, `lasting_text`); `transcript.txt`; `usage.jsonl` log of calls |
+| zoom | `see.look`, `events.snap_look_times`, `see._active_crop_row` | frames over a span (or `--say "phrase"`), snapped to cached `0.25 s` residual peaks + a 4-tile 2x active-region Codec Canvas crop row (`ACT CROP`) + a sound strip on the same axis |
 | corrections | `feedback.record`, `feedback.learned` | `mediasift fix` logs a wrong sound name to `feedback.jsonl`; 3 agreeing fixes add "(usually: X)" on later cards |
 
 Runs politely: `nice 10`, capped pools (`polite.py`). Audio decoding and tagging run beside the picture pass; speech starts as soon as the tags hear it when it holds little Mac memory (the box, or Core ML QUAN) and is collected after OCR; MLX speech (3.3 GB) still waits for the local passes. Core ML calls go through `coreml.py` (pyobjc, one autorelease pool per prediction).
@@ -39,7 +39,7 @@ Analyse dense and cheap, emit sparse and rich. Every frame is examined at
 
 | stage | module | output |
 |---|---|---|
-| probe + packets (no decode) | `decode.py` | duration, fps, packet sizes, I-frame times |
+| probe + packets (no decode) | `decode.py` (`packet_activity`, `packets`) | duration, fps, packet sizes, P/B byte-ratio spikes, I-frame times |
 | visual track | `visual.py` | per frame: 32×18 luma + edge blocks, 64-bin histogram, sharpness, dHash, step distance |
 | audio track | `audio.py` | 50 ms log-mel + RMS, pauses |
 | signals | `segment.build_signals` | visual/audio novelty as robust-z, codec activity, silence on one grid |

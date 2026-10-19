@@ -31,7 +31,7 @@ from PIL import Image, ImageDraw, ImageFont
 from . import __version__, audio, decode, events, polite, sound
 from .transcript import Cue
 
-CARD_VERSION = "see-12"   # bump when the card format changes: the cache key includes it
+CARD_VERSION = "see-15"   # bump when the card format changes: the cache key includes it
 TILE_W, TILE_H = 320, 180          # the size uniform 1 fps sheets used in the bench: enough, ~920 tokens a sheet
 FONT = "/System/Library/Fonts/Helvetica.ttc"
 URL = re.compile(r"^https?://")
@@ -221,6 +221,9 @@ class Sensed:
     detected_kind: str = ""
     flows: list[str] = field(default_factory=list)
     refs: dict[int, str] = field(default_factory=dict)
+    frame_peaks: list[list[float]] = field(default_factory=list)
+    layout: dict = field(default_factory=dict)
+    lasting_text: list[dict] = field(default_factory=list)
 
 
 def classify_signal(s: Sensed, talk_s: float | None = None) -> tuple[str, list[str]]:
@@ -318,6 +321,9 @@ def sensed_from_dict(js: dict) -> Sensed:
         detected_kind=js.get("detected_kind", ""),
         flows=list(js.get("flows", [])),
         refs={int(k): v for k, v in (js.get("refs") or {}).items()},
+        frame_peaks=[[float(x) for x in fp] for fp in js.get("frame_peaks", [])],
+        layout=dict(js.get("layout") or {}),
+        lasting_text=list(js.get("lasting_text") or []),
     )
 def _visual(path: str, info: decode.MediaInfo) -> tuple[events.Grid, float]:
     # Brief events need a fast rate; long talks do not, and decoding is the cost there.
@@ -476,6 +482,91 @@ def _ocr_events(path: str, info: decode.MediaInfo, evs: list[events.Event], work
     return True
 
 
+def _norm_ocr_key(s: str) -> str:
+    import unicodedata
+    s_low = s.lower().replace("đ", "d")
+    s_nfd = "".join(c for c in unicodedata.normalize("NFD", s_low) if unicodedata.category(c) != "Mn")
+    return re.sub(r"[^a-z0-9]+", " ", s_nfd).strip()
+
+
+def scan_persistent_text(path: str, info: decode.MediaInfo, s: Sensed, work: Path) -> list[dict]:
+    """Read static/persistent headlines, banners, and listicle overlays across settled anchor frames.
+    Catches text that is already on screen at t=0 or never triggers a change event in _ocr_events."""
+    from . import ocr
+    if not ocr.available() or not info.has_video or info.duration <= 0:
+        return []
+    d = max(info.duration, 0.5)
+    anchors = [round(min(0.5, d * 0.2), 3), round(d * 0.5, 3)]
+    if d >= 6.0:
+        anchors.append(round(min(d - 0.3, max(1.5, d * 0.82)), 3))
+    for e in s.events:
+        if e.kind == "cut" and len(anchors) < 6:
+            anchors.append(round(min(d - 0.2, e.after + 0.35), 3))
+    times: list[float] = []
+    for t in sorted(set(anchors)):
+        if not times or t - times[-1] >= 1.2:
+            times.append(t)
+    times = times[:6]
+    files = dict(zip(times, _frames_at(path, times, work, 768)))
+    ev_keys = {_norm_ocr_key(t) for e in s.events for t in e.text_added if len(_norm_ocr_key(t)) >= 4}
+    speech_words = {w for c in s.speech for w in _norm_ocr_key(c.get("text", "")).split() if len(w) >= 3}
+    tracks: list[dict] = []
+    for t in times:
+        fpath = files.get(t)
+        if not fpath or not Path(fpath).exists():
+            continue
+        for raw_txt, box in ocr.read(str(fpath)):
+            core = raw_txt.strip(" •·:-\"'")
+            if len(core) < 3:
+                continue
+            if WATERMARK.search(core) or (s.content == "camera" and HANDLE.search(core)):
+                wkey = re.sub(r"\W", "", core.lower())[:5]
+                if not any(re.sub(r"\W", "", w.lower())[:5] == wkey for w in s.watermarks):
+                    s.watermarks.append(core)
+                continue
+            k = _norm_ocr_key(core)
+            if len(re.sub(r"\s+", "", k)) < 3:
+                continue
+            x0, y0, x1, y1 = box
+            yc = 0.5 * (y0 + y1)
+            zone = "top" if yc < 0.34 else ("bottom" if yc > 0.67 else "middle")
+            toks = set(k.split())
+            matched = False
+            for tr in tracks:
+                tr_toks = tr["toks"]
+                overlap = len(toks & tr_toks) / max(1, min(len(toks), len(tr_toks)))
+                if abs(yc - tr["yc"]) <= 0.12 and (k in tr["key"] or tr["key"] in k or overlap >= 0.6):
+                    tr["end"] = t
+                    tr["count"] += 1
+                    if len(core) > len(tr["text"]):
+                        tr["text"], tr["key"], tr["toks"] = core, k, toks
+                    matched = True
+                    break
+            if not matched:
+                tracks.append({
+                    "text": core, "key": k, "toks": toks,
+                    "zone": zone, "yc": yc, "start": t, "end": t, "count": 1,
+                    "box": [round(float(v), 3) for v in box],
+                })
+    out: list[dict] = []
+    for tr in tracks:
+        k = tr["key"]
+        if tr["count"] < 2 and any(k in ek or ek in k for ek in ev_keys):
+            continue
+        w = [x for x in tr["toks"] if len(x) >= 3]
+        if w and speech_words and len(set(w) & speech_words) / len(w) >= 0.65:
+            continue
+        if tr["count"] >= 2 or (tr["start"] == times[0] and len(k) >= 5):
+            out.append({
+                "text": tr["text"],
+                "zone": tr["zone"],
+                "start": round(0.0 if tr["start"] == times[0] else tr["start"], 2),
+                "end": round(info.duration if tr["end"] == times[-1] and tr["count"] >= 2 else tr["end"], 2),
+                "box": tr["box"],
+            })
+    return out[:8]
+
+
 def _sync_sound_events(s: Sensed) -> None:
     for snd in s.sounds:
         for t in (snd.times or [snd.start]):
@@ -526,6 +617,8 @@ def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = Non
         s.content = "screen" if g.identical > 0.3 else "camera"
         s.camera = events.camera_moves(g, screen=s.content == "screen")
         s.shots = events.shot_letters(g, [e.start for e in s.events if e.kind == "cut"])
+        s.frame_peaks = events.extract_frame_peaks(g)
+        s.layout = events.detect_layout(g)
         s.timings["visual"] = round(time.perf_counter() - tv, 1)
     if prep is not None:
         early = prep.result()
@@ -558,6 +651,7 @@ def sense(path: Path, out: Path, asr_mode: str = "auto", subs: Path | None = Non
             t1 = time.perf_counter()
             s.ocr = _ocr_events(str(path), info, s.events, out / "frames", s.analysed_fps)
             if s.ocr:
+                s.lasting_text = scan_persistent_text(str(path), info, s, out / "frames")
                 s.timings["ocr"] = round(time.perf_counter() - t1, 1)
             else:
                 s.holes.append("on-screen text not read (install indra-ocr on Linux or pyobjc Vision on macOS)")
@@ -593,6 +687,13 @@ def _drop_captions(s: Sensed, window: float = 6.0) -> None:
         keep = lambda t: not (w := words(t)) or len(w & said) / len(w) < 0.6
         e.text_added = [t for t in e.text_added if keep(t)]
         e.text_removed = [t for t in e.text_removed if keep(t)]
+    if s.lasting_text:
+        all_said = {w for c in s.speech for w in _norm_ocr_key(c.get("text", "")).split() if len(w) >= 3}
+        s.lasting_text = [
+            item for item in s.lasting_text
+            if not (ws := [w for w in _norm_ocr_key(item.get("text", "")).split() if len(w) >= 3])
+            or len(set(ws) & all_said) / len(ws) < 0.65
+        ]
 
 
 # ------------------------------------------------------------------ words
@@ -811,7 +912,7 @@ def flow_sheets(path: str, s: Sensed, g: events.Grid | None, out: Path, max_fram
         # On camera footage pixel change is mostly people and camera moving, not information:
         # change-weighting starved a slide animation while a lecturer walked (bench round 4).
         # Clock-uniform frames plus the first frame of every shot.
-        grid_t = [float(t) for t in (np.arange(n) + 0.5) * s.duration / n]
+        grid_t = events.select_bucket_peaks(g, 0.0, s.duration, n, anchor_ends=False)
         shots = [e.after for e in s.events if e.kind == "cut"]
         times = []
         for t in sorted(grid_t + shots):
@@ -965,6 +1066,15 @@ def card(s: Sensed, flows: list[str], refs: dict[int, str], src_label: str,
     if "ocr" in active and s.watermarks:
         marks = "; ".join(f'"{w}"' for w in s.watermarks[:4])
         lines.append(f"Watermark (moves around the frame; not listed below): {marks}.")
+    if "pic" in active and s.layout and s.layout.get("kind", "full") != "full":
+        vp = s.layout.get("viewport") or [0.0, 0.0, 1.0, 1.0]
+        lines.append(
+            f"Layout: {s.layout['kind']} (active viewport {vp[0]:.0%}-{vp[2]:.0%} x {vp[1]:.0%}-{vp[3]:.0%}, "
+            f"{s.layout.get('panels', 1)} panel{'s' if s.layout.get('panels', 1) > 1 else ''})."
+        )
+    if "ocr" in active and s.lasting_text:
+        lt_parts = [f'{x["zone"]}: "{x["text"]}" ({ts(x["start"])}-{ts(x["end"])})' for x in s.lasting_text[:5]]
+        lines.append("Lasting text (persistent banner/overlay): " + "; ".join(lt_parts) + ".")
     use_flows = flows if "pic" in active else []
     use_refs = refs if "pic" in active else {}
     lines += ["", "How to use this card:",
@@ -1108,6 +1218,8 @@ def _upgrade_sensed(path: Path, out: Path, s: Sensed, missing: set[str], wanted:
         s.content = "screen" if g.identical > 0.3 else "camera"
         s.camera = events.camera_moves(g, screen=s.content == "screen")
         s.shots = events.shot_letters(g, [e.start for e in s.events if e.kind == "cut"])
+        s.frame_peaks = events.extract_frame_peaks(g)
+        s.layout = events.detect_layout(g)
         if s.sounds:
             _sync_sound_events(s)
         s.flows = flow_sheets(str(path), s, g, out)
@@ -1117,6 +1229,7 @@ def _upgrade_sensed(path: Path, out: Path, s: Sensed, missing: set[str], wanted:
         t1 = time.perf_counter()
         s.ocr = _ocr_events(str(path), info, s.events, out / "frames", s.analysed_fps or 15.0)
         if s.ocr:
+            s.lasting_text = scan_persistent_text(str(path), info, s, out / "frames")
             s.timings["ocr"] = round(time.perf_counter() - t1, 1)
             s.holes = [h for h in s.holes if "OCR" not in h]
         if s.speech:
@@ -1379,19 +1492,117 @@ def _match_say(speech: list[dict], phrase: str, duration: float) -> tuple[float,
     raise ValueError(f"phrase {phrase!r} not found in transcript; closest lines: {candidates}")
 
 
+def _active_crop_row(files: list[Path], times: list[float], cols: int, tw: int, th: int) -> Image.Image | None:
+    """Codec Canvas active-region zoom strip: finds the highest-residual localized sub-region
+    across the look() frames (cancelling global camera pan and ignoring bottom caption overlays
+    when upper-frame gesture/UI motion is present) and renders 4 chronological 2x crops."""
+    if len(files) < 4 or cols < 4:
+        return None
+    imgs = [Image.open(f).convert("RGB") for f in files]
+    arr = np.stack([np.asarray(im, dtype=np.float32) for im in imgs])
+    n_frames, h, w, _ = arr.shape
+    if h < 64 or w < 64:
+        return None
+    yh, yw = h // 2, w // 2
+    win = np.outer(np.hanning(yh), np.hanning(yw)).astype(np.float32)
+    lumas = [
+        (arr[i] @ np.array([0.299, 0.587, 0.114], np.float32)).reshape(yh, 2, yw, 2).mean(axis=(1, 3))
+        for i in range(n_frames)
+    ]
+    step_diffs = []
+    for i in range(n_frames - 1):
+        dx, dy, pk = events._shift(lumas[i], lumas[i + 1], win)
+        prev = arr[i]
+        ix, iy = int(round(dx * 2)), int(round(dy * 2))
+        if pk >= 0.20 and (abs(ix) >= 1 or abs(iy) >= 1) and abs(ix) < w // 3 and abs(iy) < h // 3:
+            warped = prev.copy()
+            sy0, sy1 = max(0, -iy), min(h, h - iy)
+            dy0, dy1 = max(0, iy), min(h, h + iy)
+            sx0, sx1 = max(0, -ix), min(w, w - ix)
+            dx0, dx1 = max(0, ix), min(w, w + ix)
+            warped[dy0:dy1, dx0:dx1] = prev[sy0:sy1, sx0:sx1]
+            if dy0 > 0:
+                warped[:dy0, :] = arr[i + 1][:dy0, :]
+            if dy1 < h:
+                warped[dy1:, :] = arr[i + 1][dy1:, :]
+            if dx0 > 0:
+                warped[:, :dx0] = arr[i + 1][:, :dx0]
+            if dx1 < w:
+                warped[:, dx1:] = arr[i + 1][:, dx1:]
+            prev = warped
+        d = np.abs(arr[i + 1] - prev).max(axis=2)
+        my, mx = max(2, h // 32), max(2, w // 32)
+        d[:my, :] = 0.0
+        d[-my:, :] = 0.0
+        d[:, :mx] = 0.0
+        d[:, -mx:] = 0.0
+        step_diffs.append(d)
+    sdiff = np.stack(step_diffs)
+    gh, gw = 16, 16
+    bh, bw = h // gh, w // gw
+    grid_steps = sdiff[:, :gh * bh, :gw * bw].reshape(len(step_diffs), gh, bh, gw, bw).mean(axis=(2, 4))
+    act_grid = np.percentile(grid_steps, 85, axis=0)
+    if h > w:  # Portrait clip: if upper 75% has clear motion, ignore burned-in caption band at bottom
+        upper_max = float(act_grid[:12, :].max())
+        if upper_max >= 14.0:
+            act_grid[12:, :] = np.minimum(act_grid[12:, :], upper_max * 0.30)
+    peak_val = float(act_grid.max())
+    if peak_val < 12.0:
+        return None
+    mask = act_grid >= max(11.0, 0.38 * peak_val)
+    ys, xs = np.nonzero(mask)
+    if not len(xs):
+        return None
+    gy0, gy1 = int(ys.min()), int(ys.max()) + 1
+    gx0, gx1 = int(xs.min()), int(xs.max()) + 1
+    if (gy1 - gy0) * (gx1 - gx0) > 0.62 * (gh * gw):
+        return None
+    cx = (gx0 + gx1) * 0.5 * bw
+    cy = (gy0 + gy1) * 0.5 * bh
+    raw_w = (gx1 - gx0) * bw * 1.45
+    raw_h = (gy1 - gy0) * bh * 1.45
+    aspect = tw / max(th, 1)
+    crop_w = float(np.clip(max(raw_w, raw_h * aspect), 0.36 * w, 0.68 * w))
+    crop_h = float(np.clip(crop_w / aspect, 0.36 * h, 0.68 * h))
+    crop_w = min(float(w), crop_h * aspect)
+    x0 = int(round(np.clip(cx - crop_w * 0.5, 0, w - crop_w)))
+    y0 = int(round(np.clip(cy - crop_h * 0.5, 0, h - crop_h)))
+    x1 = min(w, int(round(x0 + crop_w)))
+    y1 = min(h, int(round(y0 + crop_h)))
+    box_scores = np.zeros(n_frames, dtype=np.float32)
+    for i in range(n_frames - 1):
+        sc = float(np.percentile(sdiff[i, y0:y1, x0:x1], 90))
+        box_scores[i] = max(box_scores[i], sc * 0.85)
+        box_scores[i + 1] = max(box_scores[i + 1], sc)
+    interior = list(range(1, n_frames - 1))
+    interior.sort(key=lambda idx: float(box_scores[idx]), reverse=True)
+    picked_mid = sorted(interior[: cols - 2])
+    picked = [0] + picked_mid + [n_frames - 1]
+    row_im = Image.new("RGB", (cols * tw, th), "black")
+    for k, idx in enumerate(picked[:cols]):
+        crop = imgs[idx].crop((x0, y0, x1, y1)).resize((tw, th), Image.Resampling.LANCZOS)
+        _label(crop, f"zoom {times[idx]:.2f}s", 18)
+        row_im.paste(crop, (k * tw, 0))
+    return row_im
+
+
 def look(src: str, span: str | None = None, n: int = 8, width: int = TILE_W, say: str | None = None) -> Path:
-    """Frames evenly spread over a span (or around `--say PHRASE`), with the sound drawn underneath."""
+    """Frames spread over a span (snapped to intra-bucket motion peaks when sensed) or around
+    `--say PHRASE`, with an active-region zoom strip and the sound drawn underneath."""
     path = Path(fetch(src)[0] if URL.match(src) else Path(src).expanduser().resolve())
     info = decode.probe(str(path))
     focus_words: tuple[float, float] | None = None
+    side = out_dir(path) / "sensed.json"
+    js: dict = {}
     if say is not None:
-        side = out_dir(path) / "sensed.json"
         if not side.exists():
             see(str(path))
         js = json.loads(side.read_text())
         a, b, focus_words = _match_say(js.get("speech", []), say, info.duration)
     elif span is not None:
         a, b = parse_span(span, info.duration)
+        if side.exists():
+            js = json.loads(side.read_text())
     else:
         raise ValueError("give a span (START-END) or --say PHRASE")
     out = out_dir(path) / "look"
@@ -1404,20 +1615,28 @@ def look(src: str, span: str | None = None, n: int = 8, width: int = TILE_W, say
         sheet.save(out / name, quality=88)
         return out / name
     n = max(1, min(n, int((b - a) * min(info.fps or 30, 30)) or 1))
-    times = [a + (b - a) * (i + 0.5) / n for i in range(n)]
+    frame_peaks = js.get("frame_peaks") or []
+    if frame_peaks and n >= 4:
+        times = events.snap_look_times(a, b, n, frame_peaks)
+    else:
+        times = [a + (b - a) * (i + 0.5) / n for i in range(n)]
     files = _frames_at(str(path), times, out / "frames", 768 if n <= 2 else 512)
     cols = 1 if n == 1 else 2 if n <= 4 else 4
     tw = 1024 if n == 1 else 640 if n <= 4 else width
     th = round(tw * (info.height or 9) / (info.width or 16))
     rows = (n + cols - 1) // cols
+    crop_row = _active_crop_row(files, times, cols, tw, th) if (n >= 6 and cols == 4 and (b - a) <= 6.0) else None
+    crop_h = crop_row.height if crop_row is not None else 0
     strip_h = 120 if info.has_audio else 0
-    sheet = Image.new("RGB", (cols * tw, rows * th + strip_h), "black")
+    sheet = Image.new("RGB", (cols * tw, rows * th + crop_h + strip_h), "black")
     for i, (t, f) in enumerate(zip(times, files)):
         tile = _fit(Image.open(f), tw, th)
         _label(tile, f"{t:.2f}s", 20)
         sheet.paste(tile, ((i % cols) * tw, (i // cols) * th))
+    if crop_row is not None:
+        sheet.paste(crop_row, (0, rows * th))
     if info.has_audio:
-        _sound_strip(sheet, path, a, b, times, rows * th, strip_h, focus_words=focus_words)
+        _sound_strip(sheet, path, a, b, times, rows * th + crop_h, strip_h, focus_words=focus_words)
     name = f"look_{a:09.2f}-{b:09.2f}.jpg"
     usage("look", key=out.parent.name, start=round(a, 2), end=round(b, 2), n=n, say=bool(say))
     sheet.save(out / name, quality=88)

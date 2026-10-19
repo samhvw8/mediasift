@@ -1,0 +1,39 @@
+{
+  "clip": "reel_en",
+  "arm": "C",
+  "images_read": 8,
+  "answers": [
+    {
+      "id": "q01",
+      "answer": "capacity"
+    },
+    {
+      "id": "q02",
+      "answer": "saving"
+    },
+    {
+      "id": "q03",
+      "answer": "3"
+    },
+    {
+      "id": "q04",
+      "answer": "From right to left across the frame (leftward toward the left edge of the frame)"
+    },
+    {
+      "id": "q05",
+      "answer": "He lowers his raised arm back down to his lap"
+    },
+    {
+      "id": "q06",
+      "answer": "He raises his hand up toward his face and chin with fingers bunched or pinched together"
+    },
+    {
+      "id": "q07",
+      "answer": "About 1 second (approximately 1.1 seconds, from 1.6s to 2.7s)"
+    },
+    {
+      "id": "q08",
+      "answer": "It is in italics (italicized / slanted font), whereas the words around it are regular upright text"
+    }
+  ]
+}

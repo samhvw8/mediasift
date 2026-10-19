@@ -1,0 +1,39 @@
+{
+  "clip": "tiktok_vi",
+  "arm": "B",
+  "images_read": 3,
+  "answers": [
+    {
+      "id": "q01",
+      "answer": "The on-screen caption says 'thì cái lưu ý đây là' (or 'thì cái lưu ý đấy là')."
+    },
+    {
+      "id": "q02",
+      "answer": "It starts as an empty horizontal search bar with a glowing cyan and red outline, then transitions into a white search bar containing a magnifying glass icon, the account handle '@tu.phu.ngo.triet', and a small TikTok logo."
+    },
+    {
+      "id": "q03",
+      "answer": "At the start, the TikTok logo and handle are on the middle-left side of the frame; after about 5 seconds, it moves to the bottom-right corner."
+    },
+    {
+      "id": "q04",
+      "answer": "2 times (first at the start from 00:00 to 00:03, and second at 02:10 to 02:15)."
+    },
+    {
+      "id": "q05",
+      "answer": "About 3 seconds (from ~126s to ~129s)."
+    },
+    {
+      "id": "q06",
+      "answer": "About 4 seconds (from ~160.5s to ~164.5s)."
+    },
+    {
+      "id": "q07",
+      "answer": "A large silver and blue sword (model / replica / toy sword) held in front of the camera."
+    },
+    {
+      "id": "q08",
+      "answer": "A yellow origami / folded paper object (spiky modular origami polyhedron/star)."
+    }
+  ]
+}

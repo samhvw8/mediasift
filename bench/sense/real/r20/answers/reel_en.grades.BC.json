@@ -1,0 +1,33 @@
+{
+  "clip": "reel_en",
+  "grades": {
+    "B": {
+      "q01": 1,
+      "q02": 1,
+      "q03": 1,
+      "q04": 1,
+      "q05": 1,
+      "q06": 0,
+      "q07": 1,
+      "q08": 1
+    },
+    "C": {
+      "q01": 1,
+      "q02": 1,
+      "q03": 1,
+      "q04": 1,
+      "q05": 1,
+      "q06": 1,
+      "q07": 1,
+      "q08": 1
+    }
+  },
+  "notes": {
+    "B": {
+      "q06": "Answered gesturing forward toward camera; misses location covering face or mouth."
+    },
+    "C": {
+      "q06": "Correctly notes hand raised up toward face/chin with bunched fingers."
+    }
+  }
+}

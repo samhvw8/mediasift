@@ -1,0 +1,39 @@
+{
+  "clip": "reel_en",
+  "arm": "B",
+  "images_read": 3,
+  "answers": [
+    {
+      "id": "q01",
+      "answer": "capacity"
+    },
+    {
+      "id": "q02",
+      "answer": "saving"
+    },
+    {
+      "id": "q03",
+      "answer": "3"
+    },
+    {
+      "id": "q04",
+      "answer": "His arm moves from viewer's right across to the left/center and lowers downward."
+    },
+    {
+      "id": "q05",
+      "answer": "His arm is raised with open hand and fingers spread gesturing outward to the right, then lowers down at the end."
+    },
+    {
+      "id": "q06",
+      "answer": "His hand is formed into a fist, gesturing and pulsing forward toward the camera."
+    },
+    {
+      "id": "q07",
+      "answer": "About 1 second (approximately 0.8 to 1.2 seconds, around 2.0s to 3.0s)."
+    },
+    {
+      "id": "q08",
+      "answer": "It is styled in italics (slanted), whereas the surrounding words are in normal upright (roman) text."
+    }
+  ]
+}

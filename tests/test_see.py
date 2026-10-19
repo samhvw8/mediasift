@@ -436,3 +436,42 @@ def test_indra_ocr_fallback_and_box_cropping(clips, tmp_path, monkeypatch):
     assert js["ocr"] is True
     assert "on-screen text: OCR on changed regions" in card
     assert any(e.get("text_added") for e in js["events"])
+
+
+def test_packet_activity_and_look_active_crop_row(clips, tmp_path, monkeypatch):
+    """`decode.packet_activity` profiles P/B byte ratios without decoding frames, and `look()`
+    snaps to cached `frame_peaks` and appends a Codec Canvas active-region zoom row when a
+    localized motion region is present."""
+    import json
+    from mediasift import see, sound
+    real_models = sound.cache_root() / "models"
+    if real_models.exists():
+        (tmp_path / "models").symlink_to(real_models)
+    from PIL import Image
+    pa = decode.packet_activity(clips["motion"])
+    assert pa["duration"] > 0
+    assert len(pa["bin_ratios"]) >= 1
+    assert pa["median_pb"] > 0
+
+    monkeypatch.setenv("MEDIASIFT_CACHE", str(tmp_path))
+    out = see.see(clips["motion"], asr_mode="off")
+    js = json.loads((out / "sensed.json").read_text())
+    assert len(js.get("frame_peaks") or []) >= 4
+
+    sheet_path = see.look(clips["motion"], span="0.2-3.8", n=8)
+    with Image.open(sheet_path) as im:
+        # 8 frames in 4 cols -> 2 full-frame rows (2 * 180 = 360) + 1 active crop row (180) + sound strip (120) = 660
+        assert im.width == 4 * see.TILE_W
+        assert im.height >= 3 * see.TILE_H
+
+
+def test_scan_persistent_text_and_layout_on_card(tmp_path):
+    """`see.card` surfaces `Layout:` when non-full and `Lasting text (persistent banner/overlay):`
+    when `s.lasting_text` holds static headline/banner text."""
+    from mediasift import see
+    s = see.Sensed("reel.mp4", 12.0, 576, 1024, 30.0, 15.0, "camera", ocr=True)
+    s.layout = {"kind": "letterbox+split-vertical", "viewport": [0.0, 0.25, 1.0, 0.75], "active_ratio": 0.5, "panels": 2}
+    s.lasting_text = [{"text": "QUỐC TẾ ĐÀN ÔNG", "zone": "top", "start": 0.0, "end": 12.0, "box": [0.1, 0.15, 0.9, 0.25]}]
+    md = see.card(s, ["flow_01.jpg (00:00.5-00:11.5)"], {}, "reel.mp4")
+    assert "Layout: letterbox+split-vertical (active viewport 0%-100% x 25%-75%, 2 panels)." in md
+    assert 'Lasting text (persistent banner/overlay): top: "QUỐC TẾ ĐÀN ÔNG" (00:00.0-00:12.0).' in md

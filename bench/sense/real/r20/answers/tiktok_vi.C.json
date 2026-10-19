@@ -1,0 +1,39 @@
+{
+  "clip": "tiktok_vi",
+  "arm": "C",
+  "images_read": 8,
+  "answers": [
+    {
+      "id": "q01",
+      "answer": "\"thì cái lưu ý đấy là\""
+    },
+    {
+      "id": "q02",
+      "answer": "It starts as a cyan, white, and red block, changes into an empty search bar with a search icon and a TikTok note icon, and then the account username \"@ tu.phu.ngo.trie...\" appears inside it."
+    },
+    {
+      "id": "q03",
+      "answer": "It is on the left side at the start, and moves to the right side (lower right) after about 5 seconds."
+    },
+    {
+      "id": "q04",
+      "answer": "2 times (first in the opening hook at 00:00.2-00:03.7, and again at 02:10.2-02:15.8)."
+    },
+    {
+      "id": "q05",
+      "answer": "About 3.6 seconds (from 02:06.1 to 02:09.7)."
+    },
+    {
+      "id": "q06",
+      "answer": "About 4.0 seconds (from 02:40.4 to 02:44.4)."
+    },
+    {
+      "id": "q07",
+      "answer": "A large silver and blue futuristic replica/toy sword held up next to his microphone."
+    },
+    {
+      "id": "q08",
+      "answer": "A Naruto anime figurine with spiky yellow hair."
+    }
+  ]
+}
