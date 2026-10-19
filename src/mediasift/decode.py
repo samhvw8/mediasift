@@ -207,6 +207,33 @@ def packets(path: str) -> Packets:
     return Packets(arr[:, 0].astype(float), arr[:, 1].astype(float), arr[:, 2].astype(bool))
 
 
+
+def packet_activity(path: str, bin_s: float = 1.0) -> dict:
+    """Compressed-domain P/B-frame bit-rate profile from ffprobe (no frame decoding).
+    Reports keyframe timestamps and per-bin P/B byte ratios against the clip median."""
+    pkts = packets(path)
+    if len(pkts.times) == 0:
+        return {"duration": 0.0, "key_times": [], "bin_ratios": [], "active_bins": [], "p90_ratio": 0.0}
+    dur = float(pkts.times[-1])
+    n_bins = max(1, int(np.ceil(dur / bin_s)))
+    non_key = ~pkts.is_key
+    pb_times = pkts.times[non_key] if non_key.any() else pkts.times
+    pb_sizes = pkts.sizes[non_key] if non_key.any() else pkts.sizes
+    bin_bytes = np.zeros(n_bins, dtype=np.float64)
+    if len(pb_times):
+        idx = np.clip((pb_times / bin_s).astype(int), 0, n_bins - 1)
+        np.add.at(bin_bytes, idx, pb_sizes)
+    med = max(float(np.median(bin_bytes)), 1.0)
+    ratios = np.round(bin_bytes / med, 2)
+    return {
+        "duration": round(dur, 2),
+        "key_times": [round(float(t), 2) for t in pkts.times[pkts.is_key][:50]],
+        "bin_ratios": ratios.tolist(),
+        "active_bins": [i for i, r in enumerate(ratios) if r >= 1.35],
+        "median_pb": round(med, 1),
+        "p90_ratio": round(float(np.percentile(ratios, 90)), 2) if len(ratios) else 1.0,
+    }
+
 def frames_at(path: str, times: list[float], width: int) -> Iterator[tuple[float, np.ndarray]]:
     """Many exact moments in one decode pass (one ffmpeg, not one per frame): each requested
     time gets the first frame at or after it. Yields (requested time, RGB) in time order."""

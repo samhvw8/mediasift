@@ -156,3 +156,50 @@ def test_a_single_cut_back_to_the_opening_place_reads_plainly():
     assert "CUT: same place again (shot A, as at the start)" in see.card(s, [], {}, "x.mp4")
     s.shots = [(0.0, "A"), (4.3, "B")]
     assert "CUT: new shot B" in see.card(s, [], {}, "x.mp4")
+
+
+def test_motion_compensated_residuals_and_intra_bucket_peak_snapping(clips):
+    """Panning camera residuals are suppressed by border-consensus motion compensation, and
+    intra-bucket peak selection snaps off uniform clock midpoints onto brief localized bursts."""
+    import numpy as np
+    g_pan = events.build_grid(decode.video_frames(str(clips / "pan_right.mp4"), 15, events.DECODE_W, events.DECODE_H))
+    bl = g_pan.blocks.astype(np.float32)
+    raw_diff = np.abs(bl[1:] - bl[:-1]).max(axis=3)
+    raw_chg = float((raw_diff > g_pan.thr).mean())
+    mc_chg = float((g_pan.diff[1:] > g_pan.thr).mean())
+    assert mc_chg < raw_chg * 0.75, f"expected motion-compensated diff ({mc_chg:.3f}) < 0.75 * raw ({raw_chg:.3f})"
+
+    # Synthetic grid with a brief localized gesture peak at t = 1.20s inside bucket [1.0, 2.0]
+    frames = []
+    for i in range(45):
+        t = round(i / 15.0, 2)
+        rgb = np.full((events.DECODE_H, events.DECODE_W, 3), 40, dtype=np.uint8)
+        if i in (18, 19):  # t = 1.20s, 1.27s (off the 1.50s midpoint)
+            rgb[40:100, 80:160] = 240
+        frames.append((t, rgb))
+    g = events.build_grid(frames)
+    snapped = events.select_bucket_peaks(g, 0.0, 3.0, 3, anchor_ends=False)
+    assert abs(snapped[1] - 1.20) <= 0.10, f"expected bucket 1 to snap near 1.20s, got {snapped}"
+    peaks = events.extract_frame_peaks(g)
+    look_t = events.snap_look_times(0.0, 3.0, 3, peaks)
+    assert abs(look_t[1] - 1.20) <= 0.10, f"expected look snap near 1.20s, got {look_t}"
+
+
+def test_detect_layout_and_active_viewport_border_shift():
+    """`events.detect_layout` distinguishes letterbox, split-vertical, and static-slide canvases,
+    and `_border_shift` trims static letterbox matte bars so active-viewport pans are preserved."""
+    import numpy as np
+    # 1. Letterbox + split-vertical synthetic grid
+    frames = []
+    for i in range(20):
+        t = round(i / 10.0, 2)
+        rgb = np.zeros((events.DECODE_H, events.DECODE_W, 3), dtype=np.uint8)
+        # Active middle rows [36:108] with a sharp vertical divider at x = 128
+        rgb[36:108, :128] = 60 + ((i * 17) % 120)
+        rgb[36:108, 128:] = 200 - ((i * 13) % 120)
+        frames.append((t, rgb))
+    g = events.build_grid(frames)
+    lay = events.detect_layout(g)
+    assert lay["kind"] == "letterbox+split-vertical", f"unexpected layout: {lay}"
+    assert lay["panels"] == 2
+    assert 0.20 <= lay["viewport"][1] <= 0.30 and 0.70 <= lay["viewport"][3] <= 0.80

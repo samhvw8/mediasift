@@ -6,15 +6,18 @@ tags: [see, picture, events, camera, shots, ocr]
 status: draft
 generated:
   by: claude-code/opus-5.5
-  at: "2026-10-10T21:00:00Z"
+  at: "2026-10-18T16:15:00Z"
 resource: src/mediasift/events.py
 sources:
   - id: sense-real
     resource: bench/sense/real.py
-    title: Real-footage temporal questions, 6 videos (rounds r2-r18)
+    title: Real-footage temporal questions, 6 videos (rounds r2-r20)
   - id: real-use
     resource: ~/Downloads (two phone videos, run locally)
     title: First real-use run on a 26 s English reel and a 2:44 Vietnamese TikTok
+  - id: codec-bench
+    resource: bench/sense/codec_motion_bench.py
+    title: 18-clip Hugging Face (MotionBench, TempCompass, reels-clips, ig-reels) + phone gesture apex benchmark (visual report at https://mediasift-see-14.art.3cxo.work/)
 ---
 
 # Base: events on a block grid
@@ -40,6 +43,9 @@ on camera footage and change-weighted on screens: [mediasift see](/decisions/see
 | **an overlay >= 2% of the frame wiped away by a later change gets a lifetime** | the X went together with the card under it, so "undone" never matched | the X reads red, 104.6-107.8 s (key: about 3 s) |
 | **platform watermarks named once** in the header ("TikTok", "CapCut" everywhere; an "@handle" only on camera footage; OCR variants folded) | the mark jumps corners and each jump read as new text: 2-4 lines per reel | 0 watermark lines in TikTok timelines |
 | **zoom hint**: the card says to `look` for a gesture, a face or small text at one moment | answerers guessed gestures from ~1 fps tiles | reel C 6/8 → 7/8 in both repeat runs (r18) |
+| **border-consensus motion-compensated P-frame residuals** (`build_grid` + `_border_shift` + `camera_moves`): matte-trimmed outer border strips (`T, B, L, R`) estimate global 1-frame camera translation and warp `prev` before computing `diff` and `pix`; `camera_moves` takes rolling median step velocity over `0.5 s` | a stationary camera with a moving central subject triggered false camera pans when 0.5 s phase correlation wrapped; unshifted block diffs flooded camera pans with background change; static letterbox/pillarbox bars pinned 2 of 5 strips to `0.0` | **3/3** pan recall & **0/3** still false positives on Hugging Face `zai-org/MotionBench`, **40.2%** pan background residual reduction (`bench/sense/codec_motion_bench.py`)[^codec-bench] |
+| **stratified intra-bucket peak snapping + `look` Codec Canvas zoom row** (`select_bucket_peaks`, `snap_look_times`, `_active_crop_row`, `see-14`): each bucket snaps within its interior `[0.18, 0.82]` window to its highest residual peak (`> 1.35x` bucket median, staying at the midpoint near cuts); `look` snaps to `0.25 s` `frame_peaks` and appends a 4-tile 2x crop row of the active gesture/UI bounding box | uniform `(k + 0.5)` midpoints stepped over a `0.2 s` raised-fist gesture at `9.20 s` in `reel_en` (`q06` missed in both B and C in r19), and full-frame portrait tiles left small hand gestures and corner toys ambiguous | **1.47x** mean peak activity gain across 30 HF clips (`codec_motion_bench.py`)[^codec-bench]; real phone bench **r20: 16/16 (100%)** (`reel_en` **8/8**, `tiktok_vi` **8/8**) vs arm B **14/16**[^sense-real] |
+| **active-viewport layout & persistent banner OCR** (`events.detect_layout`, `see.scan_persistent_text`, `see-15`): `detect_layout` classifies `letterbox`, `pillarbox`, `split-vertical` (2-panel seam), and `static-slide` from 32x18 block temporal activity and spatial uniformity; `scan_persistent_text` runs full-frame OCR at settled anchor timestamps (`min(0.5s, 0.2*dur)`, shot starts + `0.4s`, quartile midpoints, and `dur - 0.5s`), filters speech overlap (with Vietnamese `đ`/`Đ` + NFD normalization) and watermarks, and emits `Lasting text (persistent banner/overlay):` by zone (`top`/`middle`/`bottom`) | `_ocr_events` reads only changed regions (`before`/`after` crops), missing persistent top/middle headlines present from `t = 0.0 s` on **9 of 10** real TikTok, YouTube Shorts, and Instagram Reels clips (`10%` recall); letterboxed/split-screen social videos hid active viewport bounds | **11/11** layout classification and **10/10 (100%)** persistent headline recall across TikTok (`funa21/tiktok-data`, `Shofo/shofo-tiktok-general-small`), YouTube Shorts (`videoSALMONN2`, `nyu-visionx/vstat`), Instagram Reels (`eshan292/ig-reels`), and Facebook (`facebook/show3d-dataset`) (`codec_motion_bench.py`)[^codec-bench] |
 
 # Tried and left out
 
@@ -47,6 +53,8 @@ on camera footage and change-weighted on screens: [mediasift see](/decisions/see
   2:23 video); a bonus reached rank 43 while lifting 46 groups. The ranking was left alone; the X's
   lifetime is in `sensed.json` and reaches the card when the budget allows.
 - **OCR speed-ups**: see [speech and speed](/decisions/speech-and-speed.md).
+- **LLaVA-OneVision-2 / OneVision-Encoder neural ViT weights**: evaluated and rejected (+1.2 GB VRAM/weights and PyTorch dependency vs 0-parameter codec-aligned residual math in `events.py`).
 
-[^sense-real]: Rounds under bench/sense/real/r7-r18; method and current scores in [the sense bench](/benchmarks/sense-bench.md).
+[^sense-real]: Rounds under bench/sense/real/r7-r20; method and current scores in [the sense bench](/benchmarks/sense-bench.md).
 [^real-use]: Cards for the phone videos in ~/.cache/mediasift/see; the videos are now bench items `reel_en` and `tiktok_vi`.
+[^codec-bench]: 30 real clips across 8 Hugging Face datasets (`zai-org/MotionBench`, `varunredd/reels-clips`, `mm-eval/TempCompass`, `eshan292/ig-reels`, `funa21/tiktok-data`, `Shofo/shofo-tiktok-general-small`, `videoSALMONN2/video-SALMONN_2_testset`, `nyu-visionx/vstat`, `facebook/show3d-dataset`) evaluated by `bench/sense/codec_motion_bench.py`; visual report at `https://mediasift-see-14.art.3cxo.work/` (`bench/sense/real/r20/see_14_before_after.html`).

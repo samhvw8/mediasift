@@ -6,7 +6,7 @@ tags: [codec, segmentation]
 status: stable
 generated:
   by: claude-code/opus-5.5
-  at: "2026-09-30T10:15:00Z"
+  at: "2026-10-18T16:15:00Z"
 resource: src/mediasift/segment.py
 ---
 
@@ -20,7 +20,7 @@ stored in the container and cost nothing to read.
 - An I-frame whose gap to the previous one is < 0.8× the median GOP is an
   encoder scene-cut (`codec_scenecut` reason). Near an existing boundary it
   annotates; alone it becomes a boundary with strength = sensitivity.
-- Bytes per non-key packet, normalised by the median, is `activity`.
+- Bytes per non-key packet, normalised by the median, is `activity` (`decode.packet_activity` exposes per-bin P/B byte-rate ratios, `active_bins >= 1.35x` median, and keyframe timestamps in ~170 ms without decoding frames; see [picture sensing](/decisions/picture-sensing.md)).
 - `--fast` decodes only I-frames; falls back to full decode when there are
   fewer than max(4, duration/30) I-frames (screen recordings, VP9).
 
